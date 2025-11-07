@@ -1,0 +1,142 @@
+{
+  "characters": [
+    {
+      "id": "char_001",
+      "type": "guild",
+      "photo": "https://via.placeholder.com/300x400?text=Character+Photo",
+      "title": "Legendary Adventurer",
+      "name": "Aragorn Stormborne",
+      "vrcPlayerName": "StormKnight#1234",
+      "gender": "Male",
+      "race": "Half-Elf",
+      "age": 247,
+      "level": 25,
+      "class": "Ranger",
+      "height": "6'2\"",
+      "affiliation": "The Silver Warband",
+      "placeOfOrigin": "The Northern Peaks",
+      "status": "Active",
+      "rank": "A",
+      "quote": "\"The storm may rage, but we stand united.\"",
+      "lore": "A seasoned ranger with decades of experience protecting the realm from darkness. Once a prisoner of war, Aragorn now fights to ensure no one else suffers the same fate.",
+      "personality": "Stoic",
+      "flaw": "Mysterious",
+      "elemeltanAttunement": "Storm",
+      "combatSkills": [
+        { "name": "Bow Mastery", "description": "Expert archery skills", "isUltimate": false },
+        { "name": "Sword Combat", "description": "Proficient with blades", "isUltimate": false },
+        { "name": "Ranger's Tracking", "description": "Ultimate ability", "isUltimate": true }
+      ],
+      "lifeSkills": [
+        "Herbalism",
+        "Tracking"
+      ],
+      "observations": "Has a scar across his left eye. Often lost in thought. Drinks black coffee exclusively."
+    }
+  ],
+  "dropdownOptions": {
+    "personality": [
+      "Adventurous",
+      "Stoic",
+      "Charismatic",
+      "Cunning",
+      "Loyal",
+      "Rebellious",
+      "Intellectual",
+      "Compassionate",
+      "Ambitious",
+      "Optimistic",
+      "Humorous",
+      "Mysterious",
+      "Impulsive",
+      "Reckless",
+      "Arrogant",
+      "Vindictive",
+      "Envious",
+      "Greedy",
+      "Cowardly",
+      "Melancholic",
+      "Pessimistic",
+      "Naive",
+      "Dishonest",
+      "Lazy",
+      "Obsessive"
+    ],
+    "flaw": [
+      "Impulsive",
+      "Reckless",
+      "Arrogant",
+      "Vindictive",
+      "Envious",
+      "Greedy",
+      "Cowardly",
+      "Melancholic",
+      "Pessimistic",
+      "Naive",
+      "Dishonest",
+      "Lazy",
+      "Obsessive",
+      "Ambitious"
+    ],
+    "elemeltanAttunement": [
+      "Fire",
+      "Water",
+      "Earth",
+      "Air",
+      "Storm",
+      "Light",
+      "Darkness",
+      "Nature",
+      "Ice",
+      "None"
+    ],
+    "class": [
+      "Warrior",
+      "Ranger",
+      "Mage",
+      "Rogue",
+      "Cleric",
+      "Paladin",
+      "Druid",
+      "Bard",
+      "Necromancer",
+      "Artificer",
+      "Monk",
+      "Sorcerer"
+    ],
+    "race": [
+      "Human",
+      "Elf",
+      "Half-Elf",
+      "Dwarf",
+      "Halfling",
+      "Tiefling",
+      "Dragonborn",
+      "Gnome",
+      "Half-Orc",
+      "Orc",
+      "Undead",
+      "Demihuman"
+    ],
+    "lifeSkills": [
+      "Herbalism",
+      "Tracking",
+      "Cooking",
+      "Alchemy",
+      "Smithing",
+      "Tailoring",
+      "Leatherworking",
+      "Carpentry",
+      "Fishing",
+      "Mining",
+      "Brewing",
+      "Enchanting"
+    ],
+    "rank": [
+      "D",
+      "C",
+      "B",
+      "A"
+    ]
+  }
+}

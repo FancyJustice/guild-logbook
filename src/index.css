@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Cinzel:wght@400;600;700&family=MedievalSharp&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: 'Crimson Text', serif;
+  background-color: #2a2420;
+  color: #f4e8d8;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'MedievalSharp', cursive;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.font-medieval {
+  font-family: 'MedievalSharp', cursive !important;
+}
+
+a {
+  color: #d4a574;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #e8d7be;
+}
+
+.ultimate-skill {
+  background: linear-gradient(to right, #daa520, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+}

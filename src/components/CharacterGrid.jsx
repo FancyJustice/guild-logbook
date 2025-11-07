@@ -1,0 +1,38 @@
+export default function CharacterGrid({ characters, onSelectCharacter }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {characters.map(character => (
+        <div
+          key={character.id}
+          onClick={() => onSelectCharacter(character)}
+          className="bg-parchment text-wood rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition cursor-pointer transform hover:scale-105 border-2 border-gold"
+        >
+          <div className="overflow-hidden bg-wood-light" style={{ aspectRatio: '230/300' }}>
+            <img
+              src={character.photo}
+              alt={character.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="p-4">
+            <div className="text-xs text-gold uppercase tracking-wide font-medieval">
+              {character.type === 'guild' ? 'Guild Member' : 'Criminal'}
+            </div>
+            {character.title && (
+              <div className="text-xs text-gold-dark italic mb-2">"{character.title}"</div>
+            )}
+            <h3 className="text-xl font-medieval font-bold text-wood mb-1">{character.name}</h3>
+            <div className="text-sm text-wood-light mb-3">
+              <div>{character.race} {character.class}</div>
+              <div className="text-xs">{character.vrcPlayerName}</div>
+            </div>
+            <div className="flex justify-between text-xs text-wood-light border-t border-gold-dark pt-2">
+              <span className="font-medieval">{character.affiliation}</span>
+              <span className="font-medieval">Lv. {character.level || '—'}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
