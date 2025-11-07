@@ -25,13 +25,13 @@ function App() {
         setCharacters(JSON.parse(savedCharacters))
       } else {
         // If no saved data, load from JSON file
-        const response = await fetch('/characters.json')
+        const response = await fetch(import.meta.env.BASE_URL + 'characters.json')
         const data = await response.json()
         setCharacters(data.characters || [])
       }
 
       // Always load dropdown options from JSON file
-      const response = await fetch('/characters.json')
+      const response = await fetch(import.meta.env.BASE_URL + 'characters.json')
       const data = await response.json()
       setDropdownOptions(data.dropdownOptions || {})
     } catch (error) {
