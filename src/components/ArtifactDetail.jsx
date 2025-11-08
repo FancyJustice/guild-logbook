@@ -91,14 +91,9 @@ export default function ArtifactDetail({ artifact, onBack }) {
         isDragging = false
       }
 
-      const handleMouseLeave = () => {
-        isDragging = false
-      }
-
       container.addEventListener('mousedown', handleMouseDown)
-      container.addEventListener('mousemove', handleMouseMove)
-      container.addEventListener('mouseup', handleMouseUp)
-      container.addEventListener('mouseleave', handleMouseLeave)
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
 
       // Zoom controls with mouse wheel
       let isMouseOverViewer = false
@@ -233,9 +228,8 @@ export default function ArtifactDetail({ artifact, onBack }) {
 
         // Remove event listeners
         container.removeEventListener('mousedown', handleMouseDown)
-        container.removeEventListener('mousemove', handleMouseMove)
-        container.removeEventListener('mouseup', handleMouseUp)
-        container.removeEventListener('mouseleave', handleMouseLeave)
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
         container.removeEventListener('mouseenter', handleMouseEnter)
         container.removeEventListener('mouseleave', handleMouseExit)
         document.removeEventListener('wheel', handleWheel)
