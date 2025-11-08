@@ -97,16 +97,50 @@ export default function CharacterDetail({ character, onBack }) {
             )}
           </div>
 
-          {/* Core Attributes */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <StatBox label="Race" value={character.race} />
-            <StatBox label="Class" value={character.class} />
-            <StatBox label="Age" value={character.age} />
-            <StatBox label="Height" value={character.height} />
-            <StatBox label="Gender" value={character.gender} />
-            <StatBox label="Status" value={character.status} />
-            <StatBox label="Origin" value={character.placeOfOrigin} />
-            <StatBox label="Affiliation" value={character.affiliation} />
+          {/* Core Attributes - Combined Panel */}
+          <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
+            <h3 className="text-lg font-medieval font-bold text-gold-dark mb-4">Character Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Left Column */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-center py-2 border-b border-gold-dark">
+                  <span className="text-sm text-wood-light font-medieval">Race</span>
+                  <span className="font-bold text-wood">{character.race || '—'}</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-gold-dark">
+                  <span className="text-sm text-wood-light font-medieval">Class</span>
+                  <span className="font-bold text-wood">{character.class || '—'}</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-gold-dark">
+                  <span className="text-sm text-wood-light font-medieval">Age</span>
+                  <span className="font-bold text-wood">{character.age || '—'}</span>
+                </div>
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-sm text-wood-light font-medieval">Height</span>
+                  <span className="font-bold text-wood">{character.height || '—'}</span>
+                </div>
+              </div>
+
+              {/* Right Column */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-center py-2 border-b border-gold-dark">
+                  <span className="text-sm text-wood-light font-medieval">Gender</span>
+                  <span className="font-bold text-wood">{character.gender || '—'}</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-gold-dark">
+                  <span className="text-sm text-wood-light font-medieval">Status</span>
+                  <span className="font-bold text-wood">{character.status || '—'}</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-gold-dark">
+                  <span className="text-sm text-wood-light font-medieval">Origin</span>
+                  <span className="font-bold text-wood">{character.placeOfOrigin || '—'}</span>
+                </div>
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-sm text-wood-light font-medieval">Affiliation</span>
+                  <span className="font-bold text-wood">{character.affiliation || '—'}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Personality & Elements */}
