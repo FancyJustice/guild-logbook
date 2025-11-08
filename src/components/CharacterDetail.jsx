@@ -51,7 +51,18 @@ export default function CharacterDetail({ character, onBack }) {
             <div className="text-sm space-y-1">
               <p className="text-wood-light"><strong>Lvl:</strong> {character.level}</p>
               <p className="text-wood-light"><strong>Rank:</strong> {character.rank}</p>
-              <p className="text-wood-light"><strong>Player:</strong> {character.vrcPlayerName}</p>
+              <p className="text-wood-light">
+                <strong>Player:</strong> {character.vrcPlayerName && (
+                  <a
+                    href={`https://vrchat.com/home/user/${character.vrcPlayerName}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gold hover:text-parchment transition cursor-pointer"
+                  >
+                    {character.vrcPlayerName}
+                  </a>
+                )}
+              </p>
             </div>
           </div>
         </div>
@@ -71,10 +82,17 @@ export default function CharacterDetail({ character, onBack }) {
                 <p className="text-sm leading-relaxed">{character.lore}</p>
               </div>
             )}
-            {character.observations && (
+            {character.observations && character.observations.length > 0 && (
               <div className="mt-4 pt-4 border-t border-gold-dark">
                 <h3 className="text-lg font-medieval font-bold text-gold-dark mb-2">Observations</h3>
-                <p className="text-sm leading-relaxed text-wood-light">{character.observations}</p>
+                <ul className="space-y-1">
+                  {character.observations.map((observation, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-wood-light">
+                      <span className="text-gold mt-1">•</span>
+                      <span>{observation}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
@@ -101,7 +119,7 @@ export default function CharacterDetail({ character, onBack }) {
             ) : (
               <AttributeBox label="Personality" value={character.personality} />
             )}
-            <AttributeBox label="Element" value={character.elemeltanAttunement} />
+            <AttributeBox label="Elemental Attunement" value={character.elemeltanAttunement} />
           </div>
 
           {/* Combat Skills & Life Skills in one row */}
@@ -158,7 +176,7 @@ export default function CharacterDetail({ character, onBack }) {
           {/* Criminal Only Fields */}
           {character.type === 'criminal' && (
             <div className="grid grid-cols-2 gap-4">
-              {character.bounty && <StatBox label="Bounty" value={character.bounty} />}
+              <StatBox label="Bounty" value={character.bounty || '—'} />
               {character.crime && <StatBox label="Crime" value={character.crime} />}
             </div>
           )}

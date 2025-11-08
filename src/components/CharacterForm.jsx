@@ -24,7 +24,7 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
     elemeltanAttunement: '',
     combatSkills: [],
     lifeSkills: [],
-    observations: '',
+    observations: [],
     bounty: '',
     crime: '',
     ultimateSkillColor: 'gold',
@@ -36,6 +36,7 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
   const [skillBuff, setSkillBuff] = useState(false)
   const [skillPassive, setSkillPassive] = useState(false)
   const [lifeSkillInput, setLifeSkillInput] = useState('')
+  const [observationInput, setObservationInput] = useState('')
   const [photoPreview, setPhotoPreview] = useState(editingCharacter?.photo || '')
 
   const handleInputChange = (field, value) => {
@@ -131,6 +132,23 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
     }))
   }
 
+  const handleAddObservation = () => {
+    if (observationInput.trim()) {
+      setFormData(prev => ({
+        ...prev,
+        observations: [...(prev.observations || []), observationInput.trim()]
+      }))
+      setObservationInput('')
+    }
+  }
+
+  const handleRemoveObservation = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      observations: (prev.observations || []).filter((_, i) => i !== index)
+    }))
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     onSubmit(formData)
@@ -171,11 +189,11 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
           onChange={(value) => handleInputChange('gender', value)}
           placeholder="e.g., Male, Female, Non-binary"
         />
-        <FormSelect
+        <FormInput
           label="Race"
           value={formData.race}
           onChange={(value) => handleInputChange('race', value)}
-          options={[{ value: '', label: 'Select Race' }, ...(dropdownOptions.race || []).map(r => ({ value: r, label: r }))]}
+          placeholder="e.g., Human, Elf, Dwarf"
         />
         <FormInput
           label="Class"
@@ -276,7 +294,7 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
           />
         )}
         <FormSelect
-          label="Elemeltan Attunement"
+          label="Elemental Attunement"
           value={formData.elemeltanAttunement}
           onChange={(value) => handleInputChange('elemeltanAttunement', value)}
           options={[{ value: '', label: 'Select Attunement' }, ...(dropdownOptions.elemeltanAttunement || []).map(a => ({ value: a, label: a }))]}
@@ -538,12 +556,37 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
 
       <div>
         <label className="block text-sm font-medieval text-wood-light mb-2">Observations</label>
-        <textarea
-          value={formData.observations}
-          onChange={(e) => handleInputChange('observations', e.target.value)}
-          className="w-full px-3 py-2 border-2 border-gold-dark rounded bg-parchment-dark text-wood focus:outline-none focus:border-gold"
-          rows="3"
-        />
+        <div className="flex gap-2 mb-2">
+          <input
+            type="text"
+            value={observationInput}
+            onChange={(e) => setObservationInput(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddObservation())}
+            className="flex-1 px-3 py-2 border-2 border-gold-dark rounded bg-parchment-dark text-wood focus:outline-none focus:border-gold"
+            placeholder="Enter observation and press Enter"
+          />
+          <button
+            type="button"
+            onClick={handleAddObservation}
+            className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded text-sm"
+          >
+            Add
+          </button>
+        </div>
+        <div className="space-y-2">
+          {(formData.observations || []).map((observation, idx) => (
+            <div key={idx} className="flex justify-between items-center bg-parchment-dark p-2 rounded">
+              <span>{observation}</span>
+              <button
+                type="button"
+                onClick={() => handleRemoveObservation(idx)}
+                className="px-2 py-1 bg-seal text-parchment hover:bg-seal-light transition rounded text-xs"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       {formData.type === 'criminal' && (

@@ -139,7 +139,7 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
           Characters
         </button>
         <button
-          onClick={() => setView('artifacts')}
+          onClick={() => { setView('artifacts'); setFilters({ type: 'all' }); setSelectedCharacter(null); setSelectedArtifact(null) }}
           className={`px-4 py-3 text-sm font-medieval whitespace-nowrap transition rounded-l-lg border-r-4 ${
             view === 'artifacts'
               ? 'bg-wood-light text-parchment border-r-wood-light'
