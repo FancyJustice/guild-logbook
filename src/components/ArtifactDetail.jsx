@@ -1,107 +1,94 @@
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
 export default function ArtifactDetail({ artifact, onBack }) {
   const [showModel, setShowModel] = useState(false)
   const containerRef = useRef(null)
-  const sceneRef = useRef(null)
 
   useEffect(() => {
-    if (!containerRef.current || !artifact.modelPath || !showModel) return
+    if (!showModel || !containerRef.current) return
 
-    // Scene setup
-    const scene = new THREE.Scene()
-    scene.background = new THREE.Color(0x2a2420)
+    console.log('Starting 3D viewer setup...')
+    console.log('Container element:', containerRef.current)
+    console.log('Container dimensions before:', containerRef.current.clientWidth, 'x', containerRef.current.clientHeight)
 
-    // Camera setup
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      containerRef.current.clientWidth / containerRef.current.clientHeight,
-      0.1,
-      1000
-    )
-    camera.position.set(0, 5, 15)
-    camera.lookAt(0, 0, 0)
+    try {
+      // Ensure container has dimensions
+      const container = containerRef.current
+      let width = container.clientWidth
+      let height = container.clientHeight
 
-    // Renderer setup
-    const renderer = new THREE.WebGLRenderer({ antialias: true })
-    renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight)
-    renderer.shadowMap.enabled = true
-    containerRef.current.appendChild(renderer.domElement)
+      console.log('Container dimensions after:', width, 'x', height)
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
-    scene.add(ambientLight)
+      // Fallback if dimensions are 0
+      if (width === 0) {
+        width = Math.max(400, window.innerWidth * 0.6)
+        console.log('Width was 0, using fallback:', width)
+      }
+      if (height === 0) {
+        height = 400
+        console.log('Height was 0, using fallback:', height)
+      }
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8)
-    directionalLight.position.set(10, 10, 10)
-    directionalLight.castShadow = true
-    scene.add(directionalLight)
+      console.log('Final dimensions:', width, 'x', height)
 
-    const pointLight = new THREE.PointLight(0xffd700, 0.5)
-    pointLight.position.set(-10, 5, 10)
-    scene.add(pointLight)
+      // Scene
+      const scene = new THREE.Scene()
+      scene.background = new THREE.Color(0x2a2420)
+      console.log('Scene created')
 
-    // Load FBX model
-    const loader = new FBXLoader()
-    loader.load(artifact.modelPath, (fbx) => {
-      fbx.traverse((node) => {
-        if (node.isMesh) {
-          node.castShadow = true
-          node.receiveShadow = true
+      // Camera
+      const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+      camera.position.z = 10
+      console.log('Camera created')
 
-          // Apply texture if available
-          if (artifact.texturePath && node.material) {
-            const textureLoader = new THREE.TextureLoader()
-            textureLoader.load(artifact.texturePath, (texture) => {
-              node.material.map = texture
-              node.material.needsUpdate = true
-            })
-          }
-        }
-      })
+      // Renderer
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
+      renderer.setSize(width, height)
+      renderer.setPixelRatio(window.devicePixelRatio)
+      console.log('Renderer created, canvas:', renderer.domElement)
 
-      // Center and scale model
-      const box = new THREE.Box3().setFromObject(fbx)
-      const center = box.getCenter(new THREE.Vector3())
-      fbx.position.sub(center)
-      const size = box.getSize(new THREE.Vector3())
-      const maxDim = Math.max(size.x, size.y, size.z)
-      const scale = 8 / maxDim
-      fbx.scale.multiplyScalar(scale)
+      // Clear and mount
+      container.innerHTML = ''
+      container.appendChild(renderer.domElement)
+      console.log('Renderer mounted to container')
 
-      scene.add(fbx)
-      sceneRef.current = { scene, camera, renderer, fbx }
+      // Light
+      const light = new THREE.AmbientLight(0xffffff, 1)
+      scene.add(light)
+      console.log('Light added')
 
-      // Animation loop
+      // Create cube
+      const geometry = new THREE.BoxGeometry(3, 3, 3)
+      const material = new THREE.MeshPhongMaterial({ color: 0xd4a574 })
+      const cube = new THREE.Mesh(geometry, material)
+      scene.add(cube)
+      console.log('Cube created and added to scene')
+
+      // Animation
+      let animationId = null
       const animate = () => {
-        requestAnimationFrame(animate)
-        fbx.rotation.y += 0.005
+        animationId = requestAnimationFrame(animate)
+        cube.rotation.x += 0.01
+        cube.rotation.y += 0.01
         renderer.render(scene, camera)
       }
       animate()
-    })
+      console.log('Animation started')
 
-    // Handle window resize
-    const handleResize = () => {
-      if (!containerRef.current) return
-      const width = containerRef.current.clientWidth
-      const height = containerRef.current.clientHeight
-      camera.aspect = width / height
-      camera.updateProjectionMatrix()
-      renderer.setSize(width, height)
+      // Cleanup
+      return () => {
+        console.log('Cleaning up 3D viewer')
+        if (animationId) cancelAnimationFrame(animationId)
+        renderer.dispose()
+        geometry.dispose()
+        material.dispose()
+      }
+    } catch (error) {
+      console.error('3D viewer error:', error)
+      console.error('Error stack:', error.stack)
     }
-
-    window.addEventListener('resize', handleResize)
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', handleResize)
-      containerRef.current?.removeChild(renderer.domElement)
-      renderer.dispose()
-    }
-  }, [artifact.modelPath, artifact.texturePath, showModel])
+  }, [showModel])
 
   return (
     <div className="space-y-4">
@@ -113,7 +100,7 @@ export default function ArtifactDetail({ artifact, onBack }) {
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        {/* Left Column - Image & Basic Info */}
+        {/* Left Column */}
         <div className="lg:col-span-1 space-y-4">
           {artifact.photo && (
             <div className="space-y-2">
@@ -135,7 +122,6 @@ export default function ArtifactDetail({ artifact, onBack }) {
             </div>
           )}
 
-          {/* Quick Info */}
           <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold space-y-3">
             <div className="border-b border-gold-dark pb-2">
               <div className="text-xs text-gold uppercase tracking-wide font-medieval">
@@ -143,17 +129,15 @@ export default function ArtifactDetail({ artifact, onBack }) {
               </div>
               <h2 className="text-xl font-bold font-medieval text-wood">{artifact.name}</h2>
             </div>
-
             <div className="text-sm space-y-1">
               <p className="text-wood-light"><strong>Owner:</strong> {artifact.owner || '—'}</p>
             </div>
           </div>
         </div>
 
-        {/* Main Content - Right 3 Columns */}
+        {/* Main Content */}
         <div className="lg:col-span-3 space-y-4">
-          {/* 3D Model Viewer */}
-          {showModel && artifact.modelPath ? (
+          {showModel && (
             <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
               <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3">3D Model</h3>
               <div
@@ -163,17 +147,21 @@ export default function ArtifactDetail({ artifact, onBack }) {
                   height: '400px',
                   borderRadius: '8px',
                   border: '2px solid #d4a574',
-                  backgroundColor: '#2a2420'
+                  backgroundColor: '#2a2420',
+                  display: 'block',
+                  minWidth: '400px',
+                  minHeight: '400px'
                 }}
               />
             </div>
-          ) : !showModel && artifact.modelPath ? (
-            <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold text-center text-wood-light">
-              <p>Click "View 3D Model →" to load the model viewer</p>
-            </div>
-          ) : null}
+          )}
 
-          {/* Description */}
+          {!showModel && artifact.modelPath && (
+            <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold text-center text-wood-light">
+              <p>Click "View 3D Model →" to load the viewer</p>
+            </div>
+          )}
+
           {artifact.description && (
             <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
               <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3">Description</h3>
