@@ -108,7 +108,7 @@ export default function AdminPanel({
               <button
                 onClick={() => {
                   setEditingCharacter(character)
-                  setShowForm(true)
+                  setShowCharacterForm(true)
                 }}
                 className="px-3 py-1 bg-gold-dark text-parchment hover:bg-gold transition rounded text-sm font-medieval"
               >
