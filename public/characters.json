@@ -50,7 +50,9 @@
         "Cooking",
         "Fishing"
       ],
-      "observations": "Has a scar across his left eye. Often lost in thought. Drinks black coffee exclusively.",
+      "observations": [
+        "Has a scar across his left eye. Often lost in thought. Drinks black coffee exclusively."
+      ],
       "level": "60"
     },
     {
@@ -101,7 +103,9 @@
         "Tailoring",
         "Enchanting"
       ],
-      "observations": "Holy Weapon can be casted up to three times, powering up the blade from LV1 to LV3. However, each level past the first one rapidly drains Rei’s life energy. Prolonged use of Holy Weapon LV3 is fatal.\nShe makes small dolls of her party members.\nShe doesn’t drink alcohol at parties and feasts but is a lightweight if she does.\n",
+      "observations": [
+        "Holy Weapon can be casted up to three times, powering up the blade from LV1 to LV3. However, each level past the first one rapidly drains Rei’s life energy. Prolonged use of Holy Weapon LV3 is fatal.\nShe makes small dolls of her party members.\nShe doesn’t drink alcohol at parties and feasts but is a lightweight if she does.\n"
+      ],
       "bounty": "",
       "crime": "",
       "id": "char_1762543831577"
@@ -169,7 +173,7 @@
         "Enchanting",
         "Animal Handling"
       ],
-      "observations": "",
+      "observations": [],
       "bounty": "100,000G.",
       "crime": "War",
       "id": "char_1762546633163",
@@ -238,7 +242,9 @@
         "Cooking",
         "Cartography"
       ],
-      "observations": "Possess a magic rune dagger that assists fire spells.\nHas a magic bag packed with travelling necessities.\nTo be added\n",
+      "observations": [
+        "Possess a magic rune dagger that assists fire spells.\nHas a magic bag packed with travelling necessities.\nTo be added\n"
+      ],
       "bounty": "",
       "crime": "",
       "id": "char_1762574632159",
@@ -278,7 +284,7 @@
         "Alchemy",
         "Herbalism"
       ],
-      "observations": "",
+      "observations": [],
       "bounty": "70,000G",
       "crime": "Illegal magic and experimentation.",
       "ultimateSkillColor": "gold",
@@ -307,7 +313,7 @@
       "elemeltanAttunement": "",
       "combatSkills": [],
       "lifeSkills": [],
-      "observations": "",
+      "observations": [],
       "bounty": "50,000G",
       "crime": "Rampant Destruction.",
       "ultimateSkillColor": "gold",
@@ -336,7 +342,7 @@
       "elemeltanAttunement": "Lightning",
       "combatSkills": [],
       "lifeSkills": [],
-      "observations": "",
+      "observations": [],
       "bounty": "20,000G",
       "crime": "9 counts of Loitering and 7 counts of Littering.",
       "ultimateSkillColor": "gold",
