@@ -18,40 +18,69 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
     return true
   })
 
+  const filteredArtifacts = artifacts.filter(artifact => {
+    if (filters.type !== 'all' && artifact.type !== filters.type) return false
+    return true
+  })
+
+  // Get unique artifact types
+  const artifactTypes = ['all', ...new Set(artifacts.map(a => a.type).filter(Boolean))]
+  const characterTypes = ['guild', 'criminal', 'all']
+
   return (
     <div className="flex gap-4">
       {/* Left Sidebar - Type Tabs */}
       <div className="flex flex-col gap-2 pt-2">
-        <button
-          onClick={() => setFilters(prev => ({ ...prev, type: 'guild' }))}
-          className={`px-4 py-3 text-sm font-medieval whitespace-nowrap transition rounded-r-lg border-l-4 ${
-            filters.type === 'guild'
-              ? 'bg-gold text-wood border-l-gold'
-              : 'bg-gold-dark text-parchment hover:bg-gold border-l-gold-dark'
-          }`}
-        >
-          Guild Members
-        </button>
-        <button
-          onClick={() => setFilters(prev => ({ ...prev, type: 'criminal' }))}
-          className={`px-4 py-3 text-sm font-medieval whitespace-nowrap transition rounded-r-lg border-l-4 ${
-            filters.type === 'criminal'
-              ? 'bg-seal-light text-parchment border-l-seal-light'
-              : 'bg-seal text-parchment hover:bg-seal-light border-l-seal'
-          }`}
-        >
-          Criminals
-        </button>
-        <button
-          onClick={() => setFilters(prev => ({ ...prev, type: 'all' }))}
-          className={`px-4 py-3 text-sm font-medieval whitespace-nowrap transition rounded-r-lg border-l-4 ${
-            filters.type === 'all'
-              ? 'bg-wood-light text-parchment border-l-wood-light'
-              : 'bg-wood text-parchment-dark hover:bg-wood-light border-l-wood'
-          }`}
-        >
-          All Records
-        </button>
+        {view === 'characters' ? (
+          <>
+            <button
+              onClick={() => setFilters(prev => ({ ...prev, type: 'guild' }))}
+              className={`px-4 py-3 text-sm font-medieval whitespace-nowrap transition rounded-r-lg border-l-4 ${
+                filters.type === 'guild'
+                  ? 'bg-gold text-wood border-l-gold'
+                  : 'bg-gold-dark text-parchment hover:bg-gold border-l-gold-dark'
+              }`}
+            >
+              Guild Members
+            </button>
+            <button
+              onClick={() => setFilters(prev => ({ ...prev, type: 'criminal' }))}
+              className={`px-4 py-3 text-sm font-medieval whitespace-nowrap transition rounded-r-lg border-l-4 ${
+                filters.type === 'criminal'
+                  ? 'bg-seal-light text-parchment border-l-seal-light'
+                  : 'bg-seal text-parchment hover:bg-seal-light border-l-seal'
+              }`}
+            >
+              Criminals
+            </button>
+            <button
+              onClick={() => setFilters(prev => ({ ...prev, type: 'all' }))}
+              className={`px-4 py-3 text-sm font-medieval whitespace-nowrap transition rounded-r-lg border-l-4 ${
+                filters.type === 'all'
+                  ? 'bg-wood-light text-parchment border-l-wood-light'
+                  : 'bg-wood text-parchment-dark hover:bg-wood-light border-l-wood'
+              }`}
+            >
+              All Records
+            </button>
+          </>
+        ) : (
+          <>
+            {artifactTypes.map(type => (
+              <button
+                key={type}
+                onClick={() => setFilters(prev => ({ ...prev, type }))}
+                className={`px-4 py-3 text-sm font-medieval whitespace-nowrap transition rounded-r-lg border-l-4 ${
+                  filters.type === type
+                    ? 'bg-gold text-wood border-l-gold'
+                    : 'bg-gold-dark text-parchment hover:bg-gold border-l-gold-dark'
+                }`}
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </button>
+            ))}
+          </>
+        )}
       </div>
 
       {/* Main Content */}
@@ -85,10 +114,10 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
             ) : (
               <>
                 <div className="text-sm text-parchment-dark">
-                  Showing {artifacts.length} artifacts
+                  Showing {filteredArtifacts.length} of {artifacts.length} artifacts
                 </div>
                 <ArtifactGrid
-                  artifacts={artifacts}
+                  artifacts={filteredArtifacts}
                   onSelectArtifact={setSelectedArtifact}
                 />
               </>
