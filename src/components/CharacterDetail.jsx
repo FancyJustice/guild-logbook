@@ -94,7 +94,7 @@ export default function CharacterDetail({ character, onBack }) {
                 <p className="text-sm leading-relaxed">{character.lore}</p>
               </div>
             )}
-            {character.observations && character.observations.length > 0 && (
+            {character.observations && Array.isArray(character.observations) && character.observations.length > 0 && (
               <div className="mt-4 pt-4 border-t border-gold-dark">
                 <h3 className="text-lg font-medieval font-bold text-gold-dark mb-2">Observations</h3>
                 <ul className="space-y-1">
