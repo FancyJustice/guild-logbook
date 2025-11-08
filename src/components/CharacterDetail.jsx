@@ -41,8 +41,9 @@ export default function CharacterDetail({ character, onBack }) {
           {/* Quick Stats */}
           <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold space-y-3">
             <div className="border-b-2 border-gold-dark pb-2">
-              <div className="inline-block px-2 py-1 bg-gold text-wood text-xs uppercase tracking-widest font-medieval font-bold rounded mb-2">
-                {character.type === 'guild' ? '⚔ Guild Member' : '⚔ Criminal'}
+              <div className="inline-block px-3 py-1 bg-gold text-wood text-xs uppercase tracking-widest font-medieval font-bold rounded mb-2">
+                <i className={`ra ${character.type === 'guild' ? 'ra-shield' : 'ra-dragon-emblem'}`} style={{ marginRight: '0.5rem', color: '#2a2420' }}></i>
+                {character.type === 'guild' ? 'Guild Member' : 'Criminal'}
               </div>
               <h2 className="text-2xl font-bold font-medieval text-gold-dark" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>{character.name}</h2>
               {character.title && (
@@ -50,11 +51,11 @@ export default function CharacterDetail({ character, onBack }) {
               )}
             </div>
 
-            <div className="text-sm space-y-1">
-              <p className="text-wood-light"><strong>Lvl:</strong> {character.level}</p>
-              <p className="text-wood-light"><strong>Rank:</strong> {character.rank}</p>
+            <div className="text-sm space-y-2">
+              <p className="text-wood-light"><i className="ra ra-explosion" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Lvl:</strong> {character.level}</p>
+              <p className="text-wood-light"><i className="ra ra-crown" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Rank:</strong> {character.rank}</p>
               <p className="text-wood-light">
-                <strong>Player:</strong> {character.vrcPlayerName && (
+                <i className="ra ra-portrait" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Player:</strong> {character.vrcPlayerName && (
                   <a
                     href={`https://vrchat.com/home/user/${character.vrcPlayerName}`}
                     target="_blank"
@@ -92,17 +93,17 @@ export default function CharacterDetail({ character, onBack }) {
             )}
             {character.lore && (
               <div>
-                <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3 uppercase tracking-wider">━ Lore ━</h3>
+                <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3 uppercase tracking-wider"><i className="ra ra-scroll" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i>━ Lore ━</h3>
                 <p className="text-sm leading-relaxed text-wood">{character.lore}</p>
               </div>
             )}
             {character.observations && Array.isArray(character.observations) && character.observations.length > 0 && (
               <div className="pt-4 border-t-2 border-gold-dark">
-                <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3 uppercase tracking-wider">━ Observations ━</h3>
+                <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3 uppercase tracking-wider"><i className="ra ra-book" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i>━ Observations ━</h3>
                 <ul className="space-y-2">
                   {character.observations.map((observation, idx) => (
                     <li key={idx} className="flex items-start gap-3 text-sm text-wood-light pl-2 border-l-2 border-gold-dark">
-                      <span className="text-gold text-lg">✦</span>
+                      <i className="ra ra-feather" style={{ color: '#d4a574', marginTop: '0.25rem' }}></i>
                       <span>{observation}</span>
                     </li>
                   ))}
@@ -173,7 +174,7 @@ export default function CharacterDetail({ character, onBack }) {
           {/* Combat Skills */}
           {character.combatSkills && character.combatSkills.length > 0 && (
             <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
-              <h3 className="text-base font-medieval font-bold mb-3 text-gold-dark">Combat Skills</h3>
+              <h3 className="text-base font-medieval font-bold mb-3 text-gold-dark"><i className="ra ra-sword" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i>━ Combat Skills ━</h3>
               <div className="space-y-2">
                 {character.combatSkills.map((skill, idx) => {
                   const isUltimate = typeof skill !== 'string' && skill.isUltimate
@@ -208,11 +209,11 @@ export default function CharacterDetail({ character, onBack }) {
           {/* Life Skills - Small */}
           {character.lifeSkills && character.lifeSkills.length > 0 && (
             <div className="bg-parchment text-wood p-3 rounded-lg border-2 border-gold">
-              <h3 className="text-sm font-medieval font-bold mb-2 text-gold-dark">Life Skills</h3>
+              <h3 className="text-sm font-medieval font-bold mb-2 text-gold-dark"><i className="ra ra-fishing-hook" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i>━ Life Skills ━</h3>
               <ul className="grid grid-cols-2 gap-2">
                 {character.lifeSkills.map((skill, idx) => (
                   <li key={idx} className="flex items-center gap-1 text-xs">
-                    <span className="text-gold">✦</span>
+                    <i className="ra ra-sparkles" style={{ color: '#d4a574', fontSize: '0.9rem' }}></i>
                     <span>{skill}</span>
                   </li>
                 ))}
