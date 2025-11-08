@@ -101,7 +101,19 @@ export default function ArtifactDetail({ artifact, onBack }) {
       container.addEventListener('mouseleave', handleMouseLeave)
 
       // Zoom controls with mouse wheel
+      let isMouseOverViewer = false
+
+      const handleMouseEnter = () => {
+        isMouseOverViewer = true
+      }
+
+      const handleMouseExit = () => {
+        isMouseOverViewer = false
+      }
+
       const handleWheel = (e) => {
+        // Only zoom when mouse is over the viewer
+        if (!isMouseOverViewer) return
         e.preventDefault()
         const zoomSpeed = 0.1
         const direction = e.deltaY > 0 ? 1 : -1
@@ -110,7 +122,9 @@ export default function ArtifactDetail({ artifact, onBack }) {
         camera.position.z = Math.max(1, Math.min(50, camera.position.z))
       }
 
-      container.addEventListener('wheel', handleWheel, { passive: false })
+      container.addEventListener('mouseenter', handleMouseEnter)
+      container.addEventListener('mouseleave', handleMouseExit)
+      document.addEventListener('wheel', handleWheel, { passive: false })
 
       // Animation loop (created before loading model)
       let animationId = null
@@ -222,7 +236,9 @@ export default function ArtifactDetail({ artifact, onBack }) {
         container.removeEventListener('mousemove', handleMouseMove)
         container.removeEventListener('mouseup', handleMouseUp)
         container.removeEventListener('mouseleave', handleMouseLeave)
-        container.removeEventListener('wheel', handleWheel)
+        container.removeEventListener('mouseenter', handleMouseEnter)
+        container.removeEventListener('mouseleave', handleMouseExit)
+        document.removeEventListener('wheel', handleWheel)
       }
     } catch (error) {
       console.error('3D viewer error:', error)
