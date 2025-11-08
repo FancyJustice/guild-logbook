@@ -117,8 +117,15 @@ export default function ArtifactDetail({ artifact, onBack }) {
       let rotation = { x: 0, y: 0 }
 
       const handleMouseDown = (e) => {
-        isDragging = true
-        previousMousePosition = { x: e.clientX, y: e.clientY }
+        // Right click (button 2) or left click (button 0)
+        if (e.button === 0 || e.button === 2) {
+          isDragging = true
+          previousMousePosition = { x: e.clientX, y: e.clientY }
+          // Prevent context menu on right click
+          if (e.button === 2) {
+            e.preventDefault()
+          }
+        }
       }
 
       const handleMouseMove = (e) => {
@@ -140,7 +147,12 @@ export default function ArtifactDetail({ artifact, onBack }) {
         isDragging = false
       }
 
+      const handleContextMenu = (e) => {
+        e.preventDefault()
+      }
+
       container.addEventListener('mousedown', handleMouseDown)
+      container.addEventListener('contextmenu', handleContextMenu)
       document.addEventListener('mousemove', handleMouseMove)
       document.addEventListener('mouseup', handleMouseUp)
 
@@ -332,6 +344,7 @@ export default function ArtifactDetail({ artifact, onBack }) {
 
         // Remove event listeners
         container.removeEventListener('mousedown', handleMouseDown)
+        container.removeEventListener('contextmenu', handleContextMenu)
         document.removeEventListener('mousemove', handleMouseMove)
         document.removeEventListener('mouseup', handleMouseUp)
         container.removeEventListener('mouseenter', handleMouseEnter)
