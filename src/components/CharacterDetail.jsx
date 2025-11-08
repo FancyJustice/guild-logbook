@@ -93,8 +93,14 @@ export default function CharacterDetail({ character, onBack }) {
 
           {/* Personality & Elements */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <AttributeBox label="Personality" value={character.personality} />
-            <AttributeBox label="Flaw" value={character.flaw} />
+            {character.type === 'guild' ? (
+              <>
+                <AttributeBox label="Personality" value={character.personality} />
+                <AttributeBox label="Flaw" value={character.flaw} />
+              </>
+            ) : (
+              <AttributeBox label="Personality" value={character.personality} />
+            )}
             <AttributeBox label="Element" value={character.elemeltanAttunement} />
           </div>
 

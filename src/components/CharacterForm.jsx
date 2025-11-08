@@ -252,18 +252,29 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <FormSelect
-          label="Personality"
-          value={formData.personality}
-          onChange={(value) => handleInputChange('personality', value)}
-          options={[{ value: '', label: 'Select Personality' }, ...(dropdownOptions.personality || []).map(p => ({ value: p, label: p }))]}
-        />
-        <FormSelect
-          label="Flaw"
-          value={formData.flaw}
-          onChange={(value) => handleInputChange('flaw', value)}
-          options={[{ value: '', label: 'Select Flaw' }, ...(dropdownOptions.flaw || []).map(f => ({ value: f, label: f }))]}
-        />
+        {formData.type === 'guild' ? (
+          <FormSelect
+            label="Personality"
+            value={formData.personality}
+            onChange={(value) => handleInputChange('personality', value)}
+            options={[{ value: '', label: 'Select Personality' }, ...(dropdownOptions.personality || []).map(p => ({ value: p, label: p }))]}
+          />
+        ) : (
+          <FormSelect
+            label="Personality"
+            value={formData.personality}
+            onChange={(value) => handleInputChange('personality', value)}
+            options={[{ value: '', label: 'Select Flaw' }, ...(dropdownOptions.flaw || []).map(f => ({ value: f, label: f }))]}
+          />
+        )}
+        {formData.type === 'guild' && (
+          <FormSelect
+            label="Flaw"
+            value={formData.flaw}
+            onChange={(value) => handleInputChange('flaw', value)}
+            options={[{ value: '', label: 'Select Flaw' }, ...(dropdownOptions.flaw || []).map(f => ({ value: f, label: f }))]}
+          />
+        )}
         <FormSelect
           label="Elemeltan Attunement"
           value={formData.elemeltanAttunement}
