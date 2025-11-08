@@ -67,6 +67,16 @@ export default function CharacterDetail({ character, onBack }) {
               </p>
             </div>
           </div>
+
+          {/* Character Stats Hexagon */}
+          <StatsHexagon stats={{
+            str: character.str || 0,
+            agi: character.agi || 0,
+            dex: character.dex || 0,
+            int: character.int || 0,
+            luk: character.luk || 0,
+            vit: character.vit || 0,
+          }} />
         </div>
 
         {/* Main Content - Right 3 Columns */}
@@ -156,18 +166,6 @@ export default function CharacterDetail({ character, onBack }) {
               <AttributeBox label="Personality" value={character.personality} />
             )}
             <AttributeBox label="Elemental Attunement" value={character.elemeltanAttunement} />
-          </div>
-
-          {/* Character Stats Hexagon */}
-          <div className="flex justify-center">
-            <StatsHexagon stats={{
-              str: character.str || 0,
-              agi: character.agi || 0,
-              dex: character.dex || 0,
-              int: character.int || 0,
-              luk: character.luk || 0,
-              vit: character.vit || 0,
-            }} />
           </div>
 
           {/* Combat Skills & Life Skills in one row */}
