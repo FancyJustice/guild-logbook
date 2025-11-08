@@ -147,21 +147,39 @@ export default function ArtifactDetail({ artifact, onBack }) {
           fullPath,
           (fbx) => {
             console.log('FBX loaded successfully:', fbx)
+            console.log('FBX children:', fbx.children)
 
             // Center and scale the model
             const box = new THREE.Box3().setFromObject(fbx)
+            console.log('Box:', box)
             const size = box.getSize(new THREE.Vector3())
+            console.log('Model size:', size)
             const maxDim = Math.max(size.x, size.y, size.z)
+            console.log('Max dimension:', maxDim)
             const scale = 5 / maxDim
+            console.log('Scale factor:', scale)
             fbx.scale.multiplyScalar(scale)
 
             const center = box.getCenter(new THREE.Vector3())
             fbx.position.sub(center)
             fbx.position.multiplyScalar(scale)
 
+            // Ensure all meshes are visible with proper materials
+            fbx.traverse((child) => {
+              if (child.isMesh) {
+                console.log('Found mesh:', child.name, child.geometry, child.material)
+                child.visible = true
+                if (child.material) {
+                  child.material.side = THREE.DoubleSide
+                  child.material.transparent = false
+                }
+              }
+            })
+
             scene.add(fbx)
             objectToRotate = fbx
             console.log('FBX added to scene and ready to rotate')
+            console.log('Scene children after adding FBX:', scene.children)
 
             // Apply texture if provided
             if (artifact.texturePath) {
