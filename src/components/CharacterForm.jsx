@@ -1,7 +1,12 @@
 import { useState } from 'react'
 
 export default function CharacterForm({ dropdownOptions, editingCharacter, onSubmit, onCancel }) {
-  const [formData, setFormData] = useState(editingCharacter || {
+  const [formData, setFormData] = useState(editingCharacter ? {
+    ...editingCharacter,
+    observations: Array.isArray(editingCharacter.observations) ? editingCharacter.observations : (editingCharacter.observations ? [editingCharacter.observations] : []),
+    combatSkills: editingCharacter.combatSkills || [],
+    lifeSkills: editingCharacter.lifeSkills || [],
+  } : {
     type: 'guild',
     photo: '',
     title: '',
