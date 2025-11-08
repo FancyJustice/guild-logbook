@@ -168,56 +168,55 @@ export default function CharacterDetail({ character, onBack }) {
             <AttributeBox label="Elemental Attunement" value={character.elemeltanAttunement} />
           </div>
 
-          {/* Combat Skills & Life Skills in one row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {character.combatSkills && character.combatSkills.length > 0 && (
-              <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
-                <h3 className="text-base font-medieval font-bold mb-3 text-gold-dark">Combat Skills</h3>
-                <div className="space-y-2">
-                  {character.combatSkills.map((skill, idx) => {
-                    const isUltimate = typeof skill !== 'string' && skill.isUltimate
-                    const skillObj = typeof skill === 'string' ? { name: skill, description: '' } : skill
+          {/* Combat Skills */}
+          {character.combatSkills && character.combatSkills.length > 0 && (
+            <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
+              <h3 className="text-base font-medieval font-bold mb-3 text-gold-dark">Combat Skills</h3>
+              <div className="space-y-2">
+                {character.combatSkills.map((skill, idx) => {
+                  const isUltimate = typeof skill !== 'string' && skill.isUltimate
+                  const skillObj = typeof skill === 'string' ? { name: skill, description: '' } : skill
 
-                    let icon = '⚔'
-                    if (isUltimate) icon = '⚡'
-                    else if (skillObj.heal) icon = '💚'
-                    else if (skillObj.buff) icon = '⬆️'
-                    else if (skillObj.passive) icon = '✦'
+                  let icon = '⚔'
+                  if (isUltimate) icon = '⚡'
+                  else if (skillObj.heal) icon = '💚'
+                  else if (skillObj.buff) icon = '⬆️'
+                  else if (skillObj.passive) icon = '✦'
 
-                    return (
-                      <div key={idx} className={`border-l-4 pl-2 py-1 ${isUltimate ? 'border-ultimate' : 'border-gold-dark'}`}>
-                        <div className="flex items-start gap-2">
-                          <span className="text-gold text-lg">{icon}</span>
-                          <div className="flex-1">
-                            <div className={`${isUltimate ? 'ultimate-skill text-sm' : 'font-bold text-sm'}`}>
-                              {skillObj.name}
-                            </div>
-                            {skillObj.description && (
-                              <div className="text-sm text-wood-light mt-0.5">{skillObj.description}</div>
-                            )}
+                  return (
+                    <div key={idx} className={`border-l-4 pl-2 py-1 ${isUltimate ? 'border-ultimate' : 'border-gold-dark'}`}>
+                      <div className="flex items-start gap-2">
+                        <span className="text-gold text-lg">{icon}</span>
+                        <div className="flex-1">
+                          <div className={`${isUltimate ? 'ultimate-skill text-sm' : 'font-bold text-sm'}`}>
+                            {skillObj.name}
                           </div>
+                          {skillObj.description && (
+                            <div className="text-sm text-wood-light mt-0.5">{skillObj.description}</div>
+                          )}
                         </div>
                       </div>
-                    )
-                  })}
-                </div>
+                    </div>
+                  )
+                })}
               </div>
-            )}
+            </div>
+          )}
 
-            {character.lifeSkills && character.lifeSkills.length > 0 && (
-              <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
-                <h3 className="text-base font-medieval font-bold mb-3 text-gold-dark">Life Skills</h3>
-                <ul className="grid grid-cols-1 gap-1">
-                  {character.lifeSkills.map((skill, idx) => (
-                    <li key={idx} className="flex items-center gap-2 text-sm">
-                      <span className="text-gold">✦</span>
-                      <span>{skill}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+          {/* Life Skills - Small */}
+          {character.lifeSkills && character.lifeSkills.length > 0 && (
+            <div className="bg-parchment text-wood p-3 rounded-lg border-2 border-gold">
+              <h3 className="text-sm font-medieval font-bold mb-2 text-gold-dark">Life Skills</h3>
+              <ul className="grid grid-cols-2 gap-2">
+                {character.lifeSkills.map((skill, idx) => (
+                  <li key={idx} className="flex items-center gap-1 text-xs">
+                    <span className="text-gold">✦</span>
+                    <span>{skill}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Criminal Only Fields */}
           {character.type === 'criminal' && (
