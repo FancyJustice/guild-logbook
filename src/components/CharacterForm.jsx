@@ -185,9 +185,9 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
         />
         <FormInput
           label="Age"
-          type="number"
           value={formData.age}
           onChange={(value) => handleInputChange('age', value)}
+          placeholder="e.g., 25, Unknown, Ageless"
         />
         <FormInput
           label="Level"
