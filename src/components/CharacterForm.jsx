@@ -33,6 +33,12 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
     bounty: '',
     crime: '',
     ultimateSkillColor: 'gold',
+    str: 0,
+    agi: 0,
+    dex: 0,
+    int: 0,
+    luk: 0,
+    vit: 0,
   })
 
   const [skillInput, setSkillInput] = useState('')
@@ -591,6 +597,49 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
               </button>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Character Stats */}
+      <div>
+        <label className="block text-sm font-medieval text-wood-light mb-3">Character Stats</label>
+        <div className="grid grid-cols-3 gap-3">
+          <FormInput
+            label="STR"
+            type="number"
+            value={formData.str || 0}
+            onChange={(value) => handleInputChange('str', parseInt(value) || 0)}
+          />
+          <FormInput
+            label="AGI"
+            type="number"
+            value={formData.agi || 0}
+            onChange={(value) => handleInputChange('agi', parseInt(value) || 0)}
+          />
+          <FormInput
+            label="DEX"
+            type="number"
+            value={formData.dex || 0}
+            onChange={(value) => handleInputChange('dex', parseInt(value) || 0)}
+          />
+          <FormInput
+            label="INT"
+            type="number"
+            value={formData.int || 0}
+            onChange={(value) => handleInputChange('int', parseInt(value) || 0)}
+          />
+          <FormInput
+            label="LUK"
+            type="number"
+            value={formData.luk || 0}
+            onChange={(value) => handleInputChange('luk', parseInt(value) || 0)}
+          />
+          <FormInput
+            label="VIT"
+            type="number"
+            value={formData.vit || 0}
+            onChange={(value) => handleInputChange('vit', parseInt(value) || 0)}
+          />
         </div>
       </div>
 
