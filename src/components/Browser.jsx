@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import CharacterGrid from './CharacterGrid'
 import CharacterDetail from './CharacterDetail'
+import CharacterHierarchy from './CharacterHierarchy'
 
 import ArtifactGrid from './ArtifactGrid'
 import ArtifactDetail from './ArtifactDetail'
@@ -9,6 +10,7 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
   const [selectedCharacter, setSelectedCharacter] = useState(null)
   const [selectedArtifact, setSelectedArtifact] = useState(null)
   const [view, setView] = useState('characters') // 'characters' or 'artifacts'
+  const [displayMode, setDisplayMode] = useState('grid') // 'grid' or 'hierarchy'
   const [filters, setFilters] = useState({
     type: 'all',
   })
@@ -96,13 +98,46 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
               />
             ) : (
               <>
-                <div className="text-sm text-parchment-dark">
-                  Showing {filteredCharacters.length} of {characters.length} characters
+                <div className="flex justify-between items-center">
+                  <div className="text-sm text-parchment-dark">
+                    Showing {filteredCharacters.length} of {characters.length} characters
+                  </div>
+                  {filters.type !== 'all' && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setDisplayMode('grid')}
+                        className={`px-3 py-1 text-sm rounded transition ${
+                          displayMode === 'grid'
+                            ? 'bg-gold text-wood'
+                            : 'bg-gold-dark text-parchment hover:bg-gold'
+                        }`}
+                      >
+                        Grid
+                      </button>
+                      <button
+                        onClick={() => setDisplayMode('hierarchy')}
+                        className={`px-3 py-1 text-sm rounded transition ${
+                          displayMode === 'hierarchy'
+                            ? 'bg-gold text-wood'
+                            : 'bg-gold-dark text-parchment hover:bg-gold'
+                        }`}
+                      >
+                        Hierarchy
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <CharacterGrid
-                  characters={filteredCharacters}
-                  onSelectCharacter={setSelectedCharacter}
-                />
+                {displayMode === 'grid' ? (
+                  <CharacterGrid
+                    characters={filteredCharacters}
+                    onSelectCharacter={setSelectedCharacter}
+                  />
+                ) : (
+                  <CharacterHierarchy
+                    characters={filteredCharacters}
+                    onSelectCharacter={setSelectedCharacter}
+                  />
+                )}
               </>
             )}
           </>
