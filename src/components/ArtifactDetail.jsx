@@ -188,9 +188,12 @@ export default function ArtifactDetail({ artifact, onBack }) {
             console.log('Scale factor:', scale)
             fbx.scale.multiplyScalar(scale)
 
-            const center = box.getCenter(new THREE.Vector3())
-            fbx.position.sub(center)
-            fbx.position.multiplyScalar(scale)
+            // Recalculate bounding box after scaling
+            const scaledBox = new THREE.Box3().setFromObject(fbx)
+            const center = scaledBox.getCenter(new THREE.Vector3())
+
+            // Center the model at origin
+            fbx.position.copy(center).multiplyScalar(-1)
 
             // Parse toggleable meshes from artifact data
             const toggleableMeshNames = artifact.toggleableMeshes
