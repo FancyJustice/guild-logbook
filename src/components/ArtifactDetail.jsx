@@ -5,23 +5,37 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 export default function ArtifactDetail({ artifact, onBack }) {
   const [showModel, setShowModel] = useState(false)
   const [meshVisibility, setMeshVisibility] = useState({})
+  const [isLoading, setIsLoading] = useState(false)
   const containerRef = useRef(null)
   const meshReferencesRef = useRef({})
+  const rendererRef = useRef(null)
+  const animationIdRef = useRef(null)
 
-  // Initialize mesh visibility when showing model
+  // Toggle mesh visibility
   const toggleMeshVisibility = (meshName) => {
+    console.log('Toggling mesh visibility for:', meshName)
+
+    // Directly update the mesh visibility
+    if (meshReferencesRef.current[meshName]) {
+      meshReferencesRef.current[meshName].visible = !meshReferencesRef.current[meshName].visible
+      console.log('Toggled to:', meshReferencesRef.current[meshName].visible)
+    } else {
+      console.warn('Mesh not found:', meshName)
+    }
+
+    // Update state for UI
     setMeshVisibility(prev => {
       const newState = { ...prev, [meshName]: !prev[meshName] }
-      // Also update the actual mesh in the scene
-      if (meshReferencesRef.current[meshName]) {
-        meshReferencesRef.current[meshName].visible = newState[meshName]
-      }
       return newState
     })
   }
 
+  // Preload and setup 3D viewer when artifact is selected
   useEffect(() => {
-    if (!showModel || !containerRef.current) return
+    if (!containerRef.current || !artifact.modelPath) return
+
+    setIsLoading(true)
+    console.log('Starting 3D viewer preload...')
 
     console.log('Starting 3D viewer setup...')
     console.log('Container element:', containerRef.current)
@@ -281,12 +295,15 @@ export default function ArtifactDetail({ artifact, onBack }) {
       }
 
       animate()
+      animationIdRef.current = animationId
+      rendererRef.current = renderer
       console.log('Animation started')
+      setIsLoading(false)
 
       // Cleanup
       return () => {
         console.log('Cleaning up 3D viewer')
-        if (animationId) cancelAnimationFrame(animationId)
+        if (animationIdRef.current) cancelAnimationFrame(animationIdRef.current)
         renderer.dispose()
 
         // Remove event listeners
@@ -300,8 +317,9 @@ export default function ArtifactDetail({ artifact, onBack }) {
     } catch (error) {
       console.error('3D viewer error:', error)
       console.error('Error stack:', error.stack)
+      setIsLoading(false)
     }
-  }, [showModel])
+  }, [artifact.id])
 
   return (
     <div className="space-y-4">
@@ -350,9 +368,10 @@ export default function ArtifactDetail({ artifact, onBack }) {
 
         {/* Main Content */}
         <div className="lg:col-span-3 space-y-4">
-          {showModel && (
-            <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold space-y-4">
-              <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3">3D Model</h3>
+          {/* 3D Model Container - Always rendered but hidden until showModel is true */}
+          {artifact.modelPath && (
+            <div className={`bg-parchment text-wood p-6 rounded-lg border-2 border-gold space-y-4 ${!showModel && 'hidden'}`}>
+              <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3">3D Model {isLoading && '(Loading...)'}</h3>
               <div
                 ref={containerRef}
                 style={{
@@ -390,9 +409,9 @@ export default function ArtifactDetail({ artifact, onBack }) {
             </div>
           )}
 
-          {!showModel && artifact.modelPath && (
+          {!showModel && artifact.modelPath && !isLoading && (
             <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold text-center text-wood-light">
-              <p>Click "View 3D Model →" to load the viewer</p>
+              <p onClick={() => setShowModel(true)} className="cursor-pointer hover:text-wood">Click "View 3D Model →" to see the viewer</p>
             </div>
           )}
 
