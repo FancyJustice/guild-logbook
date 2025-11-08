@@ -10,6 +10,8 @@ export default function ArtifactDetail({ artifact, onBack }) {
   const meshReferencesRef = useRef({})
   const rendererRef = useRef(null)
   const animationIdRef = useRef(null)
+  const cameraRef = useRef(null)
+  const sceneRef = useRef(null)
 
   // Toggle mesh visibility
   const toggleMeshVisibility = (meshName) => {
@@ -29,6 +31,23 @@ export default function ArtifactDetail({ artifact, onBack }) {
       return newState
     })
   }
+
+  // Handle visibility change - resize renderer when model becomes visible
+  useEffect(() => {
+    if (!showModel || !containerRef.current || !rendererRef.current || !cameraRef.current) return
+
+    console.log('Model became visible, updating renderer size...')
+    const width = containerRef.current.clientWidth
+    const height = containerRef.current.clientHeight
+    console.log('New dimensions:', width, 'x', height)
+
+    if (width > 0 && height > 0) {
+      rendererRef.current.setSize(width, height)
+      cameraRef.current.aspect = width / height
+      cameraRef.current.updateProjectionMatrix()
+      console.log('Renderer resized and camera updated')
+    }
+  }, [showModel])
 
   // Preload and setup 3D viewer when artifact is selected
   useEffect(() => {
@@ -65,11 +84,13 @@ export default function ArtifactDetail({ artifact, onBack }) {
       const scene = new THREE.Scene()
       scene.background = new THREE.Color(0x2a2420)
       console.log('Scene created')
+      sceneRef.current = scene
 
       // Camera - closer initial zoom
       const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
       camera.position.z = 5
       console.log('Camera created')
+      cameraRef.current = camera
 
       // Renderer
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
