@@ -7,11 +7,11 @@ export default function CharacterHierarchy({ characters, onSelectCharacter }) {
     return acc
   }, {})
 
-  // Get unique ranks in order (you can customize this order)
+  // Get unique ranks in order (highest to lowest)
   const rankOrder = [
+    'S-Rank', 'A-Rank', 'B-Rank', 'C-Rank', 'D-Rank',
     'Leader', 'Co-Leader', 'Officer', 'Elder',
     'Member', 'Initiate', 'Recruit',
-    'S-Rank', 'A-Rank', 'B-Rank', 'C-Rank', 'D-Rank',
     'Unranked'
   ]
 

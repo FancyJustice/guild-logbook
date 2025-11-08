@@ -10,7 +10,7 @@ export default function StatsHexagon({ stats = {} }) {
   }
 
   const finalStats = { ...defaultStats, ...stats }
-  const maxStat = 100 // Maximum possible stat value for scaling
+  const maxStat = 10 // Maximum possible stat value for scaling
 
   // Calculate normalized values (0-1) for drawing
   const normalizeValue = (value) => {
@@ -51,11 +51,9 @@ export default function StatsHexagon({ stats = {} }) {
     .join(' ')
 
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
-        <h3 className="text-lg font-medieval font-bold text-gold-dark mb-4 text-center">Character Stats</h3>
-
-        <svg width="280" height="280" viewBox="0 0 240 240" className="mx-auto">
+    <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold overflow-hidden">
+      <div className="flex justify-center">
+        <svg width="200" height="200" viewBox="0 0 240 240" className="mx-auto">
           {/* Background hexagon grid */}
           {[1, 0.75, 0.5, 0.25].map((scale, idx) => (
             <polygon
@@ -125,23 +123,6 @@ export default function StatsHexagon({ stats = {} }) {
           {/* Center dot */}
           <circle cx={centerX} cy={centerY} r="2" fill="#d4a574" />
         </svg>
-      </div>
-
-      {/* Stats display */}
-      <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold-dark grid grid-cols-3 gap-3 w-full max-w-sm">
-        {statKeys.map((key, i) => (
-          <div key={key} className="text-center">
-            <div className="text-xs text-gold-dark uppercase font-medieval mb-1">
-              {statLabels[i]}
-            </div>
-            <div
-              className="text-lg font-bold font-medieval rounded px-2 py-1 text-white"
-              style={{ backgroundColor: statColors[i] }}
-            >
-              {finalStats[key]}
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   )
