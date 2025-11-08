@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
 export default function ArtifactDetail({ artifact, onBack }) {
   const [showModel, setShowModel] = useState(false)
@@ -53,26 +54,114 @@ export default function ArtifactDetail({ artifact, onBack }) {
       container.appendChild(renderer.domElement)
       console.log('Renderer mounted to container')
 
-      // Light
-      const light = new THREE.AmbientLight(0xffffff, 1)
-      scene.add(light)
-      console.log('Light added')
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8)
+      scene.add(ambientLight)
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6)
+      directionalLight.position.set(5, 5, 5)
+      scene.add(directionalLight)
+      console.log('Lights added')
 
-      // Create cube
-      const geometry = new THREE.BoxGeometry(3, 3, 3)
-      const material = new THREE.MeshPhongMaterial({ color: 0xd4a574 })
-      const cube = new THREE.Mesh(geometry, material)
-      scene.add(cube)
-      console.log('Cube created and added to scene')
-
-      // Animation
+      // Animation loop (created before loading model)
       let animationId = null
+      let objectToRotate = null
+
       const animate = () => {
         animationId = requestAnimationFrame(animate)
-        cube.rotation.x += 0.01
-        cube.rotation.y += 0.01
+        if (objectToRotate) {
+          objectToRotate.rotation.x += 0.005
+          objectToRotate.rotation.y += 0.008
+        }
         renderer.render(scene, camera)
       }
+
+      // Check if we have a modelPath to load
+      if (artifact.modelPath) {
+        console.log('Loading FBX model from:', artifact.modelPath)
+
+        const fbxLoader = new FBXLoader()
+
+        // Resolve the model path relative to public folder
+        const modelPath = artifact.modelPath.startsWith('/')
+          ? artifact.modelPath.substring(1)
+          : artifact.modelPath
+        const fullPath = `${import.meta.env.BASE_URL}${modelPath}`
+        console.log('Resolved model path:', fullPath)
+
+        fbxLoader.load(
+          fullPath,
+          (fbx) => {
+            console.log('FBX loaded successfully:', fbx)
+
+            // Center and scale the model
+            const box = new THREE.Box3().setFromObject(fbx)
+            const size = box.getSize(new THREE.Vector3())
+            const maxDim = Math.max(size.x, size.y, size.z)
+            const scale = 5 / maxDim
+            fbx.scale.multiplyScalar(scale)
+
+            const center = box.getCenter(new THREE.Vector3())
+            fbx.position.sub(center)
+            fbx.position.multiplyScalar(scale)
+
+            scene.add(fbx)
+            objectToRotate = fbx
+            console.log('FBX added to scene and ready to rotate')
+
+            // Apply texture if provided
+            if (artifact.texturePath) {
+              console.log('Applying texture from:', artifact.texturePath)
+              const textureLoader = new THREE.TextureLoader()
+              const texturePath = artifact.texturePath.startsWith('/')
+                ? artifact.texturePath.substring(1)
+                : artifact.texturePath
+              const fullTexturePath = `${import.meta.env.BASE_URL}${texturePath}`
+
+              textureLoader.load(
+                fullTexturePath,
+                (texture) => {
+                  console.log('Texture loaded successfully')
+                  fbx.traverse((child) => {
+                    if (child.isMesh) {
+                      child.material.map = texture
+                      child.material.needsUpdate = true
+                    }
+                  })
+                },
+                undefined,
+                (error) => {
+                  console.warn('Texture load error:', error)
+                }
+              )
+            }
+          },
+          (progress) => {
+            const percent = (progress.loaded / progress.total * 100).toFixed(2)
+            console.log(`Model loading progress: ${percent}%`)
+          },
+          (error) => {
+            console.error('FBX load error:', error)
+            // Fall back to cube if model fails to load
+            console.log('Falling back to test cube')
+            const geometry = new THREE.BoxGeometry(3, 3, 3)
+            const material = new THREE.MeshPhongMaterial({ color: 0xd4a574 })
+            const cube = new THREE.Mesh(geometry, material)
+            scene.add(cube)
+            objectToRotate = cube
+            console.log('Fallback cube created')
+          }
+        )
+      } else {
+        // No model path provided, create a test cube
+        console.log('No model path provided, creating test cube')
+        const geometry = new THREE.BoxGeometry(3, 3, 3)
+        const material = new THREE.MeshPhongMaterial({ color: 0xd4a574 })
+        const cube = new THREE.Mesh(geometry, material)
+        scene.add(cube)
+        objectToRotate = cube
+        console.log('Test cube created')
+      }
+
       animate()
       console.log('Animation started')
 
@@ -81,8 +170,6 @@ export default function ArtifactDetail({ artifact, onBack }) {
         console.log('Cleaning up 3D viewer')
         if (animationId) cancelAnimationFrame(animationId)
         renderer.dispose()
-        geometry.dispose()
-        material.dispose()
       }
     } catch (error) {
       console.error('3D viewer error:', error)
