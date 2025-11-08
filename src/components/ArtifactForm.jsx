@@ -9,6 +9,7 @@ export default function ArtifactForm({ dropdownOptions, editingArtifact, onSubmi
     description: '',
     modelPath: '',
     texturePath: '',
+    toggleableMeshes: '',
   })
   const [photoPreview, setPhotoPreview] = useState(editingArtifact?.photo || '')
 
@@ -110,6 +111,19 @@ export default function ArtifactForm({ dropdownOptions, editingArtifact, onSubmi
           onChange={(value) => handleInputChange('texturePath', value)}
           placeholder="e.g., /textures/sword.jpg"
         />
+      </div>
+
+      {/* Toggleable Meshes */}
+      <div>
+        <label className="block text-sm font-medieval text-wood-light mb-2">Toggleable Meshes (comma-separated)</label>
+        <input
+          type="text"
+          value={formData.toggleableMeshes}
+          onChange={(e) => handleInputChange('toggleableMeshes', e.target.value)}
+          className="w-full px-4 py-2 border-2 border-gold-dark rounded bg-parchment-dark text-wood focus:outline-none focus:border-gold"
+          placeholder="e.g., Sheath, Handle, Blade"
+        />
+        <p className="text-xs text-wood-light mt-1">Names of mesh parts that can be toggled on/off in the viewer</p>
       </div>
 
       {/* Form Actions */}

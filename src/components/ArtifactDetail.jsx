@@ -4,7 +4,21 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
 export default function ArtifactDetail({ artifact, onBack }) {
   const [showModel, setShowModel] = useState(false)
+  const [meshVisibility, setMeshVisibility] = useState({})
   const containerRef = useRef(null)
+  const meshReferencesRef = useRef({})
+
+  // Initialize mesh visibility when showing model
+  const toggleMeshVisibility = (meshName) => {
+    setMeshVisibility(prev => {
+      const newState = { ...prev, [meshName]: !prev[meshName] }
+      // Also update the actual mesh in the scene
+      if (meshReferencesRef.current[meshName]) {
+        meshReferencesRef.current[meshName].visible = newState[meshName]
+      }
+      return newState
+    })
+  }
 
   useEffect(() => {
     if (!showModel || !containerRef.current) return
@@ -164,11 +178,22 @@ export default function ArtifactDetail({ artifact, onBack }) {
             fbx.position.sub(center)
             fbx.position.multiplyScalar(scale)
 
+            // Parse toggleable meshes from artifact data
+            const toggleableMeshNames = artifact.toggleableMeshes
+              ? artifact.toggleableMeshes.split(',').map(m => m.trim())
+              : []
+
             // Ensure all meshes are visible with flat lit materials
             fbx.traverse((child) => {
               if (child.isMesh) {
                 console.log('Found mesh:', child.name, child.geometry, child.material)
                 child.visible = true
+
+                // Store reference if it's a toggleable mesh
+                if (toggleableMeshNames.includes(child.name)) {
+                  meshReferencesRef.current[child.name] = child
+                  console.log('Stored toggleable mesh:', child.name)
+                }
 
                 // Convert materials to flat lit (MeshBasicMaterial)
                 if (Array.isArray(child.material)) {
@@ -188,6 +213,13 @@ export default function ArtifactDetail({ artifact, onBack }) {
                 }
               }
             })
+
+            // Initialize visibility state for toggleable meshes
+            const initialVisibility = {}
+            toggleableMeshNames.forEach(name => {
+              initialVisibility[name] = true // Start all meshes visible
+            })
+            setMeshVisibility(initialVisibility)
 
             scene.add(fbx)
             objectToRotate = fbx
@@ -319,7 +351,7 @@ export default function ArtifactDetail({ artifact, onBack }) {
         {/* Main Content */}
         <div className="lg:col-span-3 space-y-4">
           {showModel && (
-            <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
+            <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold space-y-4">
               <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3">3D Model</h3>
               <div
                 ref={containerRef}
@@ -334,6 +366,27 @@ export default function ArtifactDetail({ artifact, onBack }) {
                   minHeight: '400px'
                 }}
               />
+
+              {Object.keys(meshVisibility).length > 0 && (
+                <div className="border-t border-gold-dark pt-4">
+                  <p className="text-xs text-gold uppercase tracking-wide font-medieval mb-2">Toggle Parts</p>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(meshVisibility).map(([meshName, isVisible]) => (
+                      <button
+                        key={meshName}
+                        onClick={() => toggleMeshVisibility(meshName)}
+                        className={`px-3 py-1 text-sm font-medieval rounded transition ${
+                          isVisible
+                            ? 'bg-gold text-wood hover:bg-gold-dark'
+                            : 'bg-gold-dark text-parchment hover:bg-gold'
+                        }`}
+                      >
+                        {isVisible ? '✓ ' : '✗ '} {meshName}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
