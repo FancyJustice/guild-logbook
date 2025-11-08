@@ -370,19 +370,20 @@ export default function ArtifactDetail({ artifact, onBack }) {
         <div className="lg:col-span-3 space-y-4">
           {/* 3D Model Container - Always rendered but hidden until showModel is true */}
           {artifact.modelPath && (
-            <div className={`bg-parchment text-wood p-6 rounded-lg border-2 border-gold space-y-4 ${!showModel && 'hidden'}`}>
+            <div className={`bg-parchment text-wood p-6 rounded-lg border-2 border-gold space-y-4 overflow-hidden ${!showModel && 'hidden'}`}>
               <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3">3D Model {isLoading && '(Loading...)'}</h3>
               <div
                 ref={containerRef}
                 style={{
                   width: '100%',
                   height: '400px',
+                  maxWidth: '100%',
+                  maxHeight: '400px',
                   borderRadius: '8px',
                   border: '2px solid #d4a574',
                   backgroundColor: '#2a2420',
                   display: 'block',
-                  minWidth: '400px',
-                  minHeight: '400px'
+                  overflow: 'hidden'
                 }}
               />
 
