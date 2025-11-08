@@ -62,16 +62,50 @@ export default function ArtifactDetail({ artifact, onBack }) {
       scene.add(directionalLight)
       console.log('Lights added')
 
+      // Mouse controls
+      let isDragging = false
+      let previousMousePosition = { x: 0, y: 0 }
+      let rotation = { x: 0, y: 0 }
+
+      const handleMouseDown = (e) => {
+        isDragging = true
+        previousMousePosition = { x: e.clientX, y: e.clientY }
+      }
+
+      const handleMouseMove = (e) => {
+        if (isDragging && objectToRotate) {
+          const deltaX = e.clientX - previousMousePosition.x
+          const deltaY = e.clientY - previousMousePosition.y
+
+          rotation.x += deltaY * 0.005
+          rotation.y += deltaX * 0.005
+
+          objectToRotate.rotation.x = rotation.x
+          objectToRotate.rotation.y = rotation.y
+
+          previousMousePosition = { x: e.clientX, y: e.clientY }
+        }
+      }
+
+      const handleMouseUp = () => {
+        isDragging = false
+      }
+
+      const handleMouseLeave = () => {
+        isDragging = false
+      }
+
+      container.addEventListener('mousedown', handleMouseDown)
+      container.addEventListener('mousemove', handleMouseMove)
+      container.addEventListener('mouseup', handleMouseUp)
+      container.addEventListener('mouseleave', handleMouseLeave)
+
       // Animation loop (created before loading model)
       let animationId = null
       let objectToRotate = null
 
       const animate = () => {
         animationId = requestAnimationFrame(animate)
-        if (objectToRotate) {
-          objectToRotate.rotation.x += 0.005
-          objectToRotate.rotation.y += 0.008
-        }
         renderer.render(scene, camera)
       }
 
@@ -170,6 +204,12 @@ export default function ArtifactDetail({ artifact, onBack }) {
         console.log('Cleaning up 3D viewer')
         if (animationId) cancelAnimationFrame(animationId)
         renderer.dispose()
+
+        // Remove event listeners
+        container.removeEventListener('mousedown', handleMouseDown)
+        container.removeEventListener('mousemove', handleMouseMove)
+        container.removeEventListener('mouseup', handleMouseUp)
+        container.removeEventListener('mouseleave', handleMouseLeave)
       }
     } catch (error) {
       console.error('3D viewer error:', error)
