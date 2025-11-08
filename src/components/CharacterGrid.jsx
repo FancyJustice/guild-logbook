@@ -15,18 +15,18 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
             />
           </div>
           <div className="p-4">
-            <div className="text-xs text-gold uppercase tracking-wide font-medieval">
+            <div className="text-sm text-gold uppercase tracking-wide font-medieval">
               {character.type === 'guild' ? 'Guild Member' : 'Criminal'}
             </div>
             {character.title && (
-              <div className="text-xs text-gold-dark italic mb-2">"{character.title}"</div>
+              <div className="text-sm text-gold-dark italic mb-2">"{character.title}"</div>
             )}
-            <h3 className="text-xl font-medieval font-bold text-wood mb-1">{character.name}</h3>
-            <div className="text-sm text-wood-light mb-3">
+            <h3 className="text-2xl font-medieval font-bold text-wood mb-1">{character.name}</h3>
+            <div className="text-base text-wood-light mb-3">
               <div>{character.race} {character.class}</div>
-              <div className="text-xs">{character.vrcPlayerName}</div>
+              <div className="text-sm">{character.vrcPlayerName}</div>
             </div>
-            <div className="flex justify-between text-xs text-wood-light border-t border-gold-dark pt-2">
+            <div className="flex justify-between text-sm text-wood-light border-t border-gold-dark pt-2">
               <span className="font-medieval">{character.affiliation}</span>
               <span className="font-medieval">Lv. {character.level || '—'}</span>
             </div>

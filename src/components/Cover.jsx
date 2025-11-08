@@ -15,9 +15,10 @@ export default function Cover({ onFlip }) {
       onClick={handleClick}
       className={`min-h-screen bg-wood flex items-center justify-center cursor-pointer overflow-hidden relative ${isFading ? 'opacity-0' : 'opacity-100'}`}
       style={{
-        backgroundImage: "url('/parchment.jpg')",
+        backgroundImage: `url('${import.meta.env.BASE_URL}parchment.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        backgroundColor: '#2a2420',
         transition: 'opacity 1.2s ease-in-out',
       }}
     >

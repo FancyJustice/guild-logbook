@@ -213,7 +213,10 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
           label={formData.type === 'guild' ? 'Rank' : 'Threat Level'}
           value={formData.rank}
           onChange={(value) => handleInputChange('rank', value)}
-          options={[{ value: '', label: 'Select Rank' }, ...(dropdownOptions.rank || []).map(r => ({ value: r, label: r }))]}
+          options={formData.type === 'guild'
+            ? [{ value: '', label: 'Select Rank' }, ...(dropdownOptions.rank || []).map(r => ({ value: r, label: r }))]
+            : [{ value: '', label: 'Select Threat Level' }, ...(dropdownOptions.threatLevel || []).map(t => ({ value: t, label: t }))]
+          }
         />
         <FormInput
           label="Status"

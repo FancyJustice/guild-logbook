@@ -8,6 +8,7 @@ function App() {
   const [showCover, setShowCover] = useState(true)
   const [view, setView] = useState('browser')
   const [characters, setCharacters] = useState([])
+  const [artifacts, setArtifacts] = useState([])
   const [dropdownOptions, setDropdownOptions] = useState({})
   const [password, setPassword] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -30,6 +31,17 @@ function App() {
         setCharacters(data.characters || [])
       }
 
+      // Load artifacts from localStorage or JSON file
+      const savedArtifacts = localStorage.getItem('artifacts')
+      if (savedArtifacts) {
+        setArtifacts(JSON.parse(savedArtifacts))
+      } else {
+        // If no saved data, load from JSON file
+        const response = await fetch(import.meta.env.BASE_URL + 'characters.json')
+        const data = await response.json()
+        setArtifacts(data.artifacts || [])
+      }
+
       // Always load dropdown options from JSON file
       const response = await fetch(import.meta.env.BASE_URL + 'characters.json')
       const data = await response.json()
@@ -42,6 +54,7 @@ function App() {
   const exportCharactersAsJSON = () => {
     const dataToExport = {
       characters: characters,
+      artifacts: artifacts,
       dropdownOptions: dropdownOptions
     }
     const dataStr = JSON.stringify(dataToExport, null, 2)
@@ -64,7 +77,11 @@ function App() {
           if (data.characters && Array.isArray(data.characters)) {
             setCharacters(data.characters)
             localStorage.setItem('characters', JSON.stringify(data.characters))
-            alert('Characters imported successfully!')
+            if (data.artifacts && Array.isArray(data.artifacts)) {
+              setArtifacts(data.artifacts)
+              localStorage.setItem('artifacts', JSON.stringify(data.artifacts))
+            }
+            alert('Characters and artifacts imported successfully!')
           } else {
             alert('Invalid JSON format. Make sure it has a "characters" array.')
           }
@@ -94,6 +111,26 @@ function App() {
     const updatedCharacters = characters.filter(char => char.id !== characterId)
     setCharacters(updatedCharacters)
     localStorage.setItem('characters', JSON.stringify(updatedCharacters))
+  }
+
+  const handleAddArtifact = (newArtifact) => {
+    const updatedArtifacts = [...artifacts, { ...newArtifact, id: `artifact_${Date.now()}` }]
+    setArtifacts(updatedArtifacts)
+    localStorage.setItem('artifacts', JSON.stringify(updatedArtifacts))
+  }
+
+  const handleUpdateArtifact = (updatedArtifact) => {
+    const updatedArtifacts = artifacts.map(artifact =>
+      artifact.id === updatedArtifact.id ? updatedArtifact : artifact
+    )
+    setArtifacts(updatedArtifacts)
+    localStorage.setItem('artifacts', JSON.stringify(updatedArtifacts))
+  }
+
+  const handleDeleteArtifact = (artifactId) => {
+    const updatedArtifacts = artifacts.filter(artifact => artifact.id !== artifactId)
+    setArtifacts(updatedArtifacts)
+    localStorage.setItem('artifacts', JSON.stringify(updatedArtifacts))
   }
 
   const handleAdminLogin = (inputPassword) => {
@@ -145,7 +182,7 @@ function App() {
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
         {view === 'browser' && !isAuthenticated && (
-          <Browser characters={characters} dropdownOptions={dropdownOptions} />
+          <Browser characters={characters} artifacts={artifacts} dropdownOptions={dropdownOptions} />
         )}
         {view === 'admin' && !isAuthenticated && (
           <AdminPanel
@@ -182,10 +219,14 @@ function App() {
             <AdminPanel
               authenticated={true}
               characters={characters}
+              artifacts={artifacts}
               dropdownOptions={dropdownOptions}
               onAddCharacter={handleAddCharacter}
               onUpdateCharacter={handleUpdateCharacter}
               onDeleteCharacter={handleDeleteCharacter}
+              onAddArtifact={handleAddArtifact}
+              onUpdateArtifact={handleUpdateArtifact}
+              onDeleteArtifact={handleDeleteArtifact}
             />
           </div>
         )}

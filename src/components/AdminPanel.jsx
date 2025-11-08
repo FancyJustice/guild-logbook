@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import CharacterForm from './CharacterForm'
+import ArtifactForm from './ArtifactForm'
 
 export default function AdminPanel({
   authenticated,
@@ -7,13 +8,19 @@ export default function AdminPanel({
   password,
   setPassword,
   characters,
+  artifacts,
   dropdownOptions,
   onAddCharacter,
   onUpdateCharacter,
   onDeleteCharacter,
+  onAddArtifact,
+  onUpdateArtifact,
+  onDeleteArtifact,
 }) {
-  const [showForm, setShowForm] = useState(false)
+  const [showCharacterForm, setShowCharacterForm] = useState(false)
+  const [showArtifactForm, setShowArtifactForm] = useState(false)
   const [editingCharacter, setEditingCharacter] = useState(null)
+  const [editingArtifact, setEditingArtifact] = useState(null)
 
   if (!authenticated) {
     return (
@@ -46,22 +53,23 @@ export default function AdminPanel({
 
   return (
     <div className="space-y-6">
+      {/* Character Management Section */}
       <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-medieval font-bold text-gold-dark">Character Management</h2>
           <button
             onClick={() => {
-              setShowForm(!showForm)
+              setShowCharacterForm(!showCharacterForm)
               setEditingCharacter(null)
             }}
             className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded font-medieval"
           >
-            {showForm ? 'Cancel' : '+ Add Character'}
+            {showCharacterForm ? 'Cancel' : '+ Add Character'}
           </button>
         </div>
       </div>
 
-      {showForm && (
+      {showCharacterForm && (
         <CharacterForm
           dropdownOptions={dropdownOptions}
           editingCharacter={editingCharacter}
@@ -71,11 +79,11 @@ export default function AdminPanel({
             } else {
               onAddCharacter(character)
             }
-            setShowForm(false)
+            setShowCharacterForm(false)
             setEditingCharacter(null)
           }}
           onCancel={() => {
-            setShowForm(false)
+            setShowCharacterForm(false)
             setEditingCharacter(null)
           }}
         />
@@ -119,6 +127,85 @@ export default function AdminPanel({
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Artifact Management Section */}
+      <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-medieval font-bold text-gold-dark">Artifact Management</h2>
+          <button
+            onClick={() => {
+              setShowArtifactForm(!showArtifactForm)
+              setEditingArtifact(null)
+            }}
+            className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded font-medieval"
+          >
+            {showArtifactForm ? 'Cancel' : '+ Add Artifact'}
+          </button>
+        </div>
+      </div>
+
+      {showArtifactForm && (
+        <ArtifactForm
+          dropdownOptions={dropdownOptions}
+          editingArtifact={editingArtifact}
+          onSubmit={(artifact) => {
+            if (editingArtifact) {
+              onUpdateArtifact(artifact)
+            } else {
+              onAddArtifact(artifact)
+            }
+            setShowArtifactForm(false)
+            setEditingArtifact(null)
+          }}
+          onCancel={() => {
+            setShowArtifactForm(false)
+            setEditingArtifact(null)
+          }}
+        />
+      )}
+
+      <div className="space-y-4">
+        {artifacts && artifacts.length > 0 ? (
+          artifacts.map(artifact => (
+            <div
+              key={artifact.id}
+              className="bg-parchment text-wood p-4 rounded border-2 border-gold flex justify-between items-start"
+            >
+              <div className="flex-1">
+                <h3 className="text-lg font-medieval font-bold">{artifact.name}</h3>
+                <p className="text-sm text-wood-light">
+                  {artifact.type} • Owner: {artifact.owner || '—'}
+                </p>
+              </div>
+              <div className="space-x-2 flex">
+                <button
+                  onClick={() => {
+                    setEditingArtifact(artifact)
+                    setShowArtifactForm(true)
+                  }}
+                  className="px-3 py-1 bg-gold-dark text-parchment hover:bg-gold transition rounded text-sm font-medieval"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm(`Delete ${artifact.name}?`)) {
+                      onDeleteArtifact(artifact.id)
+                    }
+                  }}
+                  className="px-3 py-1 bg-seal text-parchment hover:bg-seal-light transition rounded text-sm font-medieval"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="bg-parchment text-wood p-4 rounded border-2 border-gold text-center text-wood-light">
+            <p>No artifacts yet. Add one to get started!</p>
+          </div>
+        )}
       </div>
     </div>
   )

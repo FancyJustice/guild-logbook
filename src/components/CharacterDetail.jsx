@@ -31,7 +31,7 @@ export default function CharacterDetail({ character, onBack }) {
               )}
             </div>
 
-            <div className="text-xs space-y-1">
+            <div className="text-sm space-y-1">
               <p className="text-wood-light"><strong>Lvl:</strong> {character.level}</p>
               <p className="text-wood-light"><strong>Rank:</strong> {character.rank}</p>
               <p className="text-wood-light"><strong>Player:</strong> {character.vrcPlayerName}</p>
@@ -44,20 +44,20 @@ export default function CharacterDetail({ character, onBack }) {
           {/* Header with Quote & Lore */}
           <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
             {character.quote && (
-              <blockquote className="italic text-sm text-gold-dark mb-3 pl-4 border-l-4 border-gold">
+              <blockquote className="italic text-base text-gold-dark mb-3 pl-4 border-l-4 border-gold">
                 "{character.quote}"
               </blockquote>
             )}
             {character.lore && (
               <div>
-                <h3 className="text-sm font-medieval font-bold text-gold-dark mb-2">Lore</h3>
-                <p className="text-xs leading-relaxed">{character.lore}</p>
+                <h3 className="text-lg font-medieval font-bold text-gold-dark mb-2">Lore</h3>
+                <p className="text-sm leading-relaxed">{character.lore}</p>
               </div>
             )}
             {character.observations && (
               <div className="mt-4 pt-4 border-t border-gold-dark">
-                <h3 className="text-sm font-medieval font-bold text-gold-dark mb-2">Observations</h3>
-                <p className="text-xs leading-relaxed text-wood-light">{character.observations}</p>
+                <h3 className="text-lg font-medieval font-bold text-gold-dark mb-2">Observations</h3>
+                <p className="text-sm leading-relaxed text-wood-light">{character.observations}</p>
               </div>
             )}
           </div>
@@ -85,7 +85,7 @@ export default function CharacterDetail({ character, onBack }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {character.combatSkills && character.combatSkills.length > 0 && (
               <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
-                <h3 className="text-sm font-medieval font-bold mb-3 text-gold-dark">Combat Skills</h3>
+                <h3 className="text-base font-medieval font-bold mb-3 text-gold-dark">Combat Skills</h3>
                 <div className="space-y-2">
                   {character.combatSkills.map((skill, idx) => {
                     const isUltimate = typeof skill !== 'string' && skill.isUltimate
@@ -100,13 +100,13 @@ export default function CharacterDetail({ character, onBack }) {
                     return (
                       <div key={idx} className={`border-l-4 pl-2 py-1 ${isUltimate ? 'border-ultimate' : 'border-gold-dark'}`}>
                         <div className="flex items-start gap-2">
-                          <span className="text-gold text-sm">{icon}</span>
+                          <span className="text-gold text-lg">{icon}</span>
                           <div className="flex-1">
-                            <div className={`${isUltimate ? 'ultimate-skill text-xs' : 'font-bold text-xs'}`}>
+                            <div className={`${isUltimate ? 'ultimate-skill text-sm' : 'font-bold text-sm'}`}>
                               {skillObj.name}
                             </div>
                             {skillObj.description && (
-                              <div className="text-xs text-wood-light mt-0.5">{skillObj.description}</div>
+                              <div className="text-sm text-wood-light mt-0.5">{skillObj.description}</div>
                             )}
                           </div>
                         </div>
@@ -119,10 +119,10 @@ export default function CharacterDetail({ character, onBack }) {
 
             {character.lifeSkills && character.lifeSkills.length > 0 && (
               <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
-                <h3 className="text-sm font-medieval font-bold mb-3 text-gold-dark">Life Skills</h3>
+                <h3 className="text-base font-medieval font-bold mb-3 text-gold-dark">Life Skills</h3>
                 <ul className="grid grid-cols-1 gap-1">
                   {character.lifeSkills.map((skill, idx) => (
-                    <li key={idx} className="flex items-center gap-2 text-xs">
+                    <li key={idx} className="flex items-center gap-2 text-sm">
                       <span className="text-gold">✦</span>
                       <span>{skill}</span>
                     </li>
@@ -149,7 +149,7 @@ function StatBox({ label, value }) {
   return (
     <div className="bg-parchment text-wood p-4 rounded border-2 border-gold text-center">
       <div className="text-xs text-gold-dark uppercase tracking-wide font-medieval mb-2">{label}</div>
-      <div className="font-medieval font-bold">{value}</div>
+      <div className="font-medieval font-bold text-lg">{value}</div>
     </div>
   )
 }
@@ -158,7 +158,7 @@ function AttributeBox({ label, value }) {
   return (
     <div className="bg-parchment text-wood p-4 rounded border-2 border-gold">
       <div className="text-xs text-gold-dark uppercase tracking-wide font-medieval mb-2">{label}</div>
-      <div className="font-medieval">{value || '—'}</div>
+      <div className="font-medieval text-base">{value || '—'}</div>
     </div>
   )
 }

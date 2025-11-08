@@ -182,14 +182,24 @@
     "elemeltanAttunement": [
       "Fire",
       "Water",
+      "Wind",
       "Earth",
-      "Air",
-      "Storm",
       "Light",
-      "Darkness",
-      "Nature",
+      "Dark",
       "Ice",
-      "None"
+      "Steam",
+      "Lightning",
+      "Nature",
+      "Magma",
+      "Sand",
+      "Metal",
+      "Gravity",
+      "Poison",
+      "Blood",
+      "Ghost",
+      "Prism",
+      "Solar",
+      "Darkflame"
     ],
     "class": [
       "Warrior",
@@ -238,6 +248,19 @@
       "C",
       "B",
       "A"
+    ],
+    "threatLevel": [
+      "Harmless",
+      "Notorious",
+      "Dangerous",
+      "Devastating"
+    ],
+    "artifactType": [
+      "Consumable",
+      "Weapon",
+      "Armor",
+      "Accessory"
     ]
-  }
+  },
+  "artifacts": []
 }
