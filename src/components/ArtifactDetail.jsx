@@ -38,9 +38,9 @@ export default function ArtifactDetail({ artifact, onBack }) {
       scene.background = new THREE.Color(0x2a2420)
       console.log('Scene created')
 
-      // Camera
+      // Camera - closer initial zoom
       const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
-      camera.position.z = 10
+      camera.position.z = 5
       console.log('Camera created')
 
       // Renderer
@@ -99,6 +99,18 @@ export default function ArtifactDetail({ artifact, onBack }) {
       container.addEventListener('mousemove', handleMouseMove)
       container.addEventListener('mouseup', handleMouseUp)
       container.addEventListener('mouseleave', handleMouseLeave)
+
+      // Zoom controls with mouse wheel
+      const handleWheel = (e) => {
+        e.preventDefault()
+        const zoomSpeed = 0.1
+        const direction = e.deltaY > 0 ? 1 : -1
+        camera.position.z += direction * zoomSpeed * camera.position.z
+        // Clamp zoom to reasonable values
+        camera.position.z = Math.max(1, Math.min(50, camera.position.z))
+      }
+
+      container.addEventListener('wheel', handleWheel, { passive: false })
 
       // Animation loop (created before loading model)
       let animationId = null
@@ -210,6 +222,7 @@ export default function ArtifactDetail({ artifact, onBack }) {
         container.removeEventListener('mousemove', handleMouseMove)
         container.removeEventListener('mouseup', handleMouseUp)
         container.removeEventListener('mouseleave', handleMouseLeave)
+        container.removeEventListener('wheel', handleWheel)
       }
     } catch (error) {
       console.error('3D viewer error:', error)
