@@ -27,10 +27,12 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
   const artifactTypes = ['all', ...new Set(artifacts.map(a => a.type).filter(Boolean))]
   const characterTypes = ['guild', 'criminal', 'all']
 
+  const isViewingDetail = selectedCharacter || selectedArtifact
+
   return (
     <div className="flex gap-4">
       {/* Left Sidebar - Type Tabs */}
-      <div className="flex flex-col gap-2 pt-2">
+      {!isViewingDetail && <div className="flex flex-col gap-2 pt-2">
         {view === 'characters' ? (
           <>
             <button
@@ -81,7 +83,7 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
             ))}
           </>
         )}
-      </div>
+      </div>}
 
       {/* Main Content */}
       <div className="flex-1 space-y-6">
@@ -127,7 +129,7 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
       </div>
 
       {/* Right Sidebar - View Tabs */}
-      <div className="flex flex-col gap-2 pt-2">
+      {!isViewingDetail && <div className="flex flex-col gap-2 pt-2">
         <button
           onClick={() => { setView('characters'); setSelectedCharacter(null); setSelectedArtifact(null) }}
           className={`px-4 py-3 text-sm font-medieval whitespace-nowrap transition rounded-l-lg border-r-4 ${
@@ -148,7 +150,7 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
         >
           Artifacts
         </button>
-      </div>
+      </div>}
     </div>
   )
 }
