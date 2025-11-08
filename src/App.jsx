@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import Browser from './components/Browser'
 import AdminPanel from './components/AdminPanel'
 import Cover from './components/Cover'
+import MergePreview from './components/MergePreview'
+import { findDifferences, mergeCharacters, generateMergeReport, validateImportedData } from './utils/mergeUtils'
 import './App.css'
 
 function App() {
@@ -13,6 +15,9 @@ function App() {
   const [password, setPassword] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [adminPassword, setAdminPassword] = useState('guild2024')
+  const [showMergePreview, setShowMergePreview] = useState(false)
+  const [pendingMergeData, setPendingMergeData] = useState(null)
+  const [mergeReport, setMergeReport] = useState(null)
 
   useEffect(() => {
     fetchCharacters()
@@ -67,14 +72,30 @@ function App() {
     URL.revokeObjectURL(url)
   }
 
-  const importCharactersFromJSON = (event) => {
+  const importCharactersFromJSON = (event, isMerge = false) => {
     const file = event.target.files[0]
     if (file) {
       const reader = new FileReader()
       reader.onload = (e) => {
         try {
           const data = JSON.parse(e.target.result)
-          if (data.characters && Array.isArray(data.characters)) {
+
+          // Validate imported data
+          const validation = validateImportedData(data)
+          if (!validation.isValid) {
+            alert('Invalid JSON format:\n' + validation.errors.join('\n'))
+            return
+          }
+
+          if (isMerge) {
+            // Show merge preview
+            const differences = findDifferences(characters, data.characters)
+            const report = generateMergeReport(differences)
+            setPendingMergeData({ characters: data.characters, artifacts: data.artifacts || [] })
+            setMergeReport(report)
+            setShowMergePreview(true)
+          } else {
+            // Direct import (replace all)
             setCharacters(data.characters)
             localStorage.setItem('characters', JSON.stringify(data.characters))
             if (data.artifacts && Array.isArray(data.artifacts)) {
@@ -82,8 +103,6 @@ function App() {
               localStorage.setItem('artifacts', JSON.stringify(data.artifacts))
             }
             alert('Characters and artifacts imported successfully!')
-          } else {
-            alert('Invalid JSON format. Make sure it has a "characters" array.')
           }
         } catch (error) {
           alert('Error parsing JSON file: ' + error.message)
@@ -91,6 +110,35 @@ function App() {
       }
       reader.readAsText(file)
     }
+  }
+
+  const handleMergeConfirm = (differences) => {
+    if (!pendingMergeData) return
+
+    // Merge characters
+    const mergedCharacters = mergeCharacters(characters, pendingMergeData.characters)
+    setCharacters(mergedCharacters)
+    localStorage.setItem('characters', JSON.stringify(mergedCharacters))
+
+    // Merge artifacts if present
+    if (pendingMergeData.artifacts && pendingMergeData.artifacts.length > 0) {
+      const mergedArtifacts = mergeCharacters(artifacts, pendingMergeData.artifacts)
+      setArtifacts(mergedArtifacts)
+      localStorage.setItem('artifacts', JSON.stringify(mergedArtifacts))
+    }
+
+    // Clear merge state
+    setShowMergePreview(false)
+    setPendingMergeData(null)
+    setMergeReport(null)
+
+    alert(`Merge successful!\nAdded: ${differences.added.length}, Modified: ${differences.modified.length}, Removed: ${differences.removed.length}`)
+  }
+
+  const handleMergeCancel = () => {
+    setShowMergePreview(false)
+    setPendingMergeData(null)
+    setMergeReport(null)
   }
 
   const handleAddCharacter = (newCharacter) => {
@@ -207,11 +255,20 @@ function App() {
                 Export JSON
               </button>
               <label className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded cursor-pointer">
-                Import JSON
+                Import JSON (Replace)
                 <input
                   type="file"
                   accept=".json"
-                  onChange={importCharactersFromJSON}
+                  onChange={(e) => importCharactersFromJSON(e, false)}
+                  style={{ display: 'none' }}
+                />
+              </label>
+              <label className="px-4 py-2 bg-gold text-wood hover:bg-gold-light transition rounded cursor-pointer">
+                Merge JSON
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={(e) => importCharactersFromJSON(e, true)}
                   style={{ display: 'none' }}
                 />
               </label>
@@ -231,6 +288,15 @@ function App() {
           </div>
         )}
       </main>
+
+      {showMergePreview && mergeReport && (
+        <MergePreview
+          differences={pendingMergeData}
+          onConfirm={handleMergeConfirm}
+          onCancel={handleMergeCancel}
+          report={mergeReport}
+        />
+      )}
     </div>
   )
 }
