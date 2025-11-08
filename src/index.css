@@ -64,3 +64,93 @@ a:hover {
     background-position: 100% 50%;
   }
 }
+
+/* Fantasy section styling */
+.fantasy-section {
+  position: relative;
+  background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(106, 86, 61, 0.1) 100%);
+  border-top: 3px solid #d4a574;
+  border-bottom: 3px solid #d4a574;
+  padding: 1.5rem;
+}
+
+.fantasy-section::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10px;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, #d4a574 0, #d4a574 10px, transparent 10px, transparent 20px);
+}
+
+.fantasy-section::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -10px;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, #d4a574 0, #d4a574 10px, transparent 10px, transparent 20px);
+}
+
+/* Character title styling */
+.character-title {
+  font-size: 2rem;
+  font-family: 'Cinzel', serif;
+  color: #d4a574;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.1em;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.character-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d4a574, transparent);
+}
+
+/* Section divider */
+.divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d4a574, transparent);
+  margin: 1.5rem 0;
+}
+
+/* Card hover glow effect */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  box-shadow: 0 0 20px rgba(212, 165, 116, 0.4), 0 0 40px rgba(212, 165, 116, 0.2);
+}
+
+/* Rank badge styling */
+.rank-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #d4a574 0%, #c9964b 100%);
+  color: #2a2420;
+  font-weight: bold;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Accent bars for sections */
+.accent-bar-left {
+  border-left: 4px solid #d4a574;
+  padding-left: 1rem;
+}
+
+.accent-bar-top {
+  border-top: 4px solid #d4a574;
+  padding-top: 1rem;
+}

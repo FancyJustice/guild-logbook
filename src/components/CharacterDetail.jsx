@@ -40,13 +40,13 @@ export default function CharacterDetail({ character, onBack }) {
 
           {/* Quick Stats */}
           <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold space-y-3">
-            <div className="border-b border-gold-dark pb-2">
-              <div className="text-xs text-gold uppercase tracking-wide font-medieval">
-                {character.type === 'guild' ? 'Guild Member' : 'Criminal'}
+            <div className="border-b-2 border-gold-dark pb-2">
+              <div className="inline-block px-2 py-1 bg-gold text-wood text-xs uppercase tracking-widest font-medieval font-bold rounded mb-2">
+                {character.type === 'guild' ? '⚔ Guild Member' : '⚔ Criminal'}
               </div>
-              <h2 className="text-xl font-bold font-medieval text-wood">{character.name}</h2>
+              <h2 className="text-2xl font-bold font-medieval text-gold-dark" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>{character.name}</h2>
               {character.title && (
-                <p className="text-xs italic text-gold-dark mt-1">"{character.title}"</p>
+                <p className="text-xs italic text-gold mt-2" style={{ fontStyle: 'italic' }}>"{character.title}"</p>
               )}
             </div>
 
@@ -82,25 +82,27 @@ export default function CharacterDetail({ character, onBack }) {
         {/* Main Content - Right 3 Columns */}
         <div className="lg:col-span-3 space-y-4">
           {/* Header with Quote & Lore */}
-          <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
+          <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold space-y-4">
             {character.quote && (
-              <blockquote className="italic text-base text-gold-dark mb-3 pl-4 border-l-4 border-gold">
+              <blockquote className="italic text-lg text-gold-dark pl-6 border-l-4 border-gold relative" style={{ fontStyle: 'italic', letterSpacing: '0.02em' }}>
+                <span className="text-gold text-2xl absolute left-0 top-0">✦</span>
                 "{character.quote}"
+                <span className="text-gold text-2xl">✦</span>
               </blockquote>
             )}
             {character.lore && (
               <div>
-                <h3 className="text-lg font-medieval font-bold text-gold-dark mb-2">Lore</h3>
-                <p className="text-sm leading-relaxed">{character.lore}</p>
+                <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3 uppercase tracking-wider">━ Lore ━</h3>
+                <p className="text-sm leading-relaxed text-wood">{character.lore}</p>
               </div>
             )}
             {character.observations && Array.isArray(character.observations) && character.observations.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gold-dark">
-                <h3 className="text-lg font-medieval font-bold text-gold-dark mb-2">Observations</h3>
-                <ul className="space-y-1">
+              <div className="pt-4 border-t-2 border-gold-dark">
+                <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3 uppercase tracking-wider">━ Observations ━</h3>
+                <ul className="space-y-2">
                   {character.observations.map((observation, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-sm text-wood-light">
-                      <span className="text-gold mt-1">•</span>
+                    <li key={idx} className="flex items-start gap-3 text-sm text-wood-light pl-2 border-l-2 border-gold-dark">
+                      <span className="text-gold text-lg">✦</span>
                       <span>{observation}</span>
                     </li>
                   ))}
