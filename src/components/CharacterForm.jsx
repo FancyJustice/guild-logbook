@@ -27,6 +27,7 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
     observations: '',
     bounty: '',
     crime: '',
+    ultimateSkillColor: 'gold',
   })
 
   const [skillInput, setSkillInput] = useState('')
@@ -449,6 +450,42 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
               </div>
             )
           })}
+        </div>
+      </div>
+
+      {/* Ultimate Skill Color */}
+      <div>
+        <label className="block text-sm font-medieval text-wood-light mb-2">Ultimate Skill Gradient Color</label>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { value: 'gold', label: 'Gold', color1: '#daa520', color2: '#ffd700' },
+            { value: 'purple', label: 'Purple', color1: '#9d4edd', color2: '#e0aaff' },
+            { value: 'cyan', label: 'Cyan', color1: '#00d4ff', color2: '#00ffff' },
+            { value: 'red', label: 'Red', color1: '#ff006e', color2: '#ff6b9d' },
+            { value: 'green', label: 'Green', color1: '#00ff88', color2: '#76ffb3' },
+            { value: 'orange', label: 'Orange', color1: '#ff8c42', color2: '#ffb347' },
+            { value: 'pink', label: 'Pink', color1: '#ff006e', color2: '#ffb3d9' },
+            { value: 'blue', label: 'Blue', color1: '#4361ee', color2: '#7209b7' },
+          ].map(colorOption => (
+            <button
+              key={colorOption.value}
+              type="button"
+              onClick={() => handleInputChange('ultimateSkillColor', colorOption.value)}
+              className={`p-3 rounded transition border-2 ${
+                formData.ultimateSkillColor === colorOption.value
+                  ? 'border-gold'
+                  : 'border-gold-dark'
+              }`}
+              title={colorOption.label}
+              style={{
+                background: `linear-gradient(135deg, ${colorOption.color1}, ${colorOption.color2})`,
+              }}
+            >
+              <span className="text-white font-bold text-sm drop-shadow-lg">
+                {colorOption.label}
+              </span>
+            </button>
+          ))}
         </div>
       </div>
 

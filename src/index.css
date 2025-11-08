@@ -47,9 +47,20 @@ a:hover {
 }
 
 .ultimate-skill {
-  background: linear-gradient(to right, #daa520, #ffd700);
+  background: linear-gradient(90deg, var(--gradient-color-1), var(--gradient-color-2));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   font-weight: 900;
+  animation: gradientShift 3s ease-in-out infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }

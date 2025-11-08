@@ -1,6 +1,23 @@
+// Color palette for ultimate skills
+const colorPalette = {
+  gold: { color1: '#daa520', color2: '#ffd700' },
+  purple: { color1: '#9d4edd', color2: '#e0aaff' },
+  cyan: { color1: '#00d4ff', color2: '#00ffff' },
+  red: { color1: '#ff006e', color2: '#ff6b9d' },
+  green: { color1: '#00ff88', color2: '#76ffb3' },
+  orange: { color1: '#ff8c42', color2: '#ffb347' },
+  pink: { color1: '#ff006e', color2: '#ffb3d9' },
+  blue: { color1: '#4361ee', color2: '#7209b7' },
+}
+
 export default function CharacterDetail({ character, onBack }) {
+  const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" style={{
+      '--gradient-color-1': ultimateColors.color1,
+      '--gradient-color-2': ultimateColors.color2,
+    }}>
       <button
         onClick={onBack}
         className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded"
