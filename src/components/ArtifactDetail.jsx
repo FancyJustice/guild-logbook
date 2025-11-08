@@ -112,39 +112,50 @@ export default function ArtifactDetail({ artifact, onBack }) {
       console.log('Lights added')
 
       // Mouse controls
-      let isDragging = false
+      let isDraggingRotate = false
+      let isDraggingPan = false
       let previousMousePosition = { x: 0, y: 0 }
       let rotation = { x: 0, y: 0 }
 
       const handleMouseDown = (e) => {
-        // Right click (button 2) or left click (button 0)
-        if (e.button === 0 || e.button === 2) {
-          isDragging = true
+        // Left click (button 0) = rotate
+        if (e.button === 0) {
+          isDraggingRotate = true
           previousMousePosition = { x: e.clientX, y: e.clientY }
-          // Prevent context menu on right click
-          if (e.button === 2) {
-            e.preventDefault()
-          }
+        }
+        // Right click (button 2) = pan camera
+        if (e.button === 2) {
+          isDraggingPan = true
+          previousMousePosition = { x: e.clientX, y: e.clientY }
+          e.preventDefault()
         }
       }
 
       const handleMouseMove = (e) => {
-        if (isDragging && objectToRotate) {
-          const deltaX = e.clientX - previousMousePosition.x
-          const deltaY = e.clientY - previousMousePosition.y
+        const deltaX = e.clientX - previousMousePosition.x
+        const deltaY = e.clientY - previousMousePosition.y
 
+        // Rotate with left click
+        if (isDraggingRotate && objectToRotate) {
           rotation.x += deltaY * 0.005
           rotation.y += deltaX * 0.005
 
           objectToRotate.rotation.x = rotation.x
           objectToRotate.rotation.y = rotation.y
-
-          previousMousePosition = { x: e.clientX, y: e.clientY }
         }
+
+        // Pan camera with right click
+        if (isDraggingPan && camera) {
+          camera.position.x -= deltaX * 0.005
+          camera.position.y += deltaY * 0.005
+        }
+
+        previousMousePosition = { x: e.clientX, y: e.clientY }
       }
 
       const handleMouseUp = () => {
-        isDragging = false
+        isDraggingRotate = false
+        isDraggingPan = false
       }
 
       const handleContextMenu = (e) => {
