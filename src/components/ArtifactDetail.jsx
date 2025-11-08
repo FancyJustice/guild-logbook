@@ -164,14 +164,27 @@ export default function ArtifactDetail({ artifact, onBack }) {
             fbx.position.sub(center)
             fbx.position.multiplyScalar(scale)
 
-            // Ensure all meshes are visible with proper materials
+            // Ensure all meshes are visible with flat lit materials
             fbx.traverse((child) => {
               if (child.isMesh) {
                 console.log('Found mesh:', child.name, child.geometry, child.material)
                 child.visible = true
-                if (child.material) {
-                  child.material.side = THREE.DoubleSide
-                  child.material.transparent = false
+
+                // Convert materials to flat lit (MeshBasicMaterial)
+                if (Array.isArray(child.material)) {
+                  child.material = child.material.map(mat => {
+                    const newMat = new THREE.MeshBasicMaterial({
+                      color: mat.color || 0xcccccc,
+                      side: THREE.DoubleSide
+                    })
+                    return newMat
+                  })
+                } else if (child.material) {
+                  const originalColor = child.material.color ? child.material.color.getHex() : 0xcccccc
+                  child.material = new THREE.MeshBasicMaterial({
+                    color: originalColor,
+                    side: THREE.DoubleSide
+                  })
                 }
               }
             })
@@ -217,7 +230,7 @@ export default function ArtifactDetail({ artifact, onBack }) {
             // Fall back to cube if model fails to load
             console.log('Falling back to test cube')
             const geometry = new THREE.BoxGeometry(3, 3, 3)
-            const material = new THREE.MeshPhongMaterial({ color: 0xd4a574 })
+            const material = new THREE.MeshBasicMaterial({ color: 0xd4a574 })
             const cube = new THREE.Mesh(geometry, material)
             scene.add(cube)
             objectToRotate = cube
@@ -228,7 +241,7 @@ export default function ArtifactDetail({ artifact, onBack }) {
         // No model path provided, create a test cube
         console.log('No model path provided, creating test cube')
         const geometry = new THREE.BoxGeometry(3, 3, 3)
-        const material = new THREE.MeshPhongMaterial({ color: 0xd4a574 })
+        const material = new THREE.MeshBasicMaterial({ color: 0xd4a574 })
         const cube = new THREE.Mesh(geometry, material)
         scene.add(cube)
         objectToRotate = cube
