@@ -78,8 +78,9 @@ export default function CharacterDetail({ character, onBack }) {
             <div className="text-sm space-y-2">
               <p className="text-wood-light"><i className="ra ra-explosion" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Lvl:</strong> {character.level}</p>
               <p className="text-wood-light"><i className="ra ra-crown" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Rank:</strong> {character.rank}</p>
-              <p className="text-wood-light">
-                <i className="ra ra-portrait" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Player:</strong> {character.vrcPlayerName && (
+              <p className="text-wood-light flex items-center gap-2">
+                <img src="/VRLogo.png" alt="VRChat" style={{ height: '1.2rem', width: 'auto' }} />
+                <strong>Player:</strong> {character.vrcPlayerName && (
                   <a
                     href={character.vrcProfileUrl || `https://vrchat.com/home/user/${character.vrcPlayerName}`}
                     target="_blank"
