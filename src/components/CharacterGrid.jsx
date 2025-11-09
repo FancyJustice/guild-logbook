@@ -57,7 +57,7 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
               <div className="text-sm">{character.vrcPlayerName}</div>
             </div>
             <div className="flex justify-between text-sm text-wood-light border-t border-gold-dark pt-2">
-              <span className="font-medieval">{character.affiliation}</span>
+              <span className="font-medieval">{character.class}</span>
               <span className="font-medieval">Lv. {character.level || '—'}</span>
             </div>
           </div>
