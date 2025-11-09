@@ -8,32 +8,44 @@ import {
   deleteDoc,
   onSnapshot,
   query,
-  where
+  where,
+  getDocs
 } from 'firebase/firestore';
 
-const CHARACTERS_DOC = 'characters-data';
 const DATA_COLLECTION = 'app-data';
+const CHARACTERS_COLLECTION = 'characters';
+const ARTIFACTS_COLLECTION = 'artifacts';
+const CONFIG_DOC = 'config';
 
 /**
  * Read all characters and artifacts from Firestore
  */
 export async function fetchCharactersFromFirebase() {
   try {
-    const docRef = doc(db, DATA_COLLECTION, CHARACTERS_DOC);
-    const docSnap = await getDoc(docRef);
+    // Fetch characters
+    const charsSnapshot = await getDocs(collection(db, CHARACTERS_COLLECTION));
+    const characters = charsSnapshot.docs.map(doc => ({
+      ...doc.data(),
+      id: doc.id
+    }));
 
-    if (docSnap.exists()) {
-      return docSnap.data();
-    } else {
-      // Initialize with empty data
-      const emptyData = {
-        characters: [],
-        artifacts: [],
-        dropdownOptions: {}
-      };
-      await setDoc(docRef, emptyData);
-      return emptyData;
-    }
+    // Fetch artifacts
+    const artsSnapshot = await getDocs(collection(db, ARTIFACTS_COLLECTION));
+    const artifacts = artsSnapshot.docs.map(doc => ({
+      ...doc.data(),
+      id: doc.id
+    }));
+
+    // Fetch dropdown options from config
+    const configRef = doc(db, DATA_COLLECTION, CONFIG_DOC);
+    const configSnap = await getDoc(configRef);
+    const dropdownOptions = configSnap.exists() ? configSnap.data().dropdownOptions || {} : {};
+
+    return {
+      characters,
+      artifacts,
+      dropdownOptions
+    };
   } catch (error) {
     console.error('Error fetching from Firebase:', error);
     throw error;
@@ -45,17 +57,40 @@ export async function fetchCharactersFromFirebase() {
  */
 export function subscribeToCharacters(callback) {
   try {
-    const docRef = doc(db, DATA_COLLECTION, CHARACTERS_DOC);
+    const unsubscribeChars = onSnapshot(collection(db, CHARACTERS_COLLECTION), (charsSnap) => {
+      const characters = charsSnap.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id
+      }));
 
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) {
-        callback(docSnap.data());
-      }
+      const unsubscribeArts = onSnapshot(collection(db, ARTIFACTS_COLLECTION), (artsSnap) => {
+        const artifacts = artsSnap.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id
+        }));
+
+        const unsubscribeConfig = onSnapshot(doc(db, DATA_COLLECTION, CONFIG_DOC), (configSnap) => {
+          const dropdownOptions = configSnap.exists() ? configSnap.data().dropdownOptions || {} : {};
+
+          callback({
+            characters,
+            artifacts,
+            dropdownOptions
+          });
+        });
+
+        return () => {
+          unsubscribeConfig();
+          unsubscribeArts();
+        };
+      });
+
+      return unsubscribeArts;
     }, (error) => {
       console.error('Error subscribing to characters:', error);
     });
 
-    return unsubscribe;
+    return unsubscribeChars;
   } catch (error) {
     console.error('Error setting up subscription:', error);
     throw error;
@@ -63,19 +98,14 @@ export function subscribeToCharacters(callback) {
 }
 
 /**
- * Update all characters and artifacts
+ * Update dropdown options
  */
-export async function updateCharactersInFirebase(characters, artifacts, dropdownOptions) {
+async function updateConfigInFirebase(dropdownOptions) {
   try {
-    const docRef = doc(db, DATA_COLLECTION, CHARACTERS_DOC);
-    await updateDoc(docRef, {
-      characters: characters,
-      artifacts: artifacts,
-      dropdownOptions: dropdownOptions,
-      lastUpdated: new Date().toISOString()
-    });
+    const configRef = doc(db, DATA_COLLECTION, CONFIG_DOC);
+    await setDoc(configRef, { dropdownOptions }, { merge: true });
   } catch (error) {
-    console.error('Error updating Firebase:', error);
+    console.error('Error updating config:', error);
     throw error;
   }
 }
@@ -85,8 +115,10 @@ export async function updateCharactersInFirebase(characters, artifacts, dropdown
  */
 export async function addCharacterToFirebase(character, currentCharacters, currentArtifacts, currentDropdown) {
   try {
-    const updatedCharacters = [...currentCharacters, character];
-    await updateCharactersInFirebase(updatedCharacters, currentArtifacts, currentDropdown);
+    const charId = character.id || `char_${Date.now()}`;
+    const charRef = doc(db, CHARACTERS_COLLECTION, charId);
+    const { id, ...charData } = character;
+    await setDoc(charRef, charData);
   } catch (error) {
     console.error('Error adding character:', error);
     throw error;
@@ -98,10 +130,9 @@ export async function addCharacterToFirebase(character, currentCharacters, curre
  */
 export async function updateCharacterInFirebase(updatedCharacter, currentCharacters, currentArtifacts, currentDropdown) {
   try {
-    const updatedCharacters = currentCharacters.map(c =>
-      c.id === updatedCharacter.id ? updatedCharacter : c
-    );
-    await updateCharactersInFirebase(updatedCharacters, currentArtifacts, currentDropdown);
+    const { id, ...charData } = updatedCharacter;
+    const charRef = doc(db, CHARACTERS_COLLECTION, id);
+    await updateDoc(charRef, charData);
   } catch (error) {
     console.error('Error updating character:', error);
     throw error;
@@ -113,8 +144,8 @@ export async function updateCharacterInFirebase(updatedCharacter, currentCharact
  */
 export async function deleteCharacterFromFirebase(characterId, currentCharacters, currentArtifacts, currentDropdown) {
   try {
-    const updatedCharacters = currentCharacters.filter(c => c.id !== characterId);
-    await updateCharactersInFirebase(updatedCharacters, currentArtifacts, currentDropdown);
+    const charRef = doc(db, CHARACTERS_COLLECTION, characterId);
+    await deleteDoc(charRef);
   } catch (error) {
     console.error('Error deleting character:', error);
     throw error;
@@ -126,8 +157,10 @@ export async function deleteCharacterFromFirebase(characterId, currentCharacters
  */
 export async function addArtifactToFirebase(artifact, currentCharacters, currentArtifacts, currentDropdown) {
   try {
-    const updatedArtifacts = [...currentArtifacts, artifact];
-    await updateCharactersInFirebase(currentCharacters, updatedArtifacts, currentDropdown);
+    const artId = artifact.id || `artifact_${Date.now()}`;
+    const artRef = doc(db, ARTIFACTS_COLLECTION, artId);
+    const { id, ...artData } = artifact;
+    await setDoc(artRef, artData);
   } catch (error) {
     console.error('Error adding artifact:', error);
     throw error;
@@ -139,10 +172,9 @@ export async function addArtifactToFirebase(artifact, currentCharacters, current
  */
 export async function updateArtifactInFirebase(updatedArtifact, currentCharacters, currentArtifacts, currentDropdown) {
   try {
-    const updatedArtifacts = currentArtifacts.map(a =>
-      a.id === updatedArtifact.id ? updatedArtifact : a
-    );
-    await updateCharactersInFirebase(currentCharacters, updatedArtifacts, currentDropdown);
+    const { id, ...artData } = updatedArtifact;
+    const artRef = doc(db, ARTIFACTS_COLLECTION, id);
+    await updateDoc(artRef, artData);
   } catch (error) {
     console.error('Error updating artifact:', error);
     throw error;
@@ -154,8 +186,8 @@ export async function updateArtifactInFirebase(updatedArtifact, currentCharacter
  */
 export async function deleteArtifactFromFirebase(artifactId, currentCharacters, currentArtifacts, currentDropdown) {
   try {
-    const updatedArtifacts = currentArtifacts.filter(a => a.id !== artifactId);
-    await updateCharactersInFirebase(currentCharacters, updatedArtifacts, currentDropdown);
+    const artRef = doc(db, ARTIFACTS_COLLECTION, artifactId);
+    await deleteDoc(artRef);
   } catch (error) {
     console.error('Error deleting artifact:', error);
     throw error;
@@ -167,7 +199,22 @@ export async function deleteArtifactFromFirebase(artifactId, currentCharacters, 
  */
 export async function mergeCharactersInFirebase(mergedCharacters, mergedArtifacts, currentDropdown) {
   try {
-    await updateCharactersInFirebase(mergedCharacters, mergedArtifacts, currentDropdown);
+    // Delete old characters and add new ones
+    for (const char of mergedCharacters) {
+      const { id, ...charData } = char;
+      const charRef = doc(db, CHARACTERS_COLLECTION, id);
+      await setDoc(charRef, charData, { merge: true });
+    }
+
+    // Delete old artifacts and add new ones
+    for (const art of mergedArtifacts) {
+      const { id, ...artData } = art;
+      const artRef = doc(db, ARTIFACTS_COLLECTION, id);
+      await setDoc(artRef, artData, { merge: true });
+    }
+
+    // Update dropdown options
+    await updateConfigInFirebase(currentDropdown);
   } catch (error) {
     console.error('Error merging data:', error);
     throw error;
