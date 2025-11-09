@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import * as anime from 'animejs'
+import anime from 'animejs/lib/anime.es.js'
 import { getImageSource } from '../utils/imageUtils'
 
 export default function CharacterGrid({ characters, onSelectCharacter }) {
