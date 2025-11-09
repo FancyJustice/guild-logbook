@@ -32,6 +32,12 @@ function App() {
   const [navigationHistory, setNavigationHistory] = useState([])
 
   useEffect(() => {
+    // Check if user was previously authenticated
+    const savedAuth = localStorage.getItem('adminAuth')
+    if (savedAuth === 'true') {
+      setIsAuthenticated(true)
+    }
+
     // Load initial data from Firebase
     const loadInitialData = async () => {
       try {
@@ -242,6 +248,8 @@ function App() {
     if (inputPassword === adminPassword) {
       setIsAuthenticated(true)
       setPassword('')
+      // Save authentication state to localStorage
+      localStorage.setItem('adminAuth', 'true')
     } else {
       alert('Incorrect password')
     }
@@ -250,6 +258,8 @@ function App() {
   const handleAdminLogout = () => {
     setIsAuthenticated(false)
     navigateTo('browser')
+    // Clear authentication state from localStorage
+    localStorage.removeItem('adminAuth')
   }
 
   if (showCover) {
