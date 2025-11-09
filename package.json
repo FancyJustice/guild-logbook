@@ -13,6 +13,7 @@
     "firebase": "^12.5.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "rpg-awesome": "^0.2.0",
     "three": "^0.181.0"
   },
   "devDependencies": {
