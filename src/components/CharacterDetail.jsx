@@ -21,11 +21,11 @@ export default function CharacterDetail({ character, onBack }) {
   const portraitRef = useRef(null)
 
   useEffect(() => {
-    // Read the stored card position from sessionStorage
+    // Read the stored card dimensions from sessionStorage
     const cardPosition = sessionStorage.getItem('cardClickPosition')
     if (cardPosition) {
       try {
-        const position = JSON.parse(cardPosition)
+        const cardData = JSON.parse(cardPosition)
 
         // Get the portrait element's final position
         if (portraitRef.current) {
@@ -33,19 +33,17 @@ export default function CharacterDetail({ character, onBack }) {
           setTimeout(() => {
             const portraitRect = portraitRef.current.getBoundingClientRect()
 
-            // Calculate offset from portrait's current position back to where card was centered
-            // The card was at the center of the viewport when the detail page loaded
+            // The card is now centered on the viewport
             const viewportWidth = window.innerWidth
             const viewportHeight = window.innerHeight
             const cardCenterX = viewportWidth / 2
             const cardCenterY = viewportHeight / 2
 
             // The portrait is at its final position in the detail page layout
-            // Calculate how much to move it to reach the card's centered position
             const portraitCenterX = portraitRect.left + portraitRect.width / 2
             const portraitCenterY = portraitRect.top + portraitRect.height / 2
 
-            // Offset needed to move FROM centered position TO final position
+            // Offset needed to move FROM centered position TO final portrait position
             const offsetX = portraitCenterX - cardCenterX
             const offsetY = portraitCenterY - cardCenterY
 
@@ -54,7 +52,7 @@ export default function CharacterDetail({ character, onBack }) {
               '--portrait-offset-x': `${offsetX}px`,
               '--portrait-offset-y': `${offsetY}px`,
               '--portrait-width': `${portraitRect.width}px`,
-              '--card-width': `${position.width}px`,
+              '--card-width': `${cardData.width}px`,
               animation: 'card-to-portrait 0.8s ease-in-out forwards',
             })
 

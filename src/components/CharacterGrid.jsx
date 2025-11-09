@@ -35,14 +35,10 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
     const offsetToCenterX = centerX - cardCenterX
     const offsetToCenterY = centerY - cardCenterY
 
-    // Store position in sessionStorage for CharacterDetail to use
+    // Store card width and height for CharacterDetail animation
     sessionStorage.setItem('cardClickPosition', JSON.stringify({
-      x: cardX,
-      y: cardY,
       width: cardWidth,
-      height: cardHeight,
-      centerOffsetX: offsetToCenterX,
-      centerOffsetY: offsetToCenterY
+      height: cardHeight
     }))
 
     // Add grow and center animation with a slight delay to let other cards start fading
