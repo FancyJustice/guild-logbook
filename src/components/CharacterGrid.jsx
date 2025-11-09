@@ -11,6 +11,13 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
       return
     }
 
+    // Fade out all other cards
+    Object.entries(cardRefs.current).forEach(([id, element]) => {
+      if (id !== character.id) {
+        element.style.animation = 'fade-out 0.4s ease-out forwards'
+      }
+    })
+
     // Get card's current position
     const cardRect = cardElement.getBoundingClientRect()
     const cardX = cardRect.left
@@ -38,15 +45,17 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
       centerOffsetY: offsetToCenterY
     }))
 
-    // Add grow and center animation
-    cardElement.style.setProperty('--card-center-offset-x', `${offsetToCenterX}px`)
-    cardElement.style.setProperty('--card-center-offset-y', `${offsetToCenterY}px`)
-    cardElement.style.animation = 'card-grow-center 0.6s ease-in-out forwards'
+    // Add grow and center animation with a slight delay to let other cards start fading
+    setTimeout(() => {
+      cardElement.style.setProperty('--card-center-offset-x', `${offsetToCenterX}px`)
+      cardElement.style.setProperty('--card-center-offset-y', `${offsetToCenterY}px`)
+      cardElement.style.animation = 'card-grow-center 0.6s ease-in-out forwards'
+    }, 100)
 
     // Navigate after grow-center animation completes
     setTimeout(() => {
       onSelectCharacter(character)
-    }, 600)
+    }, 700)
   }
 
   return (

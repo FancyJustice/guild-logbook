@@ -103,3 +103,13 @@
     opacity: 1;
   }
 }
+
+/* Fade out animation for non-selected cards */
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
