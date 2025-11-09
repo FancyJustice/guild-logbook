@@ -5,21 +5,26 @@ import { getImageSource } from '../utils/imageUtils'
 export default function CharacterGrid({ characters, onSelectCharacter }) {
   const cardRefs = useRef({})
 
-  const handleCardClick = (character, cardElement) => {
+  const handleCardClick = (character) => {
+    const cardElement = cardRefs.current[character.id]
+    if (!cardElement) return
+
+    console.log('Animating card:', character.name)
+
     // Animate the card spinning and moving
     anime({
       targets: cardElement,
       rotate: 720,
+      translateY: -100,
       opacity: 0,
-      scale: 0.5,
-      duration: 800,
-      easing: 'easeInOutQuad'
+      scale: 0.1,
+      duration: 1000,
+      easing: 'easeInOutQuad',
+      complete: () => {
+        // Call the callback after animation completes
+        onSelectCharacter(character)
+      }
     })
-
-    // Call the callback after animation completes
-    setTimeout(() => {
-      onSelectCharacter(character)
-    }, 800)
   }
 
   return (
@@ -28,8 +33,9 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
         <div
           key={character.id}
           ref={(el) => cardRefs.current[character.id] = el}
-          onClick={() => handleCardClick(character, cardRefs.current[character.id])}
+          onClick={() => handleCardClick(character)}
           className="bg-parchment text-wood rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition cursor-pointer transform hover:scale-105 border-2 border-gold"
+          style={{ transformOrigin: 'center' }}
         >
           <div className="overflow-hidden bg-wood-light" style={{ aspectRatio: '230/300' }}>
             <img
