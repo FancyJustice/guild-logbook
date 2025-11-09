@@ -25,36 +25,25 @@ function App() {
 
   const fetchCharacters = async () => {
     try {
-      // First try to load from localStorage
-      const savedCharacters = localStorage.getItem('characters')
-      if (savedCharacters) {
-        setCharacters(JSON.parse(savedCharacters))
-      } else {
-        // If no saved data, load from JSON file
-        const response = await fetch(import.meta.env.BASE_URL + 'characters.json')
-        const data = await response.json()
-        setCharacters(data.characters || [])
-      }
-
-      // Load artifacts from localStorage or JSON file
-      const savedArtifacts = localStorage.getItem('artifacts')
-      if (savedArtifacts) {
-        setArtifacts(JSON.parse(savedArtifacts))
-      } else {
-        // If no saved data, load from JSON file
-        const response = await fetch(import.meta.env.BASE_URL + 'characters.json')
-        const data = await response.json()
-        setArtifacts(data.artifacts || [])
-      }
-
-      // Always load dropdown options from JSON file
+      // Load all data from JSON file (source of truth)
       const response = await fetch(import.meta.env.BASE_URL + 'characters.json')
       const data = await response.json()
+
+      setCharacters(data.characters || [])
+      setArtifacts(data.artifacts || [])
       setDropdownOptions(data.dropdownOptions || {})
     } catch (error) {
       console.error('Error loading characters:', error)
     }
   }
+
+  // Reload data from JSON file periodically to sync changes globally
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchCharacters()
+    }, 30000) // Refresh every 30 seconds
+    return () => clearInterval(interval)
+  }, [])
 
   const exportCharactersAsJSON = () => {
     const dataToExport = {
@@ -124,27 +113,46 @@ function App() {
     }
   }
 
-  const handleMergeConfirm = (differences) => {
+  const handleMergeConfirm = async (differences) => {
     if (!pendingMergeData) return
 
     // Merge characters
     const mergedCharacters = mergeCharacters(characters, pendingMergeData.characters)
-    setCharacters(mergedCharacters)
-    localStorage.setItem('characters', JSON.stringify(mergedCharacters))
 
     // Merge artifacts if present
+    let mergedArtifacts = artifacts
     if (pendingMergeData.artifacts && pendingMergeData.artifacts.length > 0) {
-      const mergedArtifacts = mergeCharacters(artifacts, pendingMergeData.artifacts)
-      setArtifacts(mergedArtifacts)
-      localStorage.setItem('artifacts', JSON.stringify(mergedArtifacts))
+      mergedArtifacts = mergeCharacters(artifacts, pendingMergeData.artifacts)
     }
 
-    // Clear merge state
-    setShowMergePreview(false)
-    setPendingMergeData(null)
-    setMergeReport(null)
+    try {
+      const response = await fetch(import.meta.env.BASE_URL + 'api/characters', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'merge',
+          characters: mergedCharacters,
+          artifacts: mergedArtifacts
+        })
+      })
 
-    alert(`Merge successful!\nAdded: ${differences.added.length}, Modified: ${differences.modified.length}, Removed: ${differences.removed.length}`)
+      if (response.ok) {
+        setCharacters(mergedCharacters)
+        setArtifacts(mergedArtifacts)
+
+        // Clear merge state
+        setShowMergePreview(false)
+        setPendingMergeData(null)
+        setMergeReport(null)
+
+        alert(`Merge successful!\nAdded: ${differences.added.length}, Modified: ${differences.modified.length}`)
+      } else {
+        alert('Failed to save merged data')
+      }
+    } catch (error) {
+      console.error('Error saving merge:', error)
+      alert('Error saving merge: ' + error.message)
+    }
   }
 
   const handleMergeCancel = () => {
@@ -153,44 +161,160 @@ function App() {
     setMergeReport(null)
   }
 
-  const handleAddCharacter = (newCharacter) => {
-    const updatedCharacters = [...characters, { ...newCharacter, id: `char_${Date.now()}` }]
-    setCharacters(updatedCharacters)
-    localStorage.setItem('characters', JSON.stringify(updatedCharacters))
+  const handleAddCharacter = async (newCharacter) => {
+    const characterWithId = { ...newCharacter, id: `char_${Date.now()}` }
+    const updatedCharacters = [...characters, characterWithId]
+
+    try {
+      const response = await fetch(import.meta.env.BASE_URL + 'api/characters', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'add',
+          character: characterWithId,
+          allCharacters: updatedCharacters
+        })
+      })
+
+      if (response.ok) {
+        setCharacters(updatedCharacters)
+      } else {
+        alert('Failed to add character')
+      }
+    } catch (error) {
+      console.error('Error adding character:', error)
+      alert('Error adding character: ' + error.message)
+    }
   }
 
-  const handleUpdateCharacter = (updatedCharacter) => {
+  const handleUpdateCharacter = async (updatedCharacter) => {
     const updatedCharacters = characters.map(char =>
       char.id === updatedCharacter.id ? updatedCharacter : char
     )
-    setCharacters(updatedCharacters)
-    localStorage.setItem('characters', JSON.stringify(updatedCharacters))
+
+    try {
+      const response = await fetch(import.meta.env.BASE_URL + 'api/characters', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update',
+          character: updatedCharacter,
+          allCharacters: updatedCharacters
+        })
+      })
+
+      if (response.ok) {
+        setCharacters(updatedCharacters)
+      } else {
+        alert('Failed to update character')
+      }
+    } catch (error) {
+      console.error('Error updating character:', error)
+      alert('Error updating character: ' + error.message)
+    }
   }
 
-  const handleDeleteCharacter = (characterId) => {
+  const handleDeleteCharacter = async (characterId) => {
     const updatedCharacters = characters.filter(char => char.id !== characterId)
-    setCharacters(updatedCharacters)
-    localStorage.setItem('characters', JSON.stringify(updatedCharacters))
+
+    try {
+      const response = await fetch(import.meta.env.BASE_URL + 'api/characters', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'delete',
+          characterId: characterId,
+          allCharacters: updatedCharacters
+        })
+      })
+
+      if (response.ok) {
+        setCharacters(updatedCharacters)
+      } else {
+        alert('Failed to delete character')
+      }
+    } catch (error) {
+      console.error('Error deleting character:', error)
+      alert('Error deleting character: ' + error.message)
+    }
   }
 
-  const handleAddArtifact = (newArtifact) => {
-    const updatedArtifacts = [...artifacts, { ...newArtifact, id: `artifact_${Date.now()}` }]
-    setArtifacts(updatedArtifacts)
-    localStorage.setItem('artifacts', JSON.stringify(updatedArtifacts))
+  const handleAddArtifact = async (newArtifact) => {
+    const artifactWithId = { ...newArtifact, id: `artifact_${Date.now()}` }
+    const updatedArtifacts = [...artifacts, artifactWithId]
+
+    try {
+      const response = await fetch(import.meta.env.BASE_URL + 'api/artifacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'add',
+          artifact: artifactWithId,
+          allArtifacts: updatedArtifacts
+        })
+      })
+
+      if (response.ok) {
+        setArtifacts(updatedArtifacts)
+      } else {
+        alert('Failed to add artifact')
+      }
+    } catch (error) {
+      console.error('Error adding artifact:', error)
+      alert('Error adding artifact: ' + error.message)
+    }
   }
 
-  const handleUpdateArtifact = (updatedArtifact) => {
+  const handleUpdateArtifact = async (updatedArtifact) => {
     const updatedArtifacts = artifacts.map(artifact =>
       artifact.id === updatedArtifact.id ? updatedArtifact : artifact
     )
-    setArtifacts(updatedArtifacts)
-    localStorage.setItem('artifacts', JSON.stringify(updatedArtifacts))
+
+    try {
+      const response = await fetch(import.meta.env.BASE_URL + 'api/artifacts', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update',
+          artifact: updatedArtifact,
+          allArtifacts: updatedArtifacts
+        })
+      })
+
+      if (response.ok) {
+        setArtifacts(updatedArtifacts)
+      } else {
+        alert('Failed to update artifact')
+      }
+    } catch (error) {
+      console.error('Error updating artifact:', error)
+      alert('Error updating artifact: ' + error.message)
+    }
   }
 
-  const handleDeleteArtifact = (artifactId) => {
+  const handleDeleteArtifact = async (artifactId) => {
     const updatedArtifacts = artifacts.filter(artifact => artifact.id !== artifactId)
-    setArtifacts(updatedArtifacts)
-    localStorage.setItem('artifacts', JSON.stringify(updatedArtifacts))
+
+    try {
+      const response = await fetch(import.meta.env.BASE_URL + 'api/artifacts', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'delete',
+          artifactId: artifactId,
+          allArtifacts: updatedArtifacts
+        })
+      })
+
+      if (response.ok) {
+        setArtifacts(updatedArtifacts)
+      } else {
+        alert('Failed to delete artifact')
+      }
+    } catch (error) {
+      console.error('Error deleting artifact:', error)
+      alert('Error deleting artifact: ' + error.message)
+    }
   }
 
   const handleAdminLogin = (inputPassword) => {
