@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { uploadCharacterImage } from '../utils/storageUtils'
 
 export default function CharacterForm({ dropdownOptions, editingCharacter, onSubmit, onCancel }) {
   const [formData, setFormData] = useState(editingCharacter ? {
@@ -54,7 +55,7 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0]
     if (file) {
       // Validate file type
@@ -63,50 +64,61 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
         return
       }
 
-      // Create canvas to resize image to 230x300
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        const img = new Image()
-        img.onload = () => {
-          const canvas = document.createElement('canvas')
-          canvas.width = 230
-          canvas.height = 300
-          const ctx = canvas.getContext('2d')
+      try {
+        // Create canvas to resize image to 230x300
+        const reader = new FileReader()
+        reader.onload = async (event) => {
+          const img = new Image()
+          img.onload = async () => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 230
+            canvas.height = 300
+            const ctx = canvas.getContext('2d')
 
-          // Calculate dimensions to maintain aspect ratio
-          const imgRatio = img.width / img.height
-          const canvasRatio = 230 / 300
-          let drawWidth, drawHeight, offsetX = 0, offsetY = 0
+            // Calculate dimensions to maintain aspect ratio
+            const imgRatio = img.width / img.height
+            const canvasRatio = 230 / 300
+            let drawWidth, drawHeight, offsetX = 0, offsetY = 0
 
-          if (imgRatio > canvasRatio) {
-            drawHeight = 300
-            drawWidth = 300 * imgRatio
-            offsetX = (drawWidth - 230) / 2
-          } else {
-            drawWidth = 230
-            drawHeight = 230 / imgRatio
-            offsetY = (drawHeight - 300) / 2
+            if (imgRatio > canvasRatio) {
+              drawHeight = 300
+              drawWidth = 300 * imgRatio
+              offsetX = (drawWidth - 230) / 2
+            } else {
+              drawWidth = 230
+              drawHeight = 230 / imgRatio
+              offsetY = (drawHeight - 300) / 2
+            }
+
+            ctx.drawImage(img, -offsetX, -offsetY, drawWidth, drawHeight)
+            const dataUrl = canvas.toDataURL('image/png')
+            setPhotoPreview(dataUrl)
+
+            // Generate filename from character name
+            const charName = formData.name || `character_${Date.now()}`
+            const fileName = `${charName.replace(/\s+/g, '_').toLowerCase()}.png`
+
+            try {
+              // Upload to Firebase Storage
+              const downloadURL = await uploadCharacterImage(dataUrl, fileName)
+
+              // Store the download URL in the form data
+              setFormData(prev => ({
+                ...prev,
+                photo: downloadURL
+              }))
+            } catch (error) {
+              console.error('Error uploading image:', error)
+              alert('Failed to upload image: ' + error.message)
+            }
           }
-
-          ctx.drawImage(img, -offsetX, -offsetY, drawWidth, drawHeight)
-          const dataUrl = canvas.toDataURL('image/png')
-          setPhotoPreview(dataUrl)
-
-          // Generate file path from character name or use filename
-          const charName = formData.name || 'character'
-          const fileName = `${charName.replace(/\s+/g, '_').toLowerCase()}.png`
-          const filePath = `images/characters/${fileName}`
-
-          // Store both preview (for display) and file path (for JSON)
-          setFormData(prev => ({
-            ...prev,
-            photo: filePath,
-            photoData: dataUrl // Keep preview data temporarily for display
-          }))
+          img.src = event.target.result
         }
-        img.src = event.target.result
+        reader.readAsDataURL(file)
+      } catch (error) {
+        console.error('Error processing image:', error)
+        alert('Error processing image: ' + error.message)
       }
-      reader.readAsDataURL(file)
     }
   }
 
