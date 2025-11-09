@@ -68,28 +68,30 @@ export const findDifferences = (current = [], imported = []) => {
 
 /**
  * Merge character arrays with intelligent conflict resolution
- * Strategy: Import new/modified items, keep removals that weren't in the file
+ * Strategy: Only update/add items from import, NEVER remove items just because they're missing
+ * This allows people to work with partial exports and merge them back safely
  */
 export const mergeCharacters = (current = [], imported = [], strategy = 'smart') => {
   const differences = findDifferences(current, imported)
 
   let merged = [...current]
 
-  // Remove items that were removed in the import
-  merged = merged.filter(item => !differences.removed.some(r => r.id === item.id))
-
-  // Add new items
+  // Add new items from import
   differences.added.forEach(item => {
     merged.push(item)
   })
 
-  // Update modified items
+  // Update modified items with imported versions
   differences.modified.forEach(({ id, imported: importedItem }) => {
     const index = merged.findIndex(item => item.id === id)
     if (index !== -1) {
       merged[index] = importedItem
     }
   })
+
+  // IMPORTANT: Do NOT remove items that are in current but not in imported
+  // This allows partial exports/imports without losing data
+  // Items are only deleted if explicitly removed in the admin panel and re-exported
 
   return merged
 }

@@ -80,7 +80,19 @@ function App() {
         try {
           const data = JSON.parse(e.target.result)
 
-          // Validate imported data
+          // Check if it's a single character export
+          if (data.character && !data.characters) {
+            // Single character import
+            const singleCharArray = [data.character]
+            const differences = findDifferences(characters, singleCharArray)
+            const report = generateMergeReport(differences)
+            setPendingMergeData({ characters: singleCharArray, artifacts: [] })
+            setMergeReport(report)
+            setShowMergePreview(true)
+            return
+          }
+
+          // Validate imported data (full export)
           const validation = validateImportedData(data)
           if (!validation.isValid) {
             alert('Invalid JSON format:\n' + validation.errors.join('\n'))

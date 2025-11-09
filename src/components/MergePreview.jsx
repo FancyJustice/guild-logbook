@@ -12,7 +12,7 @@ export default function MergePreview({ differences, onConfirm, onCancel, report 
         </h2>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-3 gap-3 mb-6">
           <div className="bg-gold-light text-wood p-3 rounded text-center">
             <div className="text-2xl font-bold">{report.summary.added}</div>
             <div className="text-xs uppercase">Added</div>
@@ -22,10 +22,6 @@ export default function MergePreview({ differences, onConfirm, onCancel, report 
             <div className="text-xs uppercase">Modified</div>
           </div>
           <div className="bg-gold-light text-wood p-3 rounded text-center">
-            <div className="text-2xl font-bold">{report.summary.removed}</div>
-            <div className="text-xs uppercase">Removed</div>
-          </div>
-          <div className="bg-gold-light text-wood p-3 rounded text-center">
             <div className="text-2xl font-bold">{report.summary.unchanged}</div>
             <div className="text-xs uppercase">Unchanged</div>
           </div>
@@ -33,7 +29,7 @@ export default function MergePreview({ differences, onConfirm, onCancel, report 
 
         {/* Tabs */}
         <div className="flex gap-2 mb-4 border-b border-gold-dark">
-          {['summary', 'added', 'modified', 'removed'].map(tab => (
+          {['summary', 'added', 'modified'].map(tab => (
             <button
               key={tab}
               onClick={() => setSelectedTab(tab)}
@@ -56,8 +52,11 @@ export default function MergePreview({ differences, onConfirm, onCancel, report 
               <ul className="space-y-2 ml-4">
                 <li>✓ <strong>{report.summary.added}</strong> new character(s) will be added</li>
                 <li>✎ <strong>{report.summary.modified}</strong> character(s) will be updated</li>
-                <li>✗ <strong>{report.summary.removed}</strong> character(s) will be removed</li>
+                <li>✓ <strong>{report.summary.unchanged}</strong> character(s) will remain unchanged</li>
               </ul>
+              <p className="mt-4 pt-3 border-t border-gold-dark text-xs">
+                <strong>Note:</strong> Characters in your database that aren't in the imported file will NOT be removed. This allows safe merging of partial exports.
+              </p>
             </div>
           )}
 
@@ -85,17 +84,6 @@ export default function MergePreview({ differences, onConfirm, onCancel, report 
                     ))}
                     {item.changes.length > 3 && <div>+{item.changes.length - 3} more changes</div>}
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {selectedTab === 'removed' && (
-            <div className="space-y-2">
-              {report.details.removed.map(item => (
-                <div key={item.id} className="bg-parchment-dark p-2 rounded border-l-4 border-seal">
-                  <div className="font-bold text-sm">{item.name}</div>
-                  <div className="text-xs text-wood-light">ID: {item.id}</div>
                 </div>
               ))}
             </div>

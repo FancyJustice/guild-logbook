@@ -15,17 +15,40 @@ const colorPalette = {
 export default function CharacterDetail({ character, onBack }) {
   const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
 
+  const exportCharacterAsJSON = () => {
+    const dataToExport = {
+      character: character
+    }
+    const dataStr = JSON.stringify(dataToExport, null, 2)
+    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(dataBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${character.name.replace(/\s+/g, '_')}.json`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="space-y-4" style={{
       '--gradient-color-1': ultimateColors.color1,
       '--gradient-color-2': ultimateColors.color2,
     }}>
-      <button
-        onClick={onBack}
-        className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded"
-      >
-        ← Back to Browse
-      </button>
+      <div className="flex gap-3">
+        <button
+          onClick={onBack}
+          className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded"
+        >
+          ← Back to Browse
+        </button>
+        <button
+          onClick={exportCharacterAsJSON}
+          className="px-4 py-2 bg-gold text-wood hover:bg-gold-light transition rounded flex items-center gap-2"
+        >
+          <i className="ra ra-download" style={{ color: '#2a2420' }}></i>
+          Export {character.name}
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Left Column - Image & Basic Info */}
