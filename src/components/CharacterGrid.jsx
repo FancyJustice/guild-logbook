@@ -18,16 +18,35 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
     const cardWidth = cardRect.width
     const cardHeight = cardRect.height
 
+    // Calculate offset to center the card
+    const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
+    const centerX = viewportWidth / 2
+    const centerY = viewportHeight / 2
+    const cardCenterX = cardX + cardWidth / 2
+    const cardCenterY = cardY + cardHeight / 2
+    const offsetToCenterX = centerX - cardCenterX
+    const offsetToCenterY = centerY - cardCenterY
+
     // Store position in sessionStorage for CharacterDetail to use
     sessionStorage.setItem('cardClickPosition', JSON.stringify({
       x: cardX,
       y: cardY,
       width: cardWidth,
-      height: cardHeight
+      height: cardHeight,
+      centerOffsetX: offsetToCenterX,
+      centerOffsetY: offsetToCenterY
     }))
 
-    // Navigate immediately - animation happens on detail page
-    onSelectCharacter(character)
+    // Add grow and center animation
+    cardElement.style.setProperty('--card-center-offset-x', `${offsetToCenterX}px`)
+    cardElement.style.setProperty('--card-center-offset-y', `${offsetToCenterY}px`)
+    cardElement.style.animation = 'card-grow-center 0.6s ease-in-out forwards'
+
+    // Navigate after grow-center animation completes
+    setTimeout(() => {
+      onSelectCharacter(character)
+    }, 600)
   }
 
   return (

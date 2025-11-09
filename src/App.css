@@ -75,3 +75,31 @@
     transform: translateY(0);
   }
 }
+
+/* Card grow and center animation */
+@keyframes card-grow-center {
+  0% {
+    transform: translate(var(--card-center-offset-x), var(--card-center-offset-y)) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(0, 0) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 0) scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Card move to portrait position animation */
+@keyframes card-to-portrait {
+  0% {
+    transform: translate(0, 0) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--portrait-offset-x), var(--portrait-offset-y)) scale(calc(var(--portrait-width) / var(--card-width)));
+    opacity: 1;
+  }
+}

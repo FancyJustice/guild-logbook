@@ -29,29 +29,39 @@ export default function CharacterDetail({ character, onBack }) {
 
         // Get the portrait element's final position
         if (portraitRef.current) {
-          const portraitRect = portraitRef.current.getBoundingClientRect()
-
-          // Calculate the offset needed to position portrait at card location
-          const offsetX = position.x - portraitRect.left
-          const offsetY = position.y - portraitRect.top
-          const scaleRatio = position.width / portraitRect.width
-
-          // Set CSS custom properties for the animation
-          setAnimationStyle({
-            '--start-x': `${offsetX}px`,
-            '--start-y': `${offsetY}px`,
-            '--start-width': `${position.width}px`,
-            '--final-width': `${portraitRect.width}px`,
-            animation: 'portrait-expand 0.8s ease-out forwards',
-          })
-
-          // Show content after a brief delay
-          setTimeout(() => setShowContent(true), 100)
-
-          // Clean up sessionStorage after animation
+          // Use a small delay to ensure element is rendered before animation
           setTimeout(() => {
-            sessionStorage.removeItem('cardClickPosition')
-          }, 800)
+            const portraitRect = portraitRef.current.getBoundingClientRect()
+
+            // Calculate where the centered card is (at viewport center)
+            const viewportWidth = window.innerWidth
+            const viewportHeight = window.innerHeight
+            const centerX = viewportWidth / 2
+            const centerY = viewportHeight / 2
+
+            // Calculate offset from centered position to final portrait position
+            const portraitCenterX = portraitRect.left + portraitRect.width / 2
+            const portraitCenterY = portraitRect.top + portraitRect.height / 2
+            const offsetToCenterX = centerX - portraitCenterX
+            const offsetToCenterY = centerY - portraitCenterY
+
+            // Set CSS custom properties for the card-to-portrait animation
+            setAnimationStyle({
+              '--portrait-offset-x': `${offsetToCenterX}px`,
+              '--portrait-offset-y': `${offsetToCenterY}px`,
+              '--portrait-width': `${portraitRect.width}px`,
+              '--card-width': `${position.width}px`,
+              animation: 'card-to-portrait 0.8s ease-in-out forwards',
+            })
+
+            // Show content after animation starts
+            setTimeout(() => setShowContent(true), 200)
+
+            // Clean up sessionStorage after animation
+            setTimeout(() => {
+              sessionStorage.removeItem('cardClickPosition')
+            }, 800)
+          }, 50)
         }
       } catch (error) {
         console.error('Error parsing card position:', error)
