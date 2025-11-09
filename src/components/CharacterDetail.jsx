@@ -54,10 +54,7 @@ export default function CharacterDetail({ character, onBack }) {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Left Column - Image & Basic Info */}
         <div className="lg:col-span-1 space-y-4">
-          <div
-            ref={portraitRef}
-            className="bg-wood-light rounded-lg overflow-hidden shadow-lg border-2 border-gold"
-          >
+          <div className="bg-wood-light rounded-lg overflow-hidden shadow-lg border-2 border-gold">
             <img
               src={getImageSource(character.photo)}
               alt={character.name}
