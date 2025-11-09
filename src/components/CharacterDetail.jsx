@@ -33,22 +33,26 @@ export default function CharacterDetail({ character, onBack }) {
           setTimeout(() => {
             const portraitRect = portraitRef.current.getBoundingClientRect()
 
-            // Calculate where the centered card is (at viewport center)
+            // Calculate offset from portrait's current position back to where card was centered
+            // The card was at the center of the viewport when the detail page loaded
             const viewportWidth = window.innerWidth
             const viewportHeight = window.innerHeight
-            const centerX = viewportWidth / 2
-            const centerY = viewportHeight / 2
+            const cardCenterX = viewportWidth / 2
+            const cardCenterY = viewportHeight / 2
 
-            // Calculate offset from centered position to final portrait position
+            // The portrait is at its final position in the detail page layout
+            // Calculate how much to move it to reach the card's centered position
             const portraitCenterX = portraitRect.left + portraitRect.width / 2
             const portraitCenterY = portraitRect.top + portraitRect.height / 2
-            const offsetToCenterX = centerX - portraitCenterX
-            const offsetToCenterY = centerY - portraitCenterY
+
+            // Offset needed to move FROM centered position TO final position
+            const offsetX = portraitCenterX - cardCenterX
+            const offsetY = portraitCenterY - cardCenterY
 
             // Set CSS custom properties for the card-to-portrait animation
             setAnimationStyle({
-              '--portrait-offset-x': `${offsetToCenterX}px`,
-              '--portrait-offset-y': `${offsetToCenterY}px`,
+              '--portrait-offset-x': `${offsetX}px`,
+              '--portrait-offset-y': `${offsetY}px`,
               '--portrait-width': `${portraitRect.width}px`,
               '--card-width': `${position.width}px`,
               animation: 'card-to-portrait 0.8s ease-in-out forwards',
