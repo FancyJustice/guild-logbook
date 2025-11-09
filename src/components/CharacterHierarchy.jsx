@@ -70,7 +70,9 @@ export default function CharacterHierarchy({ characters, onSelectCharacter }) {
                     {/* Character Card */}
                     <div
                       onClick={() => onSelectCharacter(character)}
-                      className="bg-parchment text-wood rounded-lg overflow-hidden border-2 border-gold shadow-lg hover:shadow-2xl transition cursor-pointer transform hover:scale-105 w-32"
+                      className={`bg-parchment text-wood rounded-lg overflow-hidden border-4 shadow-lg hover:shadow-2xl transition cursor-pointer transform hover:scale-105 w-32 ${
+                        character.type === 'guild' ? 'border-gold' : 'border-seal'
+                      }`}
                     >
                       {/* Character Photo */}
                       <div className="overflow-hidden bg-wood-light" style={{ aspectRatio: '230/300' }}>

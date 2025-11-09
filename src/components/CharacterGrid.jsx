@@ -11,7 +11,9 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
         <div
           key={character.id}
           onClick={() => handleCardClick(character)}
-          className="bg-parchment text-wood rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition cursor-pointer transform hover:scale-105 border-2 border-gold"
+          className={`bg-parchment text-wood rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition cursor-pointer transform hover:scale-105 border-4 ${
+            character.type === 'guild' ? 'border-gold' : 'border-seal'
+          }`}
         >
           <div className="overflow-hidden bg-wood-light" style={{ aspectRatio: '230/300' }}>
             <img
