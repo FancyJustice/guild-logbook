@@ -1,12 +1,34 @@
+import { useRef } from 'react'
+import anime from 'animejs'
 import { getImageSource } from '../utils/imageUtils'
 
 export default function CharacterGrid({ characters, onSelectCharacter }) {
+  const cardRefs = useRef({})
+
+  const handleCardClick = (character, cardElement) => {
+    // Animate the card spinning and moving
+    anime({
+      targets: cardElement,
+      rotate: 720,
+      opacity: 0,
+      scale: 0.5,
+      duration: 800,
+      easing: 'easeInOutQuad'
+    })
+
+    // Call the callback after animation completes
+    setTimeout(() => {
+      onSelectCharacter(character)
+    }, 800)
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {characters.map(character => (
         <div
           key={character.id}
-          onClick={() => onSelectCharacter(character)}
+          ref={(el) => cardRefs.current[character.id] = el}
+          onClick={() => handleCardClick(character, cardRefs.current[character.id])}
           className="bg-parchment text-wood rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition cursor-pointer transform hover:scale-105 border-2 border-gold"
         >
           <div className="overflow-hidden bg-wood-light" style={{ aspectRatio: '230/300' }}>
