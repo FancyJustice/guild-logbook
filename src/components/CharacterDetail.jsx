@@ -81,7 +81,7 @@ export default function CharacterDetail({ character, onBack }) {
               <p className="text-wood-light">
                 <i className="ra ra-portrait" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Player:</strong> {character.vrcPlayerName && (
                   <a
-                    href={`https://vrchat.com/home/user/${character.vrcPlayerName}`}
+                    href={character.vrcProfileUrl || `https://vrchat.com/home/user/${character.vrcPlayerName}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gold hover:text-parchment transition cursor-pointer"

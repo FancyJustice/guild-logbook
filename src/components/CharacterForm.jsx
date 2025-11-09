@@ -12,6 +12,7 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
     title: '',
     name: '',
     vrcPlayerName: '',
+    vrcProfileUrl: '',
     gender: '',
     race: '',
     age: '',
@@ -223,6 +224,13 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
           value={formData.vrcPlayerName}
           onChange={(value) => handleInputChange('vrcPlayerName', value)}
           required
+        />
+        <FormInput
+          label="VRC Profile URL"
+          value={formData.vrcProfileUrl}
+          onChange={(value) => handleInputChange('vrcProfileUrl', value)}
+          placeholder="e.g., https://vrchat.com/home/user/usr_xxxxx"
+          type="url"
         />
         <FormInput
           label="Title"
