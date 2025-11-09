@@ -277,11 +277,6 @@ function App() {
               </button>
             </nav>
           </div>
-          {characters.length > 1 && (
-            <div className="bg-seal/20 border border-seal text-parchment px-4 py-3 rounded text-sm">
-              <strong>📌 Tip:</strong> Your characters are saved in your browser. Before pushing code updates, use the Admin panel to <strong>Export JSON</strong> as a backup. After updates, use <strong>Import JSON</strong> to restore them.
-            </div>
-          )}
         </div>
       </header>
 
@@ -305,30 +300,6 @@ function App() {
               >
                 Logout
               </button>
-              <button
-                onClick={exportCharactersAsJSON}
-                className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded"
-              >
-                Export JSON
-              </button>
-              <label className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded cursor-pointer">
-                Import JSON (Replace)
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={(e) => importCharactersFromJSON(e, false)}
-                  style={{ display: 'none' }}
-                />
-              </label>
-              <label className="px-4 py-2 bg-gold text-wood hover:bg-gold-light transition rounded cursor-pointer">
-                Merge JSON
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={(e) => importCharactersFromJSON(e, true)}
-                  style={{ display: 'none' }}
-                />
-              </label>
             </div>
             <AdminPanel
               authenticated={true}

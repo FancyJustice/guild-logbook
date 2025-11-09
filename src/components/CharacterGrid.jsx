@@ -7,20 +7,25 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
 
   const handleCardClick = (character) => {
     const cardElement = cardRefs.current[character.id]
-    if (!cardElement) return
+    if (!cardElement) {
+      console.log('Card element not found')
+      onSelectCharacter(character)
+      return
+    }
 
-    console.log('Animating card:', character.name)
+    console.log('Animating card:', character.name, cardElement)
 
     // Animate the card spinning and moving
     anime({
       targets: cardElement,
       rotate: 720,
-      translateY: -100,
-      opacity: 0,
-      scale: 0.1,
-      duration: 1000,
+      translateY: -50,
+      opacity: 0.2,
+      scale: 0.3,
+      duration: 600,
       easing: 'easeInOutQuad',
       complete: () => {
+        console.log('Animation complete')
         // Call the callback after animation completes
         onSelectCharacter(character)
       }
