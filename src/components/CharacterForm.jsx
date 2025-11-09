@@ -202,104 +202,115 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold space-y-6" style={{ fontFamily: 'Crimson Text, serif' }}>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <FormSelect
-          label="Type"
-          value={formData.type}
-          onChange={(value) => handleInputChange('type', value)}
-          options={[
-            { value: 'guild', label: 'Guild Member' },
-            { value: 'criminal', label: 'Criminal' },
-          ]}
-        />
-        <FormInput
-          label="Name"
-          value={formData.name}
-          onChange={(value) => handleInputChange('name', value)}
-          required
-        />
-        <FormInput
-          label="VRC Player Name"
-          value={formData.vrcPlayerName}
-          onChange={(value) => handleInputChange('vrcPlayerName', value)}
-          required
-        />
-        <FormInput
-          label="VRC Profile URL"
-          value={formData.vrcProfileUrl}
-          onChange={(value) => handleInputChange('vrcProfileUrl', value)}
-          placeholder="e.g., https://vrchat.com/home/user/usr_xxxxx"
-          type="url"
-        />
-        <FormInput
-          label="Title"
-          value={formData.title}
-          onChange={(value) => handleInputChange('title', value)}
-        />
-        <FormInput
-          label="Gender"
-          value={formData.gender}
-          onChange={(value) => handleInputChange('gender', value)}
-          placeholder="e.g., Male, Female, Non-binary"
-        />
-        <FormInput
-          label="Race"
-          value={formData.race}
-          onChange={(value) => handleInputChange('race', value)}
-          placeholder="e.g., Human, Elf, Dwarf"
-        />
-        <FormInput
-          label="Class"
-          value={formData.class}
-          onChange={(value) => handleInputChange('class', value)}
-          placeholder="e.g., Ranger, Mage, Warrior"
-        />
-        <FormInput
-          label="Age"
-          value={formData.age}
-          onChange={(value) => handleInputChange('age', value)}
-          placeholder="e.g., 25, Unknown, Ageless"
-        />
-        <FormInput
-          label="Level"
-          type="number"
-          value={formData.level}
-          onChange={(value) => handleInputChange('level', value)}
-        />
-        <FormInput
-          label="Height"
-          value={formData.height}
-          onChange={(value) => handleInputChange('height', value)}
-        />
-        <FormInput
-          label="Affiliation"
-          value={formData.affiliation}
-          onChange={(value) => handleInputChange('affiliation', value)}
-        />
-        <FormInput
-          label="Place of Origin"
-          value={formData.placeOfOrigin}
-          onChange={(value) => handleInputChange('placeOfOrigin', value)}
-        />
-        <FormSelect
-          label={formData.type === 'guild' ? 'Rank' : 'Threat Level'}
-          value={formData.rank}
-          onChange={(value) => handleInputChange('rank', value)}
-          options={formData.type === 'guild'
-            ? [{ value: '', label: 'Select Rank' }, ...(dropdownOptions.rank || []).map(r => ({ value: r, label: r }))]
-            : [{ value: '', label: 'Select Threat Level' }, ...(dropdownOptions.threatLevel || []).map(t => ({ value: t, label: t }))]
-          }
-        />
-        <FormInput
-          label="Status"
-          value={formData.status}
-          onChange={(value) => handleInputChange('status', value)}
-        />
+    <form onSubmit={handleSubmit} className="bg-parchment text-wood p-8 rounded-lg border-2 border-gold space-y-8 max-w-6xl mx-auto" style={{ fontFamily: 'Crimson Text, serif' }}>
+      {/* Header Section */}
+      <div>
+        <h2 className="text-3xl font-medieval font-bold text-gold-dark mb-6 border-b-2 border-gold-dark pb-3">Character Information</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormSelect
+            label="Type"
+            value={formData.type}
+            onChange={(value) => handleInputChange('type', value)}
+            options={[
+              { value: 'guild', label: 'Guild Member' },
+              { value: 'criminal', label: 'Criminal' },
+            ]}
+          />
+          <FormInput
+            label="Name *"
+            value={formData.name}
+            onChange={(value) => handleInputChange('name', value)}
+            required
+          />
+          <FormInput
+            label="VRC Player Name *"
+            value={formData.vrcPlayerName}
+            onChange={(value) => handleInputChange('vrcPlayerName', value)}
+            required
+          />
+          <FormInput
+            label="VRC Profile URL"
+            value={formData.vrcProfileUrl}
+            onChange={(value) => handleInputChange('vrcProfileUrl', value)}
+            placeholder="e.g., https://vrchat.com/home/user/usr_xxxxx"
+            type="url"
+          />
+          <FormInput
+            label="Title"
+            value={formData.title}
+            onChange={(value) => handleInputChange('title', value)}
+          />
+          <FormInput
+            label="Status"
+            value={formData.status}
+            onChange={(value) => handleInputChange('status', value)}
+          />
+        </div>
+      </div>
+
+      {/* Appearance & Demographics Section */}
+      <div className="border-t-2 border-gold-dark pt-6">
+        <h3 className="text-xl font-medieval font-bold text-gold-dark mb-6">Appearance & Demographics</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <FormInput
+            label="Race"
+            value={formData.race}
+            onChange={(value) => handleInputChange('race', value)}
+            placeholder="e.g., Human, Elf, Dwarf"
+          />
+          <FormInput
+            label="Class"
+            value={formData.class}
+            onChange={(value) => handleInputChange('class', value)}
+            placeholder="e.g., Ranger, Mage, Warrior"
+          />
+          <FormInput
+            label="Gender"
+            value={formData.gender}
+            onChange={(value) => handleInputChange('gender', value)}
+            placeholder="e.g., Male, Female, Non-binary"
+          />
+          <FormInput
+            label="Age"
+            value={formData.age}
+            onChange={(value) => handleInputChange('age', value)}
+            placeholder="e.g., 25, Unknown, Ageless"
+          />
+          <FormInput
+            label="Height"
+            value={formData.height}
+            onChange={(value) => handleInputChange('height', value)}
+          />
+          <FormInput
+            label="Place of Origin"
+            value={formData.placeOfOrigin}
+            onChange={(value) => handleInputChange('placeOfOrigin', value)}
+          />
+          <FormInput
+            label="Affiliation"
+            value={formData.affiliation}
+            onChange={(value) => handleInputChange('affiliation', value)}
+          />
+          <FormInput
+            label="Level"
+            type="number"
+            value={formData.level}
+            onChange={(value) => handleInputChange('level', value)}
+          />
+          <FormSelect
+            label={formData.type === 'guild' ? 'Rank' : 'Threat Level'}
+            value={formData.rank}
+            onChange={(value) => handleInputChange('rank', value)}
+            options={formData.type === 'guild'
+              ? [{ value: '', label: 'Select Rank' }, ...(dropdownOptions.rank || []).map(r => ({ value: r, label: r }))]
+              : [{ value: '', label: 'Select Threat Level' }, ...(dropdownOptions.threatLevel || []).map(t => ({ value: t, label: t }))]
+            }
+          />
+        </div>
       </div>
 
       {/* Photo Upload Section */}
-      <div className="bg-parchment-dark p-4 rounded border-2 border-gold-dark">
+      <div className="bg-parchment-dark p-6 rounded border-2 border-gold-dark">
         <label className="block text-sm font-medieval text-wood-light mb-3">Profile Photo (230x300 PNG)</label>
         <div className="flex gap-4">
           <div className="flex-1">
