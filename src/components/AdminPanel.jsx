@@ -22,6 +22,20 @@ export default function AdminPanel({
   const [editingCharacter, setEditingCharacter] = useState(null)
   const [editingArtifact, setEditingArtifact] = useState(null)
 
+  const exportCharacterAsJSON = (character) => {
+    const dataToExport = {
+      character: character
+    }
+    const dataStr = JSON.stringify(dataToExport, null, 2)
+    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(dataBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${character.name.replace(/\s+/g, '_')}.json`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
   if (!authenticated) {
     return (
       <div className="max-w-md mx-auto">
@@ -113,6 +127,13 @@ export default function AdminPanel({
                 className="px-3 py-1 bg-gold-dark text-parchment hover:bg-gold transition rounded text-sm font-medieval"
               >
                 Edit
+              </button>
+              <button
+                onClick={() => exportCharacterAsJSON(character)}
+                className="px-3 py-1 bg-gold text-wood hover:bg-gold-light transition rounded text-sm font-medieval flex items-center gap-1"
+              >
+                <i className="ra ra-download" style={{ color: '#2a2420' }}></i>
+                Export
               </button>
               <button
                 onClick={() => {
