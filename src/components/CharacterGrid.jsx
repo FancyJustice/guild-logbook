@@ -1,6 +1,4 @@
 import { useRef } from 'react'
-// @ts-ignore
-import anime from 'animejs/lib/anime.es.js'
 import { getImageSource } from '../utils/imageUtils'
 
 export default function CharacterGrid({ characters, onSelectCharacter }) {
@@ -9,28 +7,17 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
   const handleCardClick = (character) => {
     const cardElement = cardRefs.current[character.id]
     if (!cardElement) {
-      console.log('Card element not found')
       onSelectCharacter(character)
       return
     }
 
-    console.log('Animating card:', character.name, cardElement)
+    // Add CSS animation class
+    cardElement.style.animation = 'spin-fade 0.6s ease-in-out forwards'
 
-    // Animate the card spinning and moving
-    anime({
-      targets: cardElement,
-      rotate: 720,
-      translateY: -50,
-      opacity: 0.2,
-      scale: 0.3,
-      duration: 600,
-      easing: 'easeInOutQuad',
-      complete: () => {
-        console.log('Animation complete')
-        // Call the callback after animation completes
-        onSelectCharacter(character)
-      }
-    })
+    // Navigate after animation completes
+    setTimeout(() => {
+      onSelectCharacter(character)
+    }, 600)
   }
 
   return (
