@@ -22,12 +22,30 @@ const CONFIG_DOC = 'config';
  */
 export async function fetchCharactersFromFirebase() {
   try {
-    // Fetch characters
+    // Try to fetch from new collection structure first
     const charsSnapshot = await getDocs(collection(db, CHARACTERS_COLLECTION));
     const characters = charsSnapshot.docs.map(doc => ({
       ...doc.data(),
       id: doc.id
     }));
+
+    // If new structure is empty, try old structure
+    if (characters.length === 0) {
+      try {
+        const oldDocRef = doc(db, DATA_COLLECTION, 'characters-data');
+        const oldDocSnap = await getDoc(oldDocRef);
+        if (oldDocSnap.exists()) {
+          const oldData = oldDocSnap.data();
+          return {
+            characters: oldData.characters || [],
+            artifacts: oldData.artifacts || [],
+            dropdownOptions: oldData.dropdownOptions || {}
+          };
+        }
+      } catch (e) {
+        console.log('Old data structure not found, proceeding with empty collections');
+      }
+    }
 
     // Fetch artifacts
     const artsSnapshot = await getDocs(collection(db, ARTIFACTS_COLLECTION));
@@ -57,11 +75,34 @@ export async function fetchCharactersFromFirebase() {
  */
 export function subscribeToCharacters(callback) {
   try {
+    let useNewStructure = true;
+
     const unsubscribeChars = onSnapshot(collection(db, CHARACTERS_COLLECTION), (charsSnap) => {
       const characters = charsSnap.docs.map(doc => ({
         ...doc.data(),
         id: doc.id
       }));
+
+      // If new structure is empty, try old structure
+      if (characters.length === 0 && useNewStructure) {
+        useNewStructure = false;
+        try {
+          const oldDocRef = doc(db, DATA_COLLECTION, 'characters-data');
+          const unsubscribeOld = onSnapshot(oldDocRef, (oldDocSnap) => {
+            if (oldDocSnap.exists()) {
+              const oldData = oldDocSnap.data();
+              callback({
+                characters: oldData.characters || [],
+                artifacts: oldData.artifacts || [],
+                dropdownOptions: oldData.dropdownOptions || {}
+              });
+            }
+          });
+          return unsubscribeOld;
+        } catch (e) {
+          console.log('Old data structure not found');
+        }
+      }
 
       const unsubscribeArts = onSnapshot(collection(db, ARTIFACTS_COLLECTION), (artsSnap) => {
         const artifacts = artsSnap.docs.map(doc => ({
