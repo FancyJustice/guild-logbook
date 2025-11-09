@@ -1,4 +1,3 @@
-import { useState, useEffect, useRef } from 'react'
 import StatsHexagon from './StatsHexagon'
 import { getImageSource } from '../utils/imageUtils'
 
@@ -16,65 +15,6 @@ const colorPalette = {
 
 export default function CharacterDetail({ character, onBack }) {
   const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
-  const [animationStyle, setAnimationStyle] = useState({})
-  const [showContent, setShowContent] = useState(false)
-  const portraitRef = useRef(null)
-
-  useEffect(() => {
-    // Read the stored card dimensions from sessionStorage
-    const cardPosition = sessionStorage.getItem('cardClickPosition')
-    if (cardPosition) {
-      try {
-        const cardData = JSON.parse(cardPosition)
-
-        // Get the portrait element's final position
-        if (portraitRef.current) {
-          // Use a small delay to ensure element is rendered before animation
-          setTimeout(() => {
-            const portraitRect = portraitRef.current.getBoundingClientRect()
-
-            // The card is now centered on the viewport
-            const viewportWidth = window.innerWidth
-            const viewportHeight = window.innerHeight
-            const cardCenterX = viewportWidth / 2
-            const cardCenterY = viewportHeight / 2
-
-            // The portrait is at its final position in the detail page layout
-            const portraitCenterX = portraitRect.left + portraitRect.width / 2
-            const portraitCenterY = portraitRect.top + portraitRect.height / 2
-
-            // Offset needed to move FROM centered position TO final portrait position
-            const offsetX = portraitCenterX - cardCenterX
-            const offsetY = portraitCenterY - cardCenterY
-
-            // Set CSS custom properties for the card-to-portrait animation
-            setAnimationStyle({
-              '--portrait-offset-x': `${offsetX}px`,
-              '--portrait-offset-y': `${offsetY}px`,
-              '--portrait-width': `${portraitRect.width}px`,
-              '--card-width': `${cardData.width}px`,
-              animation: 'card-to-portrait 0.8s ease-in-out forwards',
-            })
-
-            // Show content after animation starts
-            setTimeout(() => setShowContent(true), 200)
-
-            // Clean up sessionStorage after animation
-            setTimeout(() => {
-              sessionStorage.removeItem('cardClickPosition')
-            }, 800)
-          }, 50)
-        }
-      } catch (error) {
-        console.error('Error parsing card position:', error)
-        setShowContent(true)
-      }
-    } else {
-      // No animation data, show content immediately
-      setShowContent(true)
-    }
-  }, [])
-
 
   const exportCharacterAsJSON = () => {
     const dataToExport = {
@@ -117,7 +57,6 @@ export default function CharacterDetail({ character, onBack }) {
           <div
             ref={portraitRef}
             className="bg-wood-light rounded-lg overflow-hidden shadow-lg border-2 border-gold"
-            style={animationStyle}
           >
             <img
               src={getImageSource(character.photo)}
@@ -127,14 +66,7 @@ export default function CharacterDetail({ character, onBack }) {
           </div>
 
           {/* Quick Stats */}
-          <div
-            className={`bg-parchment text-wood p-4 rounded-lg border-2 border-gold space-y-3 ${
-              showContent ? 'animate-in fade-in duration-700' : 'opacity-0'
-            }`}
-            style={{
-              animation: showContent ? 'content-fade-in 0.6s ease-out forwards' : 'none',
-            }}
-          >
+          <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold space-y-3">
             <div className="border-b-2 border-gold-dark pb-2">
               <div className="inline-block px-3 py-1 bg-gold text-wood text-xs uppercase tracking-widest font-medieval font-bold rounded mb-2">
                 <i className={`ra ${character.type === 'guild' ? 'ra-shield' : 'ra-dragon-emblem'}`} style={{ marginRight: '0.5rem', color: '#2a2420' }}></i>
@@ -165,31 +97,18 @@ export default function CharacterDetail({ character, onBack }) {
           </div>
 
           {/* Character Stats Hexagon */}
-          <div
-            style={{
-              animation: showContent ? 'content-fade-in 0.6s ease-out 0.1s forwards' : 'none',
-              opacity: showContent ? 1 : 0,
-            }}
-          >
-            <StatsHexagon stats={{
-              str: character.str || 0,
-              agi: character.agi || 0,
-              dex: character.dex || 0,
-              int: character.int || 0,
-              luk: character.luk || 0,
-              vit: character.vit || 0,
-            }} />
-          </div>
+          <StatsHexagon stats={{
+            str: character.str || 0,
+            agi: character.agi || 0,
+            dex: character.dex || 0,
+            int: character.int || 0,
+            luk: character.luk || 0,
+            vit: character.vit || 0,
+          }} />
         </div>
 
         {/* Main Content - Right 3 Columns */}
-        <div
-          className="lg:col-span-3 space-y-4"
-          style={{
-            animation: showContent ? 'content-fade-in 0.6s ease-out 0.15s forwards' : 'none',
-            opacity: showContent ? 1 : 0,
-          }}
-        >
+        <div className="lg:col-span-3 space-y-4">
           {/* Header with Quote & Lore */}
           <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold space-y-4">
             {character.quote && (

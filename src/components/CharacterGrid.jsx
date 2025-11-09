@@ -1,57 +1,8 @@
-import { useRef } from 'react'
 import { getImageSource } from '../utils/imageUtils'
 
 export default function CharacterGrid({ characters, onSelectCharacter }) {
-  const cardRefs = useRef({})
-
   const handleCardClick = (character) => {
-    const cardElement = cardRefs.current[character.id]
-    if (!cardElement) {
-      onSelectCharacter(character)
-      return
-    }
-
-    // Fade out all other cards
-    Object.entries(cardRefs.current).forEach(([id, element]) => {
-      if (id !== character.id) {
-        element.style.animation = 'fade-out 0.4s ease-out forwards'
-      }
-    })
-
-    // Get card's current position
-    const cardRect = cardElement.getBoundingClientRect()
-    const cardX = cardRect.left
-    const cardY = cardRect.top
-    const cardWidth = cardRect.width
-    const cardHeight = cardRect.height
-
-    // Calculate offset to center the card
-    const viewportWidth = window.innerWidth
-    const viewportHeight = window.innerHeight
-    const centerX = viewportWidth / 2
-    const centerY = viewportHeight / 2
-    const cardCenterX = cardX + cardWidth / 2
-    const cardCenterY = cardY + cardHeight / 2
-    const offsetToCenterX = centerX - cardCenterX
-    const offsetToCenterY = centerY - cardCenterY
-
-    // Store card width and height for CharacterDetail animation
-    sessionStorage.setItem('cardClickPosition', JSON.stringify({
-      width: cardWidth,
-      height: cardHeight
-    }))
-
-    // Add grow and center animation with a slight delay to let other cards start fading
-    setTimeout(() => {
-      cardElement.style.setProperty('--card-center-offset-x', `${offsetToCenterX}px`)
-      cardElement.style.setProperty('--card-center-offset-y', `${offsetToCenterY}px`)
-      cardElement.style.animation = 'card-grow-center 0.6s ease-in-out forwards'
-    }, 100)
-
-    // Navigate after grow-center animation completes
-    setTimeout(() => {
-      onSelectCharacter(character)
-    }, 700)
+    onSelectCharacter(character)
   }
 
   return (
@@ -59,10 +10,8 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
       {characters.map(character => (
         <div
           key={character.id}
-          ref={(el) => cardRefs.current[character.id] = el}
           onClick={() => handleCardClick(character)}
           className="bg-parchment text-wood rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition cursor-pointer transform hover:scale-105 border-2 border-gold"
-          style={{ transformOrigin: 'center' }}
         >
           <div className="overflow-hidden bg-wood-light" style={{ aspectRatio: '230/300' }}>
             <img
