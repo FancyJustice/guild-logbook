@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { uploadCharacterImage } from '../utils/storageUtils'
 
 export default function CharacterForm({ dropdownOptions, editingCharacter, onSubmit, onCancel }) {
   const [formData, setFormData] = useState(editingCharacter ? {
@@ -99,17 +98,30 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
             const fileName = `${charName.replace(/\s+/g, '_').toLowerCase()}.png`
 
             try {
-              // Upload to Firebase Storage
-              const downloadURL = await uploadCharacterImage(dataUrl, fileName)
+              // Upload to backend API
+              const response = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  imageData: dataUrl,
+                  fileName: fileName
+                })
+              })
 
-              // Store the download URL in the form data
-              setFormData(prev => ({
-                ...prev,
-                photo: downloadURL
-              }))
+              const result = await response.json()
+
+              if (response.ok && result.url) {
+                // Store the Firebase Storage URL
+                setFormData(prev => ({
+                  ...prev,
+                  photo: result.url
+                }))
+              } else {
+                alert('Failed to upload image: ' + (result.message || result.error))
+              }
             } catch (error) {
-              console.error('Error uploading image:', error)
-              alert('Failed to upload image: ' + error.message)
+              console.error('Upload error:', error)
+              alert('Error uploading image: ' + error.message)
             }
           }
           img.src = event.target.result

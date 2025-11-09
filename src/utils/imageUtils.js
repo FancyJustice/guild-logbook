@@ -5,7 +5,7 @@
 
 /**
  * Get the correct image source URL
- * Handles base64 data URLs, Firebase Storage URLs, and file paths
+ * Handles base64, Firebase Storage URLs, and file paths
  */
 export const getImageSource = (photoField) => {
   if (!photoField) {
@@ -17,8 +17,8 @@ export const getImageSource = (photoField) => {
     return photoField
   }
 
-  // Check if it's a Firebase Storage URL (contains 'firebasestorage')
-  if (photoField.includes('firebasestorage')) {
+  // Check if it's a Firebase Storage URL (full URL)
+  if (photoField.startsWith('http')) {
     return photoField
   }
 
