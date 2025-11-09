@@ -11,13 +11,28 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
       return
     }
 
-    // Add CSS animation class
-    cardElement.style.animation = 'spin-fade 0.6s ease-in-out forwards'
+    // Get card's current position
+    const cardRect = cardElement.getBoundingClientRect()
+    const cardX = cardRect.left
+    const cardY = cardRect.top
+    const cardWidth = cardRect.width
+    const cardHeight = cardRect.height
+
+    // Store position in sessionStorage for CharacterDetail to use
+    sessionStorage.setItem('cardClickPosition', JSON.stringify({
+      x: cardX,
+      y: cardY,
+      width: cardWidth,
+      height: cardHeight
+    }))
+
+    // Add animation
+    cardElement.style.animation = 'spin-fade 0.8s ease-in-out forwards'
 
     // Navigate after animation completes
     setTimeout(() => {
       onSelectCharacter(character)
-    }, 600)
+    }, 800)
   }
 
   return (

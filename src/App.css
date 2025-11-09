@@ -51,3 +51,27 @@
     opacity: 0;
   }
 }
+
+/* Portrait expansion animation - moves from card position to final layout position */
+@keyframes portrait-expand {
+  0% {
+    transform: translate(var(--start-x), var(--start-y)) scale(calc(var(--start-width) / var(--final-width)));
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Content fade-in animation */
+@keyframes content-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

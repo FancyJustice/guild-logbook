@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from 'react'
 import StatsHexagon from './StatsHexagon'
 import { getImageSource } from '../utils/imageUtils'
 
@@ -15,6 +16,53 @@ const colorPalette = {
 
 export default function CharacterDetail({ character, onBack }) {
   const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
+  const [animationStyle, setAnimationStyle] = useState({})
+  const [showContent, setShowContent] = useState(false)
+  const portraitRef = useRef(null)
+
+  useEffect(() => {
+    // Read the stored card position from sessionStorage
+    const cardPosition = sessionStorage.getItem('cardClickPosition')
+    if (cardPosition) {
+      try {
+        const position = JSON.parse(cardPosition)
+
+        // Get the portrait element's final position
+        if (portraitRef.current) {
+          const portraitRect = portraitRef.current.getBoundingClientRect()
+
+          // Calculate the offset needed to position portrait at card location
+          const offsetX = position.x - portraitRect.left
+          const offsetY = position.y - portraitRect.top
+          const scaleRatio = position.width / portraitRect.width
+
+          // Set CSS custom properties for the animation
+          setAnimationStyle({
+            '--start-x': `${offsetX}px`,
+            '--start-y': `${offsetY}px`,
+            '--start-width': `${position.width}px`,
+            '--final-width': `${portraitRect.width}px`,
+            animation: 'portrait-expand 0.8s ease-out forwards',
+          })
+
+          // Show content after a brief delay
+          setTimeout(() => setShowContent(true), 100)
+
+          // Clean up sessionStorage after animation
+          setTimeout(() => {
+            sessionStorage.removeItem('cardClickPosition')
+          }, 800)
+        }
+      } catch (error) {
+        console.error('Error parsing card position:', error)
+        setShowContent(true)
+      }
+    } else {
+      // No animation data, show content immediately
+      setShowContent(true)
+    }
+  }, [])
+
 
   const exportCharacterAsJSON = () => {
     const dataToExport = {
@@ -54,7 +102,11 @@ export default function CharacterDetail({ character, onBack }) {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Left Column - Image & Basic Info */}
         <div className="lg:col-span-1 space-y-4">
-          <div className="bg-wood-light rounded-lg overflow-hidden shadow-lg border-2 border-gold">
+          <div
+            ref={portraitRef}
+            className="bg-wood-light rounded-lg overflow-hidden shadow-lg border-2 border-gold"
+            style={animationStyle}
+          >
             <img
               src={getImageSource(character.photo)}
               alt={character.name}
@@ -63,7 +115,14 @@ export default function CharacterDetail({ character, onBack }) {
           </div>
 
           {/* Quick Stats */}
-          <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold space-y-3">
+          <div
+            className={`bg-parchment text-wood p-4 rounded-lg border-2 border-gold space-y-3 ${
+              showContent ? 'animate-in fade-in duration-700' : 'opacity-0'
+            }`}
+            style={{
+              animation: showContent ? 'content-fade-in 0.6s ease-out forwards' : 'none',
+            }}
+          >
             <div className="border-b-2 border-gold-dark pb-2">
               <div className="inline-block px-3 py-1 bg-gold text-wood text-xs uppercase tracking-widest font-medieval font-bold rounded mb-2">
                 <i className={`ra ${character.type === 'guild' ? 'ra-shield' : 'ra-dragon-emblem'}`} style={{ marginRight: '0.5rem', color: '#2a2420' }}></i>
@@ -94,18 +153,31 @@ export default function CharacterDetail({ character, onBack }) {
           </div>
 
           {/* Character Stats Hexagon */}
-          <StatsHexagon stats={{
-            str: character.str || 0,
-            agi: character.agi || 0,
-            dex: character.dex || 0,
-            int: character.int || 0,
-            luk: character.luk || 0,
-            vit: character.vit || 0,
-          }} />
+          <div
+            style={{
+              animation: showContent ? 'content-fade-in 0.6s ease-out 0.1s forwards' : 'none',
+              opacity: showContent ? 1 : 0,
+            }}
+          >
+            <StatsHexagon stats={{
+              str: character.str || 0,
+              agi: character.agi || 0,
+              dex: character.dex || 0,
+              int: character.int || 0,
+              luk: character.luk || 0,
+              vit: character.vit || 0,
+            }} />
+          </div>
         </div>
 
         {/* Main Content - Right 3 Columns */}
-        <div className="lg:col-span-3 space-y-4">
+        <div
+          className="lg:col-span-3 space-y-4"
+          style={{
+            animation: showContent ? 'content-fade-in 0.6s ease-out 0.15s forwards' : 'none',
+            opacity: showContent ? 1 : 0,
+          }}
+        >
           {/* Header with Quote & Lore */}
           <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold space-y-4">
             {character.quote && (
