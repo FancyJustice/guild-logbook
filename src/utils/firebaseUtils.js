@@ -173,7 +173,8 @@ export async function updateCharacterInFirebase(updatedCharacter, currentCharact
   try {
     const { id, ...charData } = updatedCharacter;
     const charRef = doc(db, CHARACTERS_COLLECTION, id);
-    await updateDoc(charRef, charData);
+    // Use setDoc with merge to create if doesn't exist, update if does
+    await setDoc(charRef, charData, { merge: true });
   } catch (error) {
     console.error('Error updating character:', error);
     throw error;
@@ -215,7 +216,8 @@ export async function updateArtifactInFirebase(updatedArtifact, currentCharacter
   try {
     const { id, ...artData } = updatedArtifact;
     const artRef = doc(db, ARTIFACTS_COLLECTION, id);
-    await updateDoc(artRef, artData);
+    // Use setDoc with merge to create if doesn't exist, update if does
+    await setDoc(artRef, artData, { merge: true });
   } catch (error) {
     console.error('Error updating artifact:', error);
     throw error;
