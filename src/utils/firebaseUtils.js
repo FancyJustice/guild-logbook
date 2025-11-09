@@ -171,10 +171,25 @@ export async function addCharacterToFirebase(character, currentCharacters, curre
  */
 export async function updateCharacterInFirebase(updatedCharacter, currentCharacters, currentArtifacts, currentDropdown) {
   try {
+    // First try to update in new structure
     const { id, ...charData } = updatedCharacter;
     const charRef = doc(db, CHARACTERS_COLLECTION, id);
-    // Use setDoc with merge to create if doesn't exist, update if does
     await setDoc(charRef, charData, { merge: true });
+
+    // Also update in old structure for backward compatibility
+    try {
+      const updatedCharacters = currentCharacters.map(c =>
+        c.id === updatedCharacter.id ? updatedCharacter : c
+      );
+      const oldDocRef = doc(db, DATA_COLLECTION, 'characters-data');
+      await setDoc(oldDocRef, {
+        characters: updatedCharacters,
+        artifacts: currentArtifacts,
+        dropdownOptions: currentDropdown
+      }, { merge: true });
+    } catch (e) {
+      console.log('Could not update old structure (may not exist yet)');
+    }
   } catch (error) {
     console.error('Error updating character:', error);
     throw error;
@@ -214,10 +229,25 @@ export async function addArtifactToFirebase(artifact, currentCharacters, current
  */
 export async function updateArtifactInFirebase(updatedArtifact, currentCharacters, currentArtifacts, currentDropdown) {
   try {
+    // First try to update in new structure
     const { id, ...artData } = updatedArtifact;
     const artRef = doc(db, ARTIFACTS_COLLECTION, id);
-    // Use setDoc with merge to create if doesn't exist, update if does
     await setDoc(artRef, artData, { merge: true });
+
+    // Also update in old structure for backward compatibility
+    try {
+      const updatedArtifacts = currentArtifacts.map(a =>
+        a.id === updatedArtifact.id ? updatedArtifact : a
+      );
+      const oldDocRef = doc(db, DATA_COLLECTION, 'characters-data');
+      await setDoc(oldDocRef, {
+        characters: currentCharacters,
+        artifacts: updatedArtifacts,
+        dropdownOptions: currentDropdown
+      }, { merge: true });
+    } catch (e) {
+      console.log('Could not update old structure (may not exist yet)');
+    }
   } catch (error) {
     console.error('Error updating artifact:', error);
     throw error;
