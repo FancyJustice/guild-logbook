@@ -26,13 +26,8 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
       height: cardHeight
     }))
 
-    // Add animation
-    cardElement.style.animation = 'spin-fade 0.8s ease-in-out forwards'
-
-    // Navigate after animation completes
-    setTimeout(() => {
-      onSelectCharacter(character)
-    }, 800)
+    // Navigate immediately - animation happens on detail page
+    onSelectCharacter(character)
   }
 
   return (
