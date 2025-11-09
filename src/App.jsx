@@ -29,6 +29,7 @@ function App() {
   const [showMergePreview, setShowMergePreview] = useState(false)
   const [pendingMergeData, setPendingMergeData] = useState(null)
   const [mergeReport, setMergeReport] = useState(null)
+  const [navigationHistory, setNavigationHistory] = useState([])
 
   useEffect(() => {
     // Load initial data from Firebase
@@ -55,6 +56,28 @@ function App() {
     // Cleanup subscription on unmount
     return () => unsubscribe()
   }, [])
+
+  // Handle browser back button
+  useEffect(() => {
+    const handlePopState = () => {
+      if (navigationHistory.length > 1) {
+        const newHistory = navigationHistory.slice(0, -1)
+        const previousView = newHistory[newHistory.length - 1]
+        setNavigationHistory(newHistory)
+        setView(previousView)
+      }
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [navigationHistory])
+
+  // Helper function to change view and update history
+  const navigateTo = (newView) => {
+    setNavigationHistory(prev => [...prev, newView])
+    setView(newView)
+    window.history.pushState({ view: newView }, '')
+  }
 
   const exportCharactersAsJSON = () => {
     const dataToExport = {
@@ -226,7 +249,7 @@ function App() {
 
   const handleAdminLogout = () => {
     setIsAuthenticated(false)
-    setView('browser')
+    navigateTo('browser')
   }
 
   if (showCover) {
@@ -241,13 +264,13 @@ function App() {
             <h1 className="text-4xl font-medieval text-gold">The Guild Logbook</h1>
             <nav className="space-x-4">
               <button
-                onClick={() => { setView('browser'); setIsAuthenticated(false) }}
+                onClick={() => { navigateTo('browser'); setIsAuthenticated(false) }}
                 className={`px-4 py-2 ${view === 'browser' && !isAuthenticated ? 'text-gold' : 'text-parchment'} hover:text-gold transition`}
               >
                 Browse
               </button>
               <button
-                onClick={() => setView('admin')}
+                onClick={() => navigateTo('admin')}
                 className={`px-4 py-2 ${view === 'admin' ? 'text-gold' : 'text-parchment'} hover:text-gold transition`}
               >
                 Admin
