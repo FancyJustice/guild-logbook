@@ -4,6 +4,17 @@ import AdminPanel from './components/AdminPanel'
 import Cover from './components/Cover'
 import MergePreview from './components/MergePreview'
 import { findDifferences, mergeCharacters, generateMergeReport, validateImportedData } from './utils/mergeUtils'
+import {
+  fetchCharactersFromFirebase,
+  subscribeToCharacters,
+  addCharacterToFirebase,
+  updateCharacterInFirebase,
+  deleteCharacterFromFirebase,
+  addArtifactToFirebase,
+  updateArtifactInFirebase,
+  deleteArtifactFromFirebase,
+  mergeCharactersInFirebase
+} from './utils/firebaseUtils'
 import './App.css'
 
 function App() {
@@ -20,29 +31,29 @@ function App() {
   const [mergeReport, setMergeReport] = useState(null)
 
   useEffect(() => {
-    fetchCharacters()
-  }, [])
+    // Load initial data from Firebase
+    const loadInitialData = async () => {
+      try {
+        const data = await fetchCharactersFromFirebase()
+        setCharacters(data.characters || [])
+        setArtifacts(data.artifacts || [])
+        setDropdownOptions(data.dropdownOptions || {})
+      } catch (error) {
+        console.error('Error loading characters from Firebase:', error)
+      }
+    }
 
-  const fetchCharacters = async () => {
-    try {
-      // Load all data from JSON file (source of truth)
-      const response = await fetch(import.meta.env.BASE_URL + 'characters.json')
-      const data = await response.json()
+    loadInitialData()
 
+    // Subscribe to real-time updates from Firebase
+    const unsubscribe = subscribeToCharacters((data) => {
       setCharacters(data.characters || [])
       setArtifacts(data.artifacts || [])
       setDropdownOptions(data.dropdownOptions || {})
-    } catch (error) {
-      console.error('Error loading characters:', error)
-    }
-  }
+    })
 
-  // Reload data from JSON file periodically to sync changes globally
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchCharacters()
-    }, 30000) // Refresh every 30 seconds
-    return () => clearInterval(interval)
+    // Cleanup subscription on unmount
+    return () => unsubscribe()
   }, [])
 
   const exportCharactersAsJSON = () => {
@@ -126,29 +137,14 @@ function App() {
     }
 
     try {
-      const response = await fetch(import.meta.env.BASE_URL + 'api/characters', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'merge',
-          characters: mergedCharacters,
-          artifacts: mergedArtifacts
-        })
-      })
+      await mergeCharactersInFirebase(mergedCharacters, mergedArtifacts, dropdownOptions)
 
-      if (response.ok) {
-        setCharacters(mergedCharacters)
-        setArtifacts(mergedArtifacts)
+      // Clear merge state
+      setShowMergePreview(false)
+      setPendingMergeData(null)
+      setMergeReport(null)
 
-        // Clear merge state
-        setShowMergePreview(false)
-        setPendingMergeData(null)
-        setMergeReport(null)
-
-        alert(`Merge successful!\nAdded: ${differences.added.length}, Modified: ${differences.modified.length}`)
-      } else {
-        alert('Failed to save merged data')
-      }
+      alert(`Merge successful!\nAdded: ${differences.added.length}, Modified: ${differences.modified.length}`)
     } catch (error) {
       console.error('Error saving merge:', error)
       alert('Error saving merge: ' + error.message)
@@ -163,24 +159,9 @@ function App() {
 
   const handleAddCharacter = async (newCharacter) => {
     const characterWithId = { ...newCharacter, id: `char_${Date.now()}` }
-    const updatedCharacters = [...characters, characterWithId]
 
     try {
-      const response = await fetch(import.meta.env.BASE_URL + 'api/characters', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'add',
-          character: characterWithId,
-          allCharacters: updatedCharacters
-        })
-      })
-
-      if (response.ok) {
-        setCharacters(updatedCharacters)
-      } else {
-        alert('Failed to add character')
-      }
+      await addCharacterToFirebase(characterWithId, characters, artifacts, dropdownOptions)
     } catch (error) {
       console.error('Error adding character:', error)
       alert('Error adding character: ' + error.message)
@@ -188,26 +169,8 @@ function App() {
   }
 
   const handleUpdateCharacter = async (updatedCharacter) => {
-    const updatedCharacters = characters.map(char =>
-      char.id === updatedCharacter.id ? updatedCharacter : char
-    )
-
     try {
-      const response = await fetch(import.meta.env.BASE_URL + 'api/characters', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'update',
-          character: updatedCharacter,
-          allCharacters: updatedCharacters
-        })
-      })
-
-      if (response.ok) {
-        setCharacters(updatedCharacters)
-      } else {
-        alert('Failed to update character')
-      }
+      await updateCharacterInFirebase(updatedCharacter, characters, artifacts, dropdownOptions)
     } catch (error) {
       console.error('Error updating character:', error)
       alert('Error updating character: ' + error.message)
@@ -215,24 +178,8 @@ function App() {
   }
 
   const handleDeleteCharacter = async (characterId) => {
-    const updatedCharacters = characters.filter(char => char.id !== characterId)
-
     try {
-      const response = await fetch(import.meta.env.BASE_URL + 'api/characters', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'delete',
-          characterId: characterId,
-          allCharacters: updatedCharacters
-        })
-      })
-
-      if (response.ok) {
-        setCharacters(updatedCharacters)
-      } else {
-        alert('Failed to delete character')
-      }
+      await deleteCharacterFromFirebase(characterId, characters, artifacts, dropdownOptions)
     } catch (error) {
       console.error('Error deleting character:', error)
       alert('Error deleting character: ' + error.message)
@@ -241,24 +188,9 @@ function App() {
 
   const handleAddArtifact = async (newArtifact) => {
     const artifactWithId = { ...newArtifact, id: `artifact_${Date.now()}` }
-    const updatedArtifacts = [...artifacts, artifactWithId]
 
     try {
-      const response = await fetch(import.meta.env.BASE_URL + 'api/artifacts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'add',
-          artifact: artifactWithId,
-          allArtifacts: updatedArtifacts
-        })
-      })
-
-      if (response.ok) {
-        setArtifacts(updatedArtifacts)
-      } else {
-        alert('Failed to add artifact')
-      }
+      await addArtifactToFirebase(artifactWithId, characters, artifacts, dropdownOptions)
     } catch (error) {
       console.error('Error adding artifact:', error)
       alert('Error adding artifact: ' + error.message)
@@ -266,26 +198,8 @@ function App() {
   }
 
   const handleUpdateArtifact = async (updatedArtifact) => {
-    const updatedArtifacts = artifacts.map(artifact =>
-      artifact.id === updatedArtifact.id ? updatedArtifact : artifact
-    )
-
     try {
-      const response = await fetch(import.meta.env.BASE_URL + 'api/artifacts', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'update',
-          artifact: updatedArtifact,
-          allArtifacts: updatedArtifacts
-        })
-      })
-
-      if (response.ok) {
-        setArtifacts(updatedArtifacts)
-      } else {
-        alert('Failed to update artifact')
-      }
+      await updateArtifactInFirebase(updatedArtifact, characters, artifacts, dropdownOptions)
     } catch (error) {
       console.error('Error updating artifact:', error)
       alert('Error updating artifact: ' + error.message)
@@ -293,24 +207,8 @@ function App() {
   }
 
   const handleDeleteArtifact = async (artifactId) => {
-    const updatedArtifacts = artifacts.filter(artifact => artifact.id !== artifactId)
-
     try {
-      const response = await fetch(import.meta.env.BASE_URL + 'api/artifacts', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'delete',
-          artifactId: artifactId,
-          allArtifacts: updatedArtifacts
-        })
-      })
-
-      if (response.ok) {
-        setArtifacts(updatedArtifacts)
-      } else {
-        alert('Failed to delete artifact')
-      }
+      await deleteArtifactFromFirebase(artifactId, characters, artifacts, dropdownOptions)
     } catch (error) {
       console.error('Error deleting artifact:', error)
       alert('Error deleting artifact: ' + error.message)
