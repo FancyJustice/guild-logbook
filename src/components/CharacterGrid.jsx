@@ -1,3 +1,5 @@
+import { getImageSource } from '../utils/imageUtils'
+
 export default function CharacterGrid({ characters, onSelectCharacter }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -9,7 +11,7 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
         >
           <div className="overflow-hidden bg-wood-light" style={{ aspectRatio: '230/300' }}>
             <img
-              src={character.photo}
+              src={getImageSource(character.photo)}
               alt={character.name}
               className="w-full h-full object-cover"
             />

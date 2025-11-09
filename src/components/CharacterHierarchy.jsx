@@ -1,3 +1,5 @@
+import { getImageSource } from '../utils/imageUtils'
+
 export default function CharacterHierarchy({ characters, onSelectCharacter }) {
   // Group characters by rank
   const groupedByRank = characters.reduce((acc, char) => {
@@ -73,7 +75,7 @@ export default function CharacterHierarchy({ characters, onSelectCharacter }) {
                       {/* Character Photo */}
                       <div className="overflow-hidden bg-wood-light" style={{ aspectRatio: '230/300' }}>
                         <img
-                          src={character.photo}
+                          src={getImageSource(character.photo)}
                           alt={character.name}
                           className="w-full h-full object-cover"
                           style={{ height: '100px' }}

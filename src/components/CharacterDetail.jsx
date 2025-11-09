@@ -1,4 +1,5 @@
 import StatsHexagon from './StatsHexagon'
+import { getImageSource } from '../utils/imageUtils'
 
 // Color palette for ultimate skills
 const colorPalette = {
@@ -55,7 +56,7 @@ export default function CharacterDetail({ character, onBack }) {
         <div className="lg:col-span-1 space-y-4">
           <div className="bg-wood-light rounded-lg overflow-hidden shadow-lg border-2 border-gold">
             <img
-              src={character.photo}
+              src={getImageSource(character.photo)}
               alt={character.name}
               className="w-full h-auto"
             />

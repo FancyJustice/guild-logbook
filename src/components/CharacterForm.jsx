@@ -91,7 +91,18 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
           ctx.drawImage(img, -offsetX, -offsetY, drawWidth, drawHeight)
           const dataUrl = canvas.toDataURL('image/png')
           setPhotoPreview(dataUrl)
-          setFormData(prev => ({ ...prev, photo: dataUrl }))
+
+          // Generate file path from character name or use filename
+          const charName = formData.name || 'character'
+          const fileName = `${charName.replace(/\s+/g, '_').toLowerCase()}.png`
+          const filePath = `images/characters/${fileName}`
+
+          // Store both preview (for display) and file path (for JSON)
+          setFormData(prev => ({
+            ...prev,
+            photo: filePath,
+            photoData: dataUrl // Keep preview data temporarily for display
+          }))
         }
         img.src = event.target.result
       }
@@ -266,7 +277,7 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
               onChange={handleImageUpload}
               className="w-full px-3 py-2 border-2 border-gold-dark rounded bg-parchment-dark text-wood focus:outline-none focus:border-gold text-sm cursor-pointer"
             />
-            <p className="text-xs text-wood-light mt-2">Upload PNG, JPG, or other image format. Will be automatically resized to 230x300.</p>
+            <p className="text-xs text-wood-light mt-2">Upload PNG, JPG, or other image format. Will be automatically resized to 230x300 and saved to <code className="bg-wood-light px-1 rounded">public/images/characters/</code></p>
           </div>
           {photoPreview && (
             <div className="w-32 flex-shrink-0">
