@@ -1,5 +1,6 @@
 import { useRef } from 'react'
-import anime from 'animejs'
+// @ts-ignore
+import anime from 'animejs/lib/anime.es.js'
 import { getImageSource } from '../utils/imageUtils'
 
 export default function CharacterGrid({ characters, onSelectCharacter }) {
@@ -16,8 +17,7 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
     console.log('Animating card:', character.name, cardElement)
 
     // Animate the card spinning and moving
-    const animeInstance = anime.default || anime
-    animeInstance({
+    anime({
       targets: cardElement,
       rotate: 720,
       translateY: -50,
