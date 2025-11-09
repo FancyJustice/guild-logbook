@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import CharacterForm from './CharacterForm'
 import ArtifactForm from './ArtifactForm'
+import { getImageSource } from '../utils/imageUtils'
 
 export default function AdminPanel({
   authenticated,
@@ -107,8 +108,17 @@ export default function AdminPanel({
         {characters.map(character => (
           <div
             key={character.id}
-            className="bg-parchment text-wood p-4 rounded border-2 border-gold flex justify-between items-start"
+            className="bg-parchment text-wood p-4 rounded border-2 border-gold flex justify-between items-start gap-4"
           >
+            {character.photo && (
+              <div className="flex-shrink-0">
+                <img
+                  src={getImageSource(character.photo)}
+                  alt={character.name}
+                  className="w-16 h-20 object-cover rounded border border-gold-dark"
+                />
+              </div>
+            )}
             <div className="flex-1">
               <h3 className="text-lg font-medieval font-bold">{character.name}</h3>
               <p className="text-sm text-wood-light">
@@ -191,8 +201,17 @@ export default function AdminPanel({
           artifacts.map(artifact => (
             <div
               key={artifact.id}
-              className="bg-parchment text-wood p-4 rounded border-2 border-gold flex justify-between items-start"
+              className="bg-parchment text-wood p-4 rounded border-2 border-gold flex justify-between items-start gap-4"
             >
+              {artifact.photo && (
+                <div className="flex-shrink-0">
+                  <img
+                    src={getImageSource(artifact.photo)}
+                    alt={artifact.name}
+                    className="w-16 h-20 object-cover rounded border border-gold-dark"
+                  />
+                </div>
+              )}
               <div className="flex-1">
                 <h3 className="text-lg font-medieval font-bold">{artifact.name}</h3>
                 <p className="text-sm text-wood-light">
