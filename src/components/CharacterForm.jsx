@@ -285,10 +285,15 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
                   { value: 'A', label: 'A' },
                   { value: 'B', label: 'B' },
                   { value: 'C', label: 'C' },
-                  { value: 'D', label: 'D' },
-                  ...(dropdownOptions.rank || []).filter(r => !['S', 'A', 'B', 'C', 'D'].includes(r)).map(r => ({ value: r, label: r }))
+                  { value: 'D', label: 'D' }
                 ]
-              : [{ value: '', label: 'Select Threat Level' }, ...(dropdownOptions.threatLevel || []).map(t => ({ value: t, label: t }))]
+              : [
+                  { value: '', label: 'Select Threat Level' },
+                  { value: 'Critical', label: 'Critical' },
+                  { value: 'High', label: 'High' },
+                  { value: 'Medium', label: 'Medium' },
+                  { value: 'Low', label: 'Low' }
+                ]
             }
           />
         </div>
