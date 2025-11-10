@@ -370,9 +370,9 @@ function RankBadge({ label, value }) {
   const animateClass = colors?.animate || ''
 
   return (
-    <div className={`${bgClass} ${borderClass} ${shadowClass} border-2 rounded-lg p-6 text-center transition-all duration-300 ${animateClass}`}>
+    <div className={`${bgClass} ${borderClass} ${shadowClass} border-2 rounded-lg p-4 text-center transition-all duration-300 ${animateClass} overflow-hidden`}>
       <div className={`text-xs ${textClass} uppercase tracking-widest font-medieval mb-2 opacity-90`}>{label}</div>
-      <div className={`${textClass} font-medieval font-black text-5xl drop-shadow-lg`}>
+      <div className={`${textClass} font-medieval font-black text-3xl md:text-4xl drop-shadow-lg leading-tight`}>
         {value || '—'}
       </div>
     </div>
