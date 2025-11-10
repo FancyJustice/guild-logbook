@@ -77,8 +77,7 @@ export default function CharacterDetail({ character, onBack }) {
 
             <div className="text-base space-y-3">
               <p className="text-wood-light"><i className="ra ra-explosion" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Lvl:</strong> {character.level}</p>
-              <p className="text-wood-light"><i className="ra ra-crown" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Rank:</strong> {character.rank}</p>
-              <p className="text-wood-light"><img src="/VRLogo.png" alt="VRChat" style={{ height: '1.2rem', width: 'auto', marginRight: '0.5rem', display: 'inline-block' }} /><strong>Player:</strong> {character.vrcPlayerName && (
+              <img src="/VRLogo.png" alt="VRChat" style={{ height: '1.2rem', width: 'auto', marginRight: '0.5rem', display: 'inline-block' }} /><p className="text-wood-light" style={{ display: 'inline' }}><strong>Player:</strong> {character.vrcPlayerName && (
                 <a
                   href={character.vrcProfileUrl || `https://vrchat.com/home/user/${character.vrcPlayerName}`}
                   target="_blank"
@@ -89,6 +88,13 @@ export default function CharacterDetail({ character, onBack }) {
                 </a>
               )}</p>
             </div>
+
+            {/* Prominent Rank/Threat Level Display */}
+            {character.rank && (
+              <div className="mt-4 pt-4 border-t-2 border-gold-dark">
+                <RankBadge label={character.type === 'guild' ? 'Rank' : 'Threat Level'} value={character.rank} />
+              </div>
+            )}
           </div>
 
           {/* Character Stats Hexagon */}
@@ -308,7 +314,18 @@ function AttributeBox({ label, value }) {
     'Nature': { bg: 'bg-green-900', border: 'border-green-600', text: 'text-green-100' },
     'Light': { bg: 'bg-yellow-100', border: 'border-yellow-300', text: 'text-yellow-900' },
     'Dark': { bg: 'bg-gray-900', border: 'border-gray-700', text: 'text-gray-300' },
-    'Neutral': { bg: 'bg-parchment', border: 'border-gold', text: 'text-wood' },
+    'Wind': { bg: 'bg-cyan-800', border: 'border-cyan-500', text: 'text-cyan-100' },
+    'Steam': { bg: 'bg-slate-700', border: 'border-slate-500', text: 'text-slate-100' },
+    'Magma': { bg: 'bg-orange-900', border: 'border-orange-600', text: 'text-orange-100' },
+    'Sand': { bg: 'bg-yellow-700', border: 'border-yellow-600', text: 'text-yellow-100' },
+    'Metal': { bg: 'bg-zinc-700', border: 'border-zinc-600', text: 'text-zinc-100' },
+    'Gravity': { bg: 'bg-purple-950', border: 'border-purple-700', text: 'text-purple-100' },
+    'Poison': { bg: 'bg-purple-900', border: 'border-purple-700', text: 'text-purple-100' },
+    'Blood': { bg: 'bg-red-950', border: 'border-red-800', text: 'text-red-100' },
+    'Ghost': { bg: 'bg-violet-950', border: 'border-violet-700', text: 'text-violet-100' },
+    'Prism': { bg: 'bg-pink-800', border: 'border-pink-600', text: 'text-pink-100' },
+    'Solar': { bg: 'bg-orange-700', border: 'border-orange-500', text: 'text-orange-100' },
+    'Darkflame': { bg: 'bg-red-950', border: 'border-red-900', text: 'text-red-100' }
   }
 
   const colors = label === 'Elemental Attunement' && value ? elementColors[value] : null
@@ -321,6 +338,43 @@ function AttributeBox({ label, value }) {
     <div className={`${bgClass} ${textClass} p-4 rounded border-2 ${borderClass}`}>
       <div className={`text-sm ${labelClass} uppercase tracking-wide font-medieval mb-3`}>{label}</div>
       <div className="font-medieval text-lg">{value || '—'}</div>
+    </div>
+  )
+}
+
+function RankBadge({ label, value }) {
+  // Rank and threat level color mapping with expanded palette
+  const rankColors = {
+    'S': { bg: 'bg-red-900', border: 'border-red-600', text: 'text-red-100', shadow: 'shadow-lg shadow-red-600/50', animate: 'animate-pulse' },
+    'A': { bg: 'bg-orange-900', border: 'border-orange-600', text: 'text-orange-100', shadow: 'shadow-lg shadow-orange-600/50', animate: 'animate-pulse' },
+    'B': { bg: 'bg-yellow-900', border: 'border-yellow-600', text: 'text-yellow-100', shadow: 'shadow-lg shadow-yellow-600/30', animate: '' },
+    'C': { bg: 'bg-green-900', border: 'border-green-600', text: 'text-green-100', shadow: 'shadow-lg shadow-green-600/30', animate: '' },
+    'D': { bg: 'bg-blue-900', border: 'border-blue-600', text: 'text-blue-100', shadow: 'shadow-lg shadow-blue-600/30', animate: '' },
+  }
+
+  const threatColors = {
+    'Critical': { bg: 'bg-red-900', border: 'border-red-600', text: 'text-red-100', shadow: 'shadow-lg shadow-red-600/50', animate: 'animate-pulse' },
+    'High': { bg: 'bg-orange-900', border: 'border-orange-600', text: 'text-orange-100', shadow: 'shadow-lg shadow-orange-600/50', animate: 'animate-pulse' },
+    'Medium': { bg: 'bg-yellow-900', border: 'border-yellow-600', text: 'text-yellow-100', shadow: 'shadow-lg shadow-yellow-600/30', animate: '' },
+    'Low': { bg: 'bg-green-900', border: 'border-green-600', text: 'text-green-100', shadow: 'shadow-lg shadow-green-600/30', animate: '' },
+  }
+
+  const isRank = label.includes('Rank')
+  const colorMap = isRank ? rankColors : threatColors
+  const colors = value ? colorMap[value] : null
+
+  const bgClass = colors?.bg || 'bg-parchment'
+  const borderClass = colors?.border || 'border-gold'
+  const textClass = colors?.text || 'text-wood'
+  const shadowClass = colors?.shadow || ''
+  const animateClass = colors?.animate || ''
+
+  return (
+    <div className={`${bgClass} ${borderClass} ${shadowClass} border-2 rounded-lg p-6 text-center transition-all duration-300 ${animateClass}`}>
+      <div className={`text-xs ${textClass} uppercase tracking-widest font-medieval mb-2 opacity-90`}>{label}</div>
+      <div className={`${textClass} font-medieval font-black text-5xl drop-shadow-lg`}>
+        {value || '—'}
+      </div>
     </div>
   )
 }
