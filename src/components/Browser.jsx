@@ -102,36 +102,59 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
                   <div className="text-sm text-parchment-dark">
                     Showing {filteredCharacters.length} of {characters.length} characters
                   </div>
-                  {filters.type !== 'all' && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setDisplayMode('grid')}
-                        className={`px-3 py-1 text-sm rounded transition ${
-                          displayMode === 'grid'
-                            ? 'bg-gold text-wood'
-                            : 'bg-gold-dark text-parchment hover:bg-gold'
-                        }`}
-                      >
-                        Grid
-                      </button>
-                      <button
-                        onClick={() => setDisplayMode('hierarchy')}
-                        className={`px-3 py-1 text-sm rounded transition ${
-                          displayMode === 'hierarchy'
-                            ? 'bg-gold text-wood'
-                            : 'bg-gold-dark text-parchment hover:bg-gold'
-                        }`}
-                      >
-                        Hierarchy
-                      </button>
-                    </div>
-                  )}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setDisplayMode('grid')}
+                      className={`px-3 py-1 text-sm rounded transition ${
+                        displayMode === 'grid'
+                          ? 'bg-gold text-wood'
+                          : 'bg-gold-dark text-parchment hover:bg-gold'
+                      }`}
+                    >
+                      Grid
+                    </button>
+                    <button
+                      onClick={() => setDisplayMode('hierarchy')}
+                      className={`px-3 py-1 text-sm rounded transition ${
+                        displayMode === 'hierarchy'
+                          ? 'bg-gold text-wood'
+                          : 'bg-gold-dark text-parchment hover:bg-gold'
+                      }`}
+                    >
+                      Hierarchy
+                    </button>
+                  </div>
                 </div>
                 {displayMode === 'grid' ? (
                   <CharacterGrid
                     characters={filteredCharacters}
                     onSelectCharacter={setSelectedCharacter}
                   />
+                ) : filters.type === 'all' ? (
+                  // Split hierarchy for "All Records"
+                  <div className="space-y-8">
+                    {/* Guild Members Hierarchy */}
+                    {characters.some(c => c.type === 'guild') && (
+                      <div>
+                        <h2 className="text-2xl font-medieval text-gold mb-4">Guild Members</h2>
+                        <CharacterHierarchy
+                          characters={characters.filter(c => c.type === 'guild')}
+                          onSelectCharacter={setSelectedCharacter}
+                        />
+                      </div>
+                    )}
+
+                    {/* Criminals Hierarchy */}
+                    {characters.some(c => c.type === 'criminal') && (
+                      <div>
+                        <h2 className="text-2xl font-medieval text-seal-light mb-4">Criminals</h2>
+                        <CharacterHierarchy
+                          characters={characters.filter(c => c.type === 'criminal')}
+                          onSelectCharacter={setSelectedCharacter}
+                        />
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <CharacterHierarchy
                     characters={filteredCharacters}
