@@ -1,10 +1,6 @@
 import { useState } from 'react'
 
 export default function CharacterForm({ dropdownOptions, characters = [], editingCharacter, onSubmit, onCancel }) {
-  // Extract unique affiliations from existing characters and convert to option format
-  const uniqueAffiliations = Array.from(
-    new Set(characters.map(c => c.affiliation).filter(Boolean))
-  ).sort().map(aff => ({ value: aff, label: aff }))
   const [formData, setFormData] = useState(editingCharacter ? {
     ...editingCharacter,
     observations: Array.isArray(editingCharacter.observations) ? editingCharacter.observations : (editingCharacter.observations ? [editingCharacter.observations] : []),
@@ -266,11 +262,11 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
             value={formData.placeOfOrigin}
             onChange={(value) => handleInputChange('placeOfOrigin', value)}
           />
-          <FormSelect
+          <FormInput
             label="Affiliation"
             value={formData.affiliation}
             onChange={(value) => handleInputChange('affiliation', value)}
-            options={uniqueAffiliations}
+            placeholder="e.g., The Guild, Shadow Syndicate, Lone Wolf"
           />
           <FormInput
             label="Level"
