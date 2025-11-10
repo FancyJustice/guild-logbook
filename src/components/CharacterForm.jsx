@@ -395,23 +395,10 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
             ]}
           />
         )}
-        <FormSelect
+        <ElementalAttunementSelect
           label="Elemental Attunement"
           value={formData.elemeltanAttunement}
           onChange={(value) => handleInputChange('elemeltanAttunement', value)}
-          options={[
-            { value: '', label: 'Select Attunement' },
-            { value: 'Fire', label: 'Fire' },
-            { value: 'Water', label: 'Water' },
-            { value: 'Earth', label: 'Earth' },
-            { value: 'Air', label: 'Air' },
-            { value: 'Lightning', label: 'Lightning' },
-            { value: 'Ice', label: 'Ice' },
-            { value: 'Nature', label: 'Nature' },
-            { value: 'Light', label: 'Light' },
-            { value: 'Dark', label: 'Dark' },
-            { value: 'Neutral', label: 'Neutral' }
-          ]}
         />
       </div>
 
@@ -844,6 +831,75 @@ function FormSelect({ label, value, onChange, options = [] }) {
           <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>
+    </div>
+  )
+}
+
+function ElementalAttunementSelect({ label, value, onChange }) {
+  const elementColors = {
+    'Fire': { bg: 'bg-red-900', border: 'border-red-600', text: 'text-red-100' },
+    'Water': { bg: 'bg-blue-900', border: 'border-blue-600', text: 'text-blue-100' },
+    'Wind': { bg: 'bg-cyan-800', border: 'border-cyan-500', text: 'text-cyan-100' },
+    'Earth': { bg: 'bg-amber-900', border: 'border-amber-700', text: 'text-amber-100' },
+    'Light': { bg: 'bg-yellow-100', border: 'border-yellow-300', text: 'text-yellow-900' },
+    'Dark': { bg: 'bg-gray-900', border: 'border-gray-700', text: 'text-gray-300' },
+    'Ice': { bg: 'bg-sky-800', border: 'border-sky-500', text: 'text-sky-100' },
+    'Steam': { bg: 'bg-slate-700', border: 'border-slate-500', text: 'text-slate-100' },
+    'Lightning': { bg: 'bg-yellow-900', border: 'border-yellow-600', text: 'text-yellow-100' },
+    'Nature': { bg: 'bg-green-900', border: 'border-green-600', text: 'text-green-100' },
+    'Magma': { bg: 'bg-orange-900', border: 'border-orange-600', text: 'text-orange-100' },
+    'Sand': { bg: 'bg-yellow-700', border: 'border-yellow-600', text: 'text-yellow-100' },
+    'Metal': { bg: 'bg-zinc-700', border: 'border-zinc-600', text: 'text-zinc-100' },
+    'Gravity': { bg: 'bg-purple-950', border: 'border-purple-700', text: 'text-purple-100' },
+    'Poison': { bg: 'bg-purple-900', border: 'border-purple-700', text: 'text-purple-100' },
+    'Blood': { bg: 'bg-red-950', border: 'border-red-800', text: 'text-red-100' },
+    'Ghost': { bg: 'bg-violet-950', border: 'border-violet-700', text: 'text-violet-100' },
+    'Prism': { bg: 'bg-pink-800', border: 'border-pink-600', text: 'text-pink-100' },
+    'Solar': { bg: 'bg-orange-700', border: 'border-orange-500', text: 'text-orange-100' },
+    'Darkflame': { bg: 'bg-red-950', border: 'border-red-900', text: 'text-red-100' }
+  }
+
+  const elements = [
+    'Fire', 'Water', 'Wind', 'Earth', 'Light', 'Dark', 'Ice', 'Steam',
+    'Lightning', 'Nature', 'Magma', 'Sand', 'Metal', 'Gravity', 'Poison',
+    'Blood', 'Ghost', 'Prism', 'Solar', 'Darkflame'
+  ]
+
+  return (
+    <div>
+      <label className="block text-xs text-gold-dark uppercase tracking-wide font-medieval mb-3">
+        {label}
+      </label>
+      <div className="grid grid-cols-4 gap-2">
+        <button
+          type="button"
+          onClick={() => onChange('')}
+          className={`px-3 py-2 rounded border-2 text-sm font-medieval transition ${
+            value === ''
+              ? 'border-gold bg-gold text-wood'
+              : 'border-gold-dark bg-parchment-dark text-wood-light hover:border-gold'
+          }`}
+        >
+          None
+        </button>
+        {elements.map(element => {
+          const colors = elementColors[element]
+          return (
+            <button
+              key={element}
+              type="button"
+              onClick={() => onChange(element)}
+              className={`px-3 py-2 rounded border-2 text-sm font-medieval transition ${
+                value === element
+                  ? `${colors.bg} ${colors.border} ${colors.text} border-opacity-100`
+                  : `${colors.bg} border-opacity-50 ${colors.text} border-opacity-40 hover:border-opacity-100`
+              }`}
+            >
+              {element}
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }
