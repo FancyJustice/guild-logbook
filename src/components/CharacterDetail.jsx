@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import StatsHexagon from './StatsHexagon'
 import { getImageSource } from '../utils/imageUtils'
 
@@ -15,6 +16,11 @@ const colorPalette = {
 
 export default function CharacterDetail({ character, onBack }) {
   const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
+
+  // Scroll to top when character changes
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [character.id])
 
   const exportCharacterAsJSON = () => {
     const dataToExport = {
