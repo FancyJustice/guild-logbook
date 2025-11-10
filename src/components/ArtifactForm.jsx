@@ -62,7 +62,14 @@ export default function ArtifactForm({ dropdownOptions, editingArtifact, onSubmi
           label="Type"
           value={formData.type}
           onChange={(value) => handleInputChange('type', value)}
-          options={[{ value: '', label: 'Select Type' }, ...(dropdownOptions.artifactType || []).map(t => ({ value: t, label: t }))]}
+          options={[
+            { value: '', label: 'Select Type' },
+            { value: 'Consumable', label: 'Consumable' },
+            { value: 'Weapon', label: 'Weapon' },
+            { value: 'Armor', label: 'Armor' },
+            { value: 'Accessory', label: 'Accessory' },
+            { value: 'Currency', label: 'Currency' }
+          ]}
         />
       </div>
 
