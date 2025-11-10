@@ -289,10 +289,10 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
                 ]
               : [
                   { value: '', label: 'Select Threat Level' },
-                  { value: 'Critical', label: 'Critical' },
-                  { value: 'High', label: 'High' },
-                  { value: 'Medium', label: 'Medium' },
-                  { value: 'Low', label: 'Low' }
+                  { value: 'Harmless', label: 'Harmless' },
+                  { value: 'Notorious', label: 'Notorious' },
+                  { value: 'Dangerous', label: 'Dangerous' },
+                  { value: 'Devastating', label: 'Devastating' }
                 ]
             }
           />

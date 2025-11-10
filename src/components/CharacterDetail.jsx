@@ -353,10 +353,10 @@ function RankBadge({ label, value }) {
   }
 
   const threatColors = {
-    'Critical': { bg: 'bg-red-900', border: 'border-red-600', text: 'text-red-100', shadow: 'shadow-lg shadow-red-600/50', animate: 'animate-pulse' },
-    'High': { bg: 'bg-orange-900', border: 'border-orange-600', text: 'text-orange-100', shadow: 'shadow-lg shadow-orange-600/50', animate: 'animate-pulse' },
-    'Medium': { bg: 'bg-yellow-900', border: 'border-yellow-600', text: 'text-yellow-100', shadow: 'shadow-lg shadow-yellow-600/30', animate: '' },
-    'Low': { bg: 'bg-green-900', border: 'border-green-600', text: 'text-green-100', shadow: 'shadow-lg shadow-green-600/30', animate: '' },
+    'Devastating': { bg: 'bg-red-900', border: 'border-red-600', text: 'text-red-100', shadow: 'shadow-lg shadow-red-600/50', animate: 'animate-pulse' },
+    'Dangerous': { bg: 'bg-orange-900', border: 'border-orange-600', text: 'text-orange-100', shadow: 'shadow-lg shadow-orange-600/50', animate: 'animate-pulse' },
+    'Notorious': { bg: 'bg-yellow-900', border: 'border-yellow-600', text: 'text-yellow-100', shadow: 'shadow-lg shadow-yellow-600/30', animate: '' },
+    'Harmless': { bg: 'bg-green-900', border: 'border-green-600', text: 'text-green-100', shadow: 'shadow-lg shadow-green-600/30', animate: '' },
   }
 
   const isRank = label.includes('Rank')
