@@ -343,8 +343,7 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
               { value: 'Ambitious', label: 'Ambitious' },
               { value: 'Optimistic', label: 'Optimistic' },
               { value: 'Humorous', label: 'Humorous' },
-              { value: 'Mysterious', label: 'Mysterious' },
-              ...(dropdownOptions.personality || []).filter(p => !['Adventurous', 'Stoic', 'Charismatic', 'Cunning', 'Loyal', 'Rebellious', 'Intellectual', 'Compassionate', 'Ambitious', 'Optimistic', 'Humorous', 'Mysterious'].includes(p)).map(p => ({ value: p, label: p }))
+              { value: 'Mysterious', label: 'Mysterious' }
             ]}
           />
         ) : (
@@ -368,8 +367,7 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
               { value: 'Dishonest', label: 'Dishonest' },
               { value: 'Lazy', label: 'Lazy' },
               { value: 'Obsessive', label: 'Obsessive' },
-              { value: 'Ambitious', label: 'Ambitious' },
-              ...(dropdownOptions.personality || []).filter(p => !['Impulsive', 'Reckless', 'Arrogant', 'Vindictive', 'Envious', 'Greedy', 'Cowardly', 'Melancholic', 'Pessimistic', 'Naive', 'Dishonest', 'Lazy', 'Obsessive', 'Ambitious'].includes(p)).map(p => ({ value: p, label: p }))
+              { value: 'Ambitious', label: 'Ambitious' }
             ]}
           />
         )}
@@ -393,8 +391,7 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
               { value: 'Dishonest', label: 'Dishonest' },
               { value: 'Lazy', label: 'Lazy' },
               { value: 'Obsessive', label: 'Obsessive' },
-              { value: 'Ambitious', label: 'Ambitious' },
-              ...(dropdownOptions.flaw || []).filter(f => !['Impulsive', 'Reckless', 'Arrogant', 'Vindictive', 'Envious', 'Greedy', 'Cowardly', 'Melancholic', 'Pessimistic', 'Naive', 'Dishonest', 'Lazy', 'Obsessive', 'Ambitious'].includes(f)).map(f => ({ value: f, label: f }))
+              { value: 'Ambitious', label: 'Ambitious' }
             ]}
           />
         )}
@@ -413,8 +410,7 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
             { value: 'Nature', label: 'Nature' },
             { value: 'Light', label: 'Light' },
             { value: 'Dark', label: 'Dark' },
-            { value: 'Neutral', label: 'Neutral' },
-            ...(dropdownOptions.elemeltanAttunement || []).filter(a => !['Fire', 'Water', 'Earth', 'Air', 'Lightning', 'Ice', 'Nature', 'Light', 'Dark', 'Neutral'].includes(a)).map(a => ({ value: a, label: a }))
+            { value: 'Neutral', label: 'Neutral' }
           ]}
         />
       </div>
