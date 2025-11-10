@@ -47,13 +47,15 @@ a:hover {
 }
 
 .ultimate-skill {
-  background: linear-gradient(90deg, var(--gradient-color-1), var(--gradient-color-2));
+  background: linear-gradient(90deg, var(--gradient-color-1, #daa520), var(--gradient-color-2, #ffd700));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  color: var(--gradient-color-1, #daa520);
   font-weight: 900;
-  animation: gradientShift 3s ease-in-out infinite;
+  animation: gradientShift 1.2s ease-in-out infinite;
   background-size: 200% 200%;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 1px rgba(0, 0, 0, 0.6));
 }
 
 @keyframes gradientShift {

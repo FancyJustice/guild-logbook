@@ -75,7 +75,10 @@ export async function fetchCharactersFromFirebase() {
  */
 export function subscribeToCharacters(callback) {
   try {
-    let useNewStructure = true;
+    let checkCounter = 0;
+    let useOldStructure = false;
+    let unsubscribeArts = null;
+    let unsubscribeConfig = null;
 
     const unsubscribeChars = onSnapshot(collection(db, CHARACTERS_COLLECTION), (charsSnap) => {
       const characters = charsSnap.docs.map(doc => ({
@@ -83,57 +86,100 @@ export function subscribeToCharacters(callback) {
         id: doc.id
       }));
 
-      // If new structure is empty, try old structure
-      if (characters.length === 0 && useNewStructure) {
-        useNewStructure = false;
-        try {
-          const oldDocRef = doc(db, DATA_COLLECTION, 'characters-data');
-          const unsubscribeOld = onSnapshot(oldDocRef, (oldDocSnap) => {
-            if (oldDocSnap.exists()) {
-              const oldData = oldDocSnap.data();
-              callback({
-                characters: oldData.characters || [],
-                artifacts: oldData.artifacts || [],
-                dropdownOptions: oldData.dropdownOptions || {}
-              });
-            }
-          });
-          return unsubscribeOld;
-        } catch (e) {
-          console.log('Old data structure not found');
-        }
+      // If new structure is empty and we haven't switched to old yet, try old structure
+      if (characters.length === 0 && !useOldStructure && checkCounter === 0) {
+        console.log('New structure is empty, switching to old structure');
+        checkCounter++;
+        useOldStructure = true;
+        // Unsubscribe from nested listeners before switching
+        if (unsubscribeArts) unsubscribeArts();
+        if (unsubscribeConfig) unsubscribeConfig();
+        return subscribeToOldStructure(callback);
       }
 
-      const unsubscribeArts = onSnapshot(collection(db, ARTIFACTS_COLLECTION), (artsSnap) => {
+      if (characters.length === 0 && useOldStructure) {
+        // Old structure was tried, still no data
+        console.log('Both structures empty, returning empty data');
+        callback({
+          characters: [],
+          artifacts: [],
+          dropdownOptions: {}
+        });
+        return;
+      }
+
+      // We have characters from new structure - set up nested listeners
+      if (unsubscribeArts) unsubscribeArts();
+      if (unsubscribeConfig) unsubscribeConfig();
+
+      unsubscribeArts = onSnapshot(collection(db, ARTIFACTS_COLLECTION), (artsSnap) => {
         const artifacts = artsSnap.docs.map(doc => ({
           ...doc.data(),
           id: doc.id
         }));
 
-        const unsubscribeConfig = onSnapshot(doc(db, DATA_COLLECTION, CONFIG_DOC), (configSnap) => {
+        unsubscribeConfig = onSnapshot(doc(db, DATA_COLLECTION, CONFIG_DOC), (configSnap) => {
           const dropdownOptions = configSnap.exists() ? configSnap.data().dropdownOptions || {} : {};
 
+          console.log('Subscription: complete data -', characters.length, 'characters,', artifacts.length, 'artifacts');
           callback({
             characters,
             artifacts,
             dropdownOptions
           });
         });
-
-        return () => {
-          unsubscribeConfig();
-          unsubscribeArts();
-        };
       });
-
-      return unsubscribeArts;
     }, (error) => {
-      console.error('Error subscribing to characters:', error);
+      console.error('Error subscribing to new structure:', error);
+      // Fall back to old structure on error
+      if (unsubscribeArts) unsubscribeArts();
+      if (unsubscribeConfig) unsubscribeConfig();
+      return subscribeToOldStructure(callback);
     });
 
-    return unsubscribeChars;
+    return () => {
+      unsubscribeChars();
+      if (unsubscribeArts) unsubscribeArts();
+      if (unsubscribeConfig) unsubscribeConfig();
+    };
   } catch (error) {
     console.error('Error setting up subscription:', error);
+    return subscribeToOldStructure(callback);
+  }
+}
+
+/**
+ * Subscribe to old single-document structure
+ */
+function subscribeToOldStructure(callback) {
+  try {
+    const oldDocRef = doc(db, DATA_COLLECTION, 'characters-data');
+    return onSnapshot(oldDocRef, (oldDocSnap) => {
+      if (oldDocSnap.exists()) {
+        const oldData = oldDocSnap.data();
+        callback({
+          characters: oldData.characters || [],
+          artifacts: oldData.artifacts || [],
+          dropdownOptions: oldData.dropdownOptions || {}
+        });
+      } else {
+        console.log('Subscription: old structure document does not exist');
+        callback({
+          characters: [],
+          artifacts: [],
+          dropdownOptions: {}
+        });
+      }
+    }, (error) => {
+      console.error('Error subscribing to old structure:', error);
+      callback({
+        characters: [],
+        artifacts: [],
+        dropdownOptions: {}
+      });
+    });
+  } catch (error) {
+    console.error('Error setting up old structure subscription:', error);
     throw error;
   }
 }
@@ -201,8 +247,22 @@ export async function updateCharacterInFirebase(updatedCharacter, currentCharact
  */
 export async function deleteCharacterFromFirebase(characterId, currentCharacters, currentArtifacts, currentDropdown) {
   try {
+    // Delete from new structure
     const charRef = doc(db, CHARACTERS_COLLECTION, characterId);
     await deleteDoc(charRef);
+
+    // Also delete from old structure for backward compatibility
+    try {
+      const updatedCharacters = currentCharacters.filter(c => c.id !== characterId);
+      const oldDocRef = doc(db, DATA_COLLECTION, 'characters-data');
+      await setDoc(oldDocRef, {
+        characters: updatedCharacters,
+        artifacts: currentArtifacts,
+        dropdownOptions: currentDropdown
+      }, { merge: true });
+    } catch (e) {
+      console.log('Could not update old structure (may not exist yet)');
+    }
   } catch (error) {
     console.error('Error deleting character:', error);
     throw error;

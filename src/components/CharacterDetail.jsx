@@ -65,32 +65,29 @@ export default function CharacterDetail({ character, onBack }) {
           {/* Quick Stats */}
           <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold space-y-3">
             <div className="border-b-2 border-gold-dark pb-2">
-              <div className="inline-block px-3 py-1 bg-gold text-wood text-xs uppercase tracking-widest font-medieval font-bold rounded mb-2">
+              <div className="inline-block px-4 py-2 bg-gold text-wood text-sm uppercase tracking-widest font-medieval font-bold rounded mb-2">
                 <i className={`ra ${character.type === 'guild' ? 'ra-shield' : 'ra-dragon-emblem'}`} style={{ marginRight: '0.5rem', color: '#2a2420' }}></i>
                 {character.type === 'guild' ? 'Guild Member' : 'Criminal'}
               </div>
-              <h2 className="text-2xl font-bold font-medieval text-gold-dark" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>{character.name}</h2>
+              <h2 className="text-4xl font-bold font-medieval text-gold-dark" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>{character.name}</h2>
               {character.title && (
-                <p className="text-xs italic text-gold mt-2" style={{ fontStyle: 'italic' }}>"{character.title}"</p>
+                <p className="text-lg italic text-gold mt-2" style={{ fontStyle: 'italic' }}>"{character.title}"</p>
               )}
             </div>
 
-            <div className="text-sm space-y-2">
+            <div className="text-base space-y-3">
               <p className="text-wood-light"><i className="ra ra-explosion" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Lvl:</strong> {character.level}</p>
               <p className="text-wood-light"><i className="ra ra-crown" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Rank:</strong> {character.rank}</p>
-              <p className="text-wood-light flex items-center gap-2">
-                <img src="/VRLogo.png" alt="VRChat" style={{ height: '1.2rem', width: 'auto' }} />
-                <strong>Player:</strong> {character.vrcPlayerName && (
-                  <a
-                    href={character.vrcProfileUrl || `https://vrchat.com/home/user/${character.vrcPlayerName}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gold hover:text-parchment transition cursor-pointer"
-                  >
-                    {character.vrcPlayerName}
-                  </a>
-                )}
-              </p>
+              <p className="text-wood-light"><img src="/VRLogo.png" alt="VRChat" style={{ height: '1.2rem', width: 'auto', marginRight: '0.5rem', display: 'inline-block' }} /><strong>Player:</strong> {character.vrcPlayerName && (
+                <a
+                  href={character.vrcProfileUrl || `https://vrchat.com/home/user/${character.vrcPlayerName}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gold hover:text-parchment transition cursor-pointer ml-1"
+                >
+                  {character.vrcPlayerName}
+                </a>
+              )}</p>
             </div>
           </div>
 
@@ -111,23 +108,23 @@ export default function CharacterDetail({ character, onBack }) {
           <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold space-y-4">
             {character.quote && (
               <blockquote className="italic text-lg text-gold-dark pl-6 border-l-4 border-gold relative" style={{ fontStyle: 'italic', letterSpacing: '0.02em' }}>
-                <span className="text-gold text-2xl absolute left-0 top-0">✦</span>
+                <span className="text-gold text-2xl" style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '0.5rem' }}>✦</span>
                 "{character.quote}"
-                <span className="text-gold text-2xl">✦</span>
+                <span className="text-gold text-2xl" style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: '0.5rem' }}>✦</span>
               </blockquote>
             )}
             {character.lore && (
               <div>
-                <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3 uppercase tracking-wider"><i className="ra ra-scroll" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i>━ Lore ━</h3>
-                <p className="text-sm leading-relaxed text-wood">{character.lore}</p>
+                <h3 className="text-2xl font-medieval font-bold text-gold-dark mb-4 uppercase tracking-wider"><i className="ra ra-scroll" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i>━ Lore ━</h3>
+                <p className="text-base leading-relaxed text-wood">{character.lore}</p>
               </div>
             )}
             {character.observations && Array.isArray(character.observations) && character.observations.length > 0 && (
               <div className="pt-4 border-t-2 border-gold-dark">
-                <h3 className="text-lg font-medieval font-bold text-gold-dark mb-3 uppercase tracking-wider"><i className="ra ra-book" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i>━ Observations ━</h3>
-                <ul className="space-y-2">
+                <h3 className="text-2xl font-medieval font-bold text-gold-dark mb-4 uppercase tracking-wider"><i className="ra ra-book" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i>━ Observations ━</h3>
+                <ul className="space-y-3">
                   {character.observations.map((observation, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-sm text-wood-light pl-2 border-l-2 border-gold-dark">
+                    <li key={idx} className="flex items-start gap-3 text-base text-wood-light pl-2 border-l-2 border-gold-dark">
                       <i className="ra ra-feather" style={{ color: '#d4a574', marginTop: '0.25rem' }}></i>
                       <span>{observation}</span>
                     </li>
@@ -142,42 +139,42 @@ export default function CharacterDetail({ character, onBack }) {
             <h3 className="text-lg font-medieval font-bold text-gold-dark mb-4">Character Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Left Column */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center py-2 border-b border-gold-dark">
-                  <span className="text-sm text-wood-light font-medieval">Race</span>
-                  <span className="font-bold text-wood">{character.race || '—'}</span>
+              <div className="space-y-5">
+                <div className="flex justify-between items-center py-4 border-b border-gold-dark">
+                  <span className="text-lg text-wood-light font-medieval">Race</span>
+                  <span className="font-bold text-lg text-wood">{character.race || '—'}</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b border-gold-dark">
-                  <span className="text-sm text-wood-light font-medieval">Class</span>
-                  <span className="font-bold text-wood">{character.class || '—'}</span>
+                <div className="flex justify-between items-center py-4 border-b border-gold-dark">
+                  <span className="text-lg text-wood-light font-medieval">Class</span>
+                  <span className="font-bold text-lg text-wood">{character.class || '—'}</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b border-gold-dark">
-                  <span className="text-sm text-wood-light font-medieval">Age</span>
-                  <span className="font-bold text-wood">{character.age || '—'}</span>
+                <div className="flex justify-between items-center py-4 border-b border-gold-dark">
+                  <span className="text-lg text-wood-light font-medieval">Age</span>
+                  <span className="font-bold text-lg text-wood">{character.age || '—'}</span>
                 </div>
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-sm text-wood-light font-medieval">Height</span>
-                  <span className="font-bold text-wood">{character.height || '—'}</span>
+                <div className="flex justify-between items-center py-4">
+                  <span className="text-lg text-wood-light font-medieval">Height</span>
+                  <span className="font-bold text-lg text-wood">{character.height || '—'}</span>
                 </div>
               </div>
 
               {/* Right Column */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center py-2 border-b border-gold-dark">
-                  <span className="text-sm text-wood-light font-medieval">Gender</span>
-                  <span className="font-bold text-wood">{character.gender || '—'}</span>
+              <div className="space-y-5">
+                <div className="flex justify-between items-center py-4 border-b border-gold-dark">
+                  <span className="text-lg text-wood-light font-medieval">Gender</span>
+                  <span className="font-bold text-lg text-wood">{character.gender || '—'}</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b border-gold-dark">
-                  <span className="text-sm text-wood-light font-medieval">Status</span>
-                  <span className="font-bold text-wood">{character.status || '—'}</span>
+                <div className="flex justify-between items-center py-4 border-b border-gold-dark">
+                  <span className="text-lg text-wood-light font-medieval">Status</span>
+                  <span className="font-bold text-lg text-wood">{character.status || '—'}</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b border-gold-dark">
-                  <span className="text-sm text-wood-light font-medieval">Origin</span>
-                  <span className="font-bold text-wood">{character.placeOfOrigin || '—'}</span>
+                <div className="flex justify-between items-center py-4 border-b border-gold-dark">
+                  <span className="text-lg text-wood-light font-medieval">Origin</span>
+                  <span className="font-bold text-lg text-wood">{character.placeOfOrigin || '—'}</span>
                 </div>
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-sm text-wood-light font-medieval">Affiliation</span>
-                  <span className="font-bold text-wood">{character.affiliation || '—'}</span>
+                <div className="flex justify-between items-center py-4">
+                  <span className="text-lg text-wood-light font-medieval">Affiliation</span>
+                  <span className="font-bold text-lg text-wood">{character.affiliation || '—'}</span>
                 </div>
               </div>
             </div>
@@ -199,8 +196,8 @@ export default function CharacterDetail({ character, onBack }) {
           {/* Combat Skills */}
           {character.combatSkills && character.combatSkills.length > 0 && (
             <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
-              <h3 className="text-base font-medieval font-bold mb-3 text-gold-dark"><i className="ra ra-sword" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i>━ Combat Skills ━</h3>
-              <div className="space-y-2">
+              <h3 className="text-2xl font-medieval font-bold mb-4 text-gold-dark"><i className="ra ra-sword" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i>━ Combat Skills ━</h3>
+              <div className="space-y-4">
                 {character.combatSkills.map((skill, idx) => {
                   const isUltimate = typeof skill !== 'string' && skill.isUltimate
                   const skillObj = typeof skill === 'string' ? { name: skill, description: '' } : skill
@@ -212,15 +209,21 @@ export default function CharacterDetail({ character, onBack }) {
                   else if (skillObj.passive) icon = '✦'
 
                   return (
-                    <div key={idx} className={`border-l-4 pl-2 py-1 ${isUltimate ? 'border-ultimate' : 'border-gold-dark'}`}>
-                      <div className="flex items-start gap-2">
-                        <span className="text-gold text-lg">{icon}</span>
+                    <div key={idx} className={`border-l-4 pl-4 py-3 ${isUltimate ? 'border-ultimate' : 'border-gold-dark'}`}>
+                      <div className="flex items-start gap-4">
+                        <span className="text-gold text-3xl flex-shrink-0">{icon}</span>
                         <div className="flex-1">
-                          <div className={`${isUltimate ? 'ultimate-skill text-sm' : 'font-bold text-sm'}`}>
+                          <div
+                            className={`${isUltimate ? 'ultimate-skill text-xl' : 'font-bold text-xl'}`}
+                            style={isUltimate ? {
+                              '--gradient-color-1': ultimateColors.color1,
+                              '--gradient-color-2': ultimateColors.color2,
+                            } : {}}
+                          >
                             {skillObj.name}
                           </div>
                           {skillObj.description && (
-                            <div className="text-sm text-wood-light mt-0.5">{skillObj.description}</div>
+                            <div className="text-lg text-wood-light mt-2">{skillObj.description}</div>
                           )}
                         </div>
                       </div>
@@ -233,12 +236,12 @@ export default function CharacterDetail({ character, onBack }) {
 
           {/* Life Skills - Small */}
           {character.lifeSkills && character.lifeSkills.length > 0 && (
-            <div className="bg-parchment text-wood p-3 rounded-lg border-2 border-gold">
-              <h3 className="text-sm font-medieval font-bold mb-2 text-gold-dark"><i className="ra ra-fishing-hook" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i>━ Life Skills ━</h3>
-              <ul className="grid grid-cols-2 gap-2">
+            <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
+              <h3 className="text-lg font-medieval font-bold mb-3 text-gold-dark"><i className="ra ra-fishing-hook" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i>━ Life Skills ━</h3>
+              <ul className="grid grid-cols-2 gap-3">
                 {character.lifeSkills.map((skill, idx) => (
-                  <li key={idx} className="flex items-center gap-1 text-xs">
-                    <i className="ra ra-sparkles" style={{ color: '#d4a574', fontSize: '0.9rem' }}></i>
+                  <li key={idx} className="flex items-center gap-2 text-base">
+                    <i className="ra ra-sparkles" style={{ color: '#d4a574', fontSize: '1.1rem' }}></i>
                     <span>{skill}</span>
                   </li>
                 ))}
@@ -260,19 +263,64 @@ export default function CharacterDetail({ character, onBack }) {
 }
 
 function StatBox({ label, value }) {
+  // Rank and threat level color mapping
+  const rankColors = {
+    'S': { bg: 'bg-red-900', border: 'border-red-600', text: 'text-red-100', animate: true },
+    'A': { bg: 'bg-orange-900', border: 'border-orange-600', text: 'text-orange-100', animate: true },
+    'B': { bg: 'bg-yellow-900', border: 'border-yellow-600', text: 'text-yellow-100', animate: false },
+    'C': { bg: 'bg-green-900', border: 'border-green-600', text: 'text-green-100', animate: false },
+    'D': { bg: 'bg-blue-900', border: 'border-blue-600', text: 'text-blue-100', animate: false },
+  }
+
+  const threatColors = {
+    'Critical': { bg: 'bg-red-900', border: 'border-red-600', text: 'text-red-100', animate: true },
+    'High': { bg: 'bg-orange-900', border: 'border-orange-600', text: 'text-orange-100', animate: true },
+    'Medium': { bg: 'bg-yellow-900', border: 'border-yellow-600', text: 'text-yellow-100', animate: false },
+    'Low': { bg: 'bg-green-900', border: 'border-green-600', text: 'text-green-100', animate: false },
+  }
+
+  const isRank = label.includes('Rank')
+  const colorMap = isRank ? rankColors : threatColors
+  const colors = value ? colorMap[value] : null
+
+  const bgClass = colors?.bg || 'bg-parchment'
+  const borderClass = colors?.border || 'border-gold'
+  const textClass = colors?.text || 'text-wood'
+  const animate = colors?.animate ? 'animate-pulse' : ''
+
   return (
-    <div className="bg-parchment text-wood p-4 rounded border-2 border-gold text-center">
-      <div className="text-xs text-gold-dark uppercase tracking-wide font-medieval mb-2">{label}</div>
-      <div className="font-medieval font-bold text-lg">{value}</div>
+    <div className={`${bgClass} ${textClass} p-4 rounded border-2 ${borderClass} text-center ${animate}`}>
+      <div className={`text-sm ${colors?.text || 'text-gold-dark'} uppercase tracking-wide font-medieval mb-3`}>{label}</div>
+      <div className="font-medieval font-bold text-2xl">{value || '—'}</div>
     </div>
   )
 }
 
 function AttributeBox({ label, value }) {
+  // Element color mapping
+  const elementColors = {
+    'Fire': { bg: 'bg-red-900', border: 'border-red-600', text: 'text-red-100' },
+    'Water': { bg: 'bg-blue-900', border: 'border-blue-600', text: 'text-blue-100' },
+    'Earth': { bg: 'bg-amber-900', border: 'border-amber-700', text: 'text-amber-100' },
+    'Air': { bg: 'bg-cyan-800', border: 'border-cyan-500', text: 'text-cyan-100' },
+    'Lightning': { bg: 'bg-yellow-900', border: 'border-yellow-600', text: 'text-yellow-100' },
+    'Ice': { bg: 'bg-sky-800', border: 'border-sky-500', text: 'text-sky-100' },
+    'Nature': { bg: 'bg-green-900', border: 'border-green-600', text: 'text-green-100' },
+    'Light': { bg: 'bg-yellow-100', border: 'border-yellow-300', text: 'text-yellow-900' },
+    'Dark': { bg: 'bg-gray-900', border: 'border-gray-700', text: 'text-gray-300' },
+    'Neutral': { bg: 'bg-parchment', border: 'border-gold', text: 'text-wood' },
+  }
+
+  const colors = label === 'Elemental Attunement' && value ? elementColors[value] : null
+  const bgClass = colors?.bg || 'bg-parchment'
+  const borderClass = colors?.border || 'border-gold'
+  const textClass = colors?.text || 'text-wood'
+  const labelClass = label === 'Elemental Attunement' && value ? colors?.text : 'text-gold-dark'
+
   return (
-    <div className="bg-parchment text-wood p-4 rounded border-2 border-gold">
-      <div className="text-xs text-gold-dark uppercase tracking-wide font-medieval mb-2">{label}</div>
-      <div className="font-medieval text-base">{value || '—'}</div>
+    <div className={`${bgClass} ${textClass} p-4 rounded border-2 ${borderClass}`}>
+      <div className={`text-sm ${labelClass} uppercase tracking-wide font-medieval mb-3`}>{label}</div>
+      <div className="font-medieval text-lg">{value || '—'}</div>
     </div>
   )
 }

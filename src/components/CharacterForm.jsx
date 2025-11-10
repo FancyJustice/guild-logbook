@@ -1,11 +1,16 @@
 import { useState } from 'react'
 
-export default function CharacterForm({ dropdownOptions, editingCharacter, onSubmit, onCancel }) {
+export default function CharacterForm({ dropdownOptions, characters = [], editingCharacter, onSubmit, onCancel }) {
+  // Extract unique affiliations from existing characters and convert to option format
+  const uniqueAffiliations = Array.from(
+    new Set(characters.map(c => c.affiliation).filter(Boolean))
+  ).sort().map(aff => ({ value: aff, label: aff }))
   const [formData, setFormData] = useState(editingCharacter ? {
     ...editingCharacter,
     observations: Array.isArray(editingCharacter.observations) ? editingCharacter.observations : (editingCharacter.observations ? [editingCharacter.observations] : []),
     combatSkills: editingCharacter.combatSkills || [],
     lifeSkills: editingCharacter.lifeSkills || [],
+    ultimateSkillColor: editingCharacter.ultimateSkillColor || 'gold',
   } : {
     type: 'guild',
     photo: '',
@@ -94,36 +99,11 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
             const dataUrl = canvas.toDataURL('image/png')
             setPhotoPreview(dataUrl)
 
-            // Generate filename from character name
-            const charName = formData.name || `character_${Date.now()}`
-            const fileName = `${charName.replace(/\s+/g, '_').toLowerCase()}.png`
-
-            try {
-              // Upload to backend API
-              const response = await fetch('/api/upload', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  imageData: dataUrl,
-                  fileName: fileName
-                })
-              })
-
-              const result = await response.json()
-
-              if (response.ok && result.url) {
-                // Store the Firebase Storage URL
-                setFormData(prev => ({
-                  ...prev,
-                  photo: result.url
-                }))
-              } else {
-                alert('Failed to upload image: ' + (result.message || result.error))
-              }
-            } catch (error) {
-              console.error('Upload error:', error)
-              alert('Error uploading image: ' + error.message)
-            }
+            // Store the image directly as a base64 data URL
+            setFormData(prev => ({
+              ...prev,
+              photo: dataUrl
+            }))
           }
           img.src = event.target.result
         }
@@ -286,10 +266,11 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
             value={formData.placeOfOrigin}
             onChange={(value) => handleInputChange('placeOfOrigin', value)}
           />
-          <FormInput
+          <FormSelect
             label="Affiliation"
             value={formData.affiliation}
             onChange={(value) => handleInputChange('affiliation', value)}
+            options={uniqueAffiliations}
           />
           <FormInput
             label="Level"
@@ -302,7 +283,15 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
             value={formData.rank}
             onChange={(value) => handleInputChange('rank', value)}
             options={formData.type === 'guild'
-              ? [{ value: '', label: 'Select Rank' }, ...(dropdownOptions.rank || []).map(r => ({ value: r, label: r }))]
+              ? [
+                  { value: '', label: 'Select Rank' },
+                  { value: 'S', label: 'S' },
+                  { value: 'A', label: 'A' },
+                  { value: 'B', label: 'B' },
+                  { value: 'C', label: 'C' },
+                  { value: 'D', label: 'D' },
+                  ...(dropdownOptions.rank || []).filter(r => !['S', 'A', 'B', 'C', 'D'].includes(r)).map(r => ({ value: r, label: r }))
+                ]
               : [{ value: '', label: 'Select Threat Level' }, ...(dropdownOptions.threatLevel || []).map(t => ({ value: t, label: t }))]
             }
           />
@@ -340,14 +329,36 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
             label="Personality"
             value={formData.personality}
             onChange={(value) => handleInputChange('personality', value)}
-            options={[{ value: '', label: 'Select Personality' }, ...(dropdownOptions.personality || []).map(p => ({ value: p, label: p }))]}
+            options={[
+              { value: '', label: 'Select Personality' },
+              { value: 'Brave', label: 'Brave' },
+              { value: 'Cautious', label: 'Cautious' },
+              { value: 'Cheerful', label: 'Cheerful' },
+              { value: 'Stoic', label: 'Stoic' },
+              { value: 'Witty', label: 'Witty' },
+              { value: 'Mysterious', label: 'Mysterious' },
+              { value: 'Loyal', label: 'Loyal' },
+              { value: 'Rebellious', label: 'Rebellious' },
+              ...(dropdownOptions.personality || []).filter(p => !['Brave', 'Cautious', 'Cheerful', 'Stoic', 'Witty', 'Mysterious', 'Loyal', 'Rebellious'].includes(p)).map(p => ({ value: p, label: p }))
+            ]}
           />
         ) : (
           <FormSelect
             label="Personality"
             value={formData.personality}
             onChange={(value) => handleInputChange('personality', value)}
-            options={[{ value: '', label: 'Select Flaw' }, ...(dropdownOptions.flaw || []).map(f => ({ value: f, label: f }))]}
+            options={[
+              { value: '', label: 'Select Personality' },
+              { value: 'Brave', label: 'Brave' },
+              { value: 'Cautious', label: 'Cautious' },
+              { value: 'Cheerful', label: 'Cheerful' },
+              { value: 'Stoic', label: 'Stoic' },
+              { value: 'Witty', label: 'Witty' },
+              { value: 'Mysterious', label: 'Mysterious' },
+              { value: 'Loyal', label: 'Loyal' },
+              { value: 'Rebellious', label: 'Rebellious' },
+              ...(dropdownOptions.personality || []).filter(p => !['Brave', 'Cautious', 'Cheerful', 'Stoic', 'Witty', 'Mysterious', 'Loyal', 'Rebellious'].includes(p)).map(p => ({ value: p, label: p }))
+            ]}
           />
         )}
         {formData.type === 'guild' && (
@@ -355,14 +366,38 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
             label="Flaw"
             value={formData.flaw}
             onChange={(value) => handleInputChange('flaw', value)}
-            options={[{ value: '', label: 'Select Flaw' }, ...(dropdownOptions.flaw || []).map(f => ({ value: f, label: f }))]}
+            options={[
+              { value: '', label: 'Select Flaw' },
+              { value: 'Arrogant', label: 'Arrogant' },
+              { value: 'Lazy', label: 'Lazy' },
+              { value: 'Impulsive', label: 'Impulsive' },
+              { value: 'Paranoid', label: 'Paranoid' },
+              { value: 'Cowardly', label: 'Cowardly' },
+              { value: 'Stubborn', label: 'Stubborn' },
+              { value: 'Naive', label: 'Naive' },
+              { value: 'Selfish', label: 'Selfish' },
+              ...(dropdownOptions.flaw || []).filter(f => !['Arrogant', 'Lazy', 'Impulsive', 'Paranoid', 'Cowardly', 'Stubborn', 'Naive', 'Selfish'].includes(f)).map(f => ({ value: f, label: f }))
+            ]}
           />
         )}
         <FormSelect
           label="Elemental Attunement"
           value={formData.elemeltanAttunement}
           onChange={(value) => handleInputChange('elemeltanAttunement', value)}
-          options={[{ value: '', label: 'Select Attunement' }, ...(dropdownOptions.elemeltanAttunement || []).map(a => ({ value: a, label: a }))]}
+          options={[
+            { value: '', label: 'Select Attunement' },
+            { value: 'Fire', label: 'Fire' },
+            { value: 'Water', label: 'Water' },
+            { value: 'Earth', label: 'Earth' },
+            { value: 'Air', label: 'Air' },
+            { value: 'Lightning', label: 'Lightning' },
+            { value: 'Ice', label: 'Ice' },
+            { value: 'Nature', label: 'Nature' },
+            { value: 'Light', label: 'Light' },
+            { value: 'Dark', label: 'Dark' },
+            { value: 'Neutral', label: 'Neutral' },
+            ...(dropdownOptions.elemeltanAttunement || []).filter(a => !['Fire', 'Water', 'Earth', 'Air', 'Lightning', 'Ice', 'Nature', 'Light', 'Dark', 'Neutral'].includes(a)).map(a => ({ value: a, label: a }))
+          ]}
         />
       </div>
 
@@ -550,6 +585,37 @@ export default function CharacterForm({ dropdownOptions, editingCharacter, onSub
       {/* Ultimate Skill Color */}
       <div>
         <label className="block text-sm font-medieval text-wood-light mb-2">Ultimate Skill Gradient Color</label>
+        {/* Preview of selected color */}
+        <div className="mb-4 p-4 bg-wood-light rounded border-2 border-gold-dark">
+          <p className="text-xs text-wood-light mb-2">Preview:</p>
+          <div
+            style={{
+              '--gradient-color-1': [
+                { value: 'gold', color1: '#daa520' },
+                { value: 'purple', color1: '#9d4edd' },
+                { value: 'cyan', color1: '#00d4ff' },
+                { value: 'red', color1: '#ff006e' },
+                { value: 'green', color1: '#00ff88' },
+                { value: 'orange', color1: '#ff8c42' },
+                { value: 'pink', color1: '#ff006e' },
+                { value: 'blue', color1: '#4361ee' },
+              ].find(c => c.value === formData.ultimateSkillColor)?.color1 || '#daa520',
+              '--gradient-color-2': [
+                { value: 'gold', color2: '#ffd700' },
+                { value: 'purple', color2: '#e0aaff' },
+                { value: 'cyan', color2: '#00ffff' },
+                { value: 'red', color2: '#ff6b9d' },
+                { value: 'green', color2: '#76ffb3' },
+                { value: 'orange', color2: '#ffb347' },
+                { value: 'pink', color2: '#ffb3d9' },
+                { value: 'blue', color2: '#7209b7' },
+              ].find(c => c.value === formData.ultimateSkillColor)?.color2 || '#ffd700',
+            }}
+            className="ultimate-skill text-2xl font-bold"
+          >
+            Ultimate Skill Name
+          </div>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { value: 'gold', label: 'Gold', color1: '#daa520', color2: '#ffd700' },
