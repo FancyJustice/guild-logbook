@@ -9,13 +9,26 @@ export default function CharacterHierarchy({ characters, onSelectCharacter }) {
     return acc
   }, {})
 
-  // Get unique ranks in order (highest to lowest)
-  const rankOrder = [
-    'A-Rank', 'B-Rank', 'C-Rank', 'D-Rank', 'S-Rank',
-    'Leader', 'Co-Leader', 'Officer', 'Elder',
-    'Member', 'Initiate', 'Recruit',
-    'Unranked'
-  ]
+  // Determine rank order based on character type (guild vs criminal)
+  // Guild members: S, A, B, C, D
+  // Criminals: Devastating, Dangerous, Notorious, Harmless
+  const getHierarchyOrder = () => {
+    const hasGuildMembers = characters.some(char => char.type === 'guild')
+    const hasCriminals = characters.some(char => char.type === 'criminal')
+
+    if (hasGuildMembers && !hasCriminals) {
+      // Only guild members - use S A B C D order (highest to lowest)
+      return ['S', 'A', 'B', 'C', 'D', 'Unranked']
+    } else if (hasCriminals && !hasGuildMembers) {
+      // Only criminals - use Devastating, Dangerous, Notorious, Harmless (highest to lowest)
+      return ['Devastating', 'Dangerous', 'Notorious', 'Harmless', 'Unranked']
+    } else {
+      // Mixed - combine both with guild ranks first, then criminal threat levels
+      return ['S', 'A', 'B', 'C', 'D', 'Devastating', 'Dangerous', 'Notorious', 'Harmless', 'Unranked']
+    }
+  }
+
+  const rankOrder = getHierarchyOrder()
 
   const sortedRanks = Object.keys(groupedByRank).sort((a, b) => {
     const aIndex = rankOrder.indexOf(a)
