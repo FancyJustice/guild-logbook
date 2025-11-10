@@ -326,38 +326,50 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {formData.type === 'guild' ? (
           <FormSelect
+            key="personality-guild"
             label="Personality"
             value={formData.personality}
             onChange={(value) => handleInputChange('personality', value)}
             options={[
               { value: '', label: 'Select Personality' },
-              { value: 'Brave', label: 'Brave' },
-              { value: 'Cautious', label: 'Cautious' },
-              { value: 'Cheerful', label: 'Cheerful' },
+              { value: 'Adventurous', label: 'Adventurous' },
               { value: 'Stoic', label: 'Stoic' },
-              { value: 'Witty', label: 'Witty' },
-              { value: 'Mysterious', label: 'Mysterious' },
+              { value: 'Charismatic', label: 'Charismatic' },
+              { value: 'Cunning', label: 'Cunning' },
               { value: 'Loyal', label: 'Loyal' },
               { value: 'Rebellious', label: 'Rebellious' },
-              ...(dropdownOptions.personality || []).filter(p => !['Brave', 'Cautious', 'Cheerful', 'Stoic', 'Witty', 'Mysterious', 'Loyal', 'Rebellious'].includes(p)).map(p => ({ value: p, label: p }))
+              { value: 'Intellectual', label: 'Intellectual' },
+              { value: 'Compassionate', label: 'Compassionate' },
+              { value: 'Ambitious', label: 'Ambitious' },
+              { value: 'Optimistic', label: 'Optimistic' },
+              { value: 'Humorous', label: 'Humorous' },
+              { value: 'Mysterious', label: 'Mysterious' },
+              ...(dropdownOptions.personality || []).filter(p => !['Adventurous', 'Stoic', 'Charismatic', 'Cunning', 'Loyal', 'Rebellious', 'Intellectual', 'Compassionate', 'Ambitious', 'Optimistic', 'Humorous', 'Mysterious'].includes(p)).map(p => ({ value: p, label: p }))
             ]}
           />
         ) : (
           <FormSelect
+            key="personality-criminal"
             label="Personality"
             value={formData.personality}
             onChange={(value) => handleInputChange('personality', value)}
             options={[
               { value: '', label: 'Select Personality' },
-              { value: 'Brave', label: 'Brave' },
-              { value: 'Cautious', label: 'Cautious' },
-              { value: 'Cheerful', label: 'Cheerful' },
-              { value: 'Stoic', label: 'Stoic' },
-              { value: 'Witty', label: 'Witty' },
-              { value: 'Mysterious', label: 'Mysterious' },
-              { value: 'Loyal', label: 'Loyal' },
-              { value: 'Rebellious', label: 'Rebellious' },
-              ...(dropdownOptions.personality || []).filter(p => !['Brave', 'Cautious', 'Cheerful', 'Stoic', 'Witty', 'Mysterious', 'Loyal', 'Rebellious'].includes(p)).map(p => ({ value: p, label: p }))
+              { value: 'Impulsive', label: 'Impulsive' },
+              { value: 'Reckless', label: 'Reckless' },
+              { value: 'Arrogant', label: 'Arrogant' },
+              { value: 'Vindictive', label: 'Vindictive' },
+              { value: 'Envious', label: 'Envious' },
+              { value: 'Greedy', label: 'Greedy' },
+              { value: 'Cowardly', label: 'Cowardly' },
+              { value: 'Melancholic', label: 'Melancholic' },
+              { value: 'Pessimistic', label: 'Pessimistic' },
+              { value: 'Naive', label: 'Naive' },
+              { value: 'Dishonest', label: 'Dishonest' },
+              { value: 'Lazy', label: 'Lazy' },
+              { value: 'Obsessive', label: 'Obsessive' },
+              { value: 'Ambitious', label: 'Ambitious' },
+              ...(dropdownOptions.personality || []).filter(p => !['Impulsive', 'Reckless', 'Arrogant', 'Vindictive', 'Envious', 'Greedy', 'Cowardly', 'Melancholic', 'Pessimistic', 'Naive', 'Dishonest', 'Lazy', 'Obsessive', 'Ambitious'].includes(p)).map(p => ({ value: p, label: p }))
             ]}
           />
         )}
@@ -368,15 +380,21 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
             onChange={(value) => handleInputChange('flaw', value)}
             options={[
               { value: '', label: 'Select Flaw' },
-              { value: 'Arrogant', label: 'Arrogant' },
-              { value: 'Lazy', label: 'Lazy' },
               { value: 'Impulsive', label: 'Impulsive' },
-              { value: 'Paranoid', label: 'Paranoid' },
+              { value: 'Reckless', label: 'Reckless' },
+              { value: 'Arrogant', label: 'Arrogant' },
+              { value: 'Vindictive', label: 'Vindictive' },
+              { value: 'Envious', label: 'Envious' },
+              { value: 'Greedy', label: 'Greedy' },
               { value: 'Cowardly', label: 'Cowardly' },
-              { value: 'Stubborn', label: 'Stubborn' },
+              { value: 'Melancholic', label: 'Melancholic' },
+              { value: 'Pessimistic', label: 'Pessimistic' },
               { value: 'Naive', label: 'Naive' },
-              { value: 'Selfish', label: 'Selfish' },
-              ...(dropdownOptions.flaw || []).filter(f => !['Arrogant', 'Lazy', 'Impulsive', 'Paranoid', 'Cowardly', 'Stubborn', 'Naive', 'Selfish'].includes(f)).map(f => ({ value: f, label: f }))
+              { value: 'Dishonest', label: 'Dishonest' },
+              { value: 'Lazy', label: 'Lazy' },
+              { value: 'Obsessive', label: 'Obsessive' },
+              { value: 'Ambitious', label: 'Ambitious' },
+              ...(dropdownOptions.flaw || []).filter(f => !['Impulsive', 'Reckless', 'Arrogant', 'Vindictive', 'Envious', 'Greedy', 'Cowardly', 'Melancholic', 'Pessimistic', 'Naive', 'Dishonest', 'Lazy', 'Obsessive', 'Ambitious'].includes(f)).map(f => ({ value: f, label: f }))
             ]}
           />
         )}
