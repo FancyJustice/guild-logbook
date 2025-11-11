@@ -1,3 +1,5 @@
+import { getImageSource } from '../utils/imageUtils'
+
 export default function ArtifactGrid({ artifacts, onSelectArtifact }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -10,7 +12,7 @@ export default function ArtifactGrid({ artifacts, onSelectArtifact }) {
           {artifact.photo && (
             <div className="overflow-hidden bg-wood-light h-48">
               <img
-                src={artifact.photo}
+                src={getImageSource(artifact.photo)}
                 alt={artifact.name}
                 className="w-full h-full object-cover"
               />

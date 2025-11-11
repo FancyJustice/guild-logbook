@@ -1,16 +1,12 @@
 import { getImageSource } from '../utils/imageUtils'
 
 export default function CharacterGrid({ characters, onSelectCharacter }) {
-  const handleCardClick = (character) => {
-    onSelectCharacter(character)
-  }
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {characters.map(character => (
         <div
           key={character.id}
-          onClick={() => handleCardClick(character)}
+          onClick={() => onSelectCharacter(character)}
           className={`relative cursor-pointer transform transition hover:scale-105`}
           style={{
             perspective: '1000px'

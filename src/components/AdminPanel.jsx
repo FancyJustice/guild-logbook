@@ -3,27 +3,59 @@ import CharacterForm from './CharacterForm'
 import ArtifactForm from './ArtifactForm'
 import { getImageSource } from '../utils/imageUtils'
 
+/**
+ * AdminPanel Component
+ *
+ * Password-protected admin interface for managing characters and artifacts
+ *
+ * Two modes:
+ * 1. NOT AUTHENTICATED: Shows password login form
+ * 2. AUTHENTICATED: Shows full admin interface with CRUD operations
+ *
+ * Displays:
+ * - Character list with edit/delete/export buttons
+ * - Add/edit character form (modal)
+ * - Artifact list with edit/delete buttons
+ * - Add/edit artifact form (modal)
+ * - Confirmation dialogs for destructive actions
+ *
+ * All actual database operations are handled by parent (App.jsx)
+ * This component just manages UI state and calls callback functions
+ */
 export default function AdminPanel({
-  authenticated,
-  onLogin,
-  password,
-  setPassword,
-  characters,
-  artifacts,
-  dropdownOptions,
-  onAddCharacter,
-  onUpdateCharacter,
-  onDeleteCharacter,
-  onAddArtifact,
-  onUpdateArtifact,
-  onDeleteArtifact,
-}) {
-  const [showCharacterForm, setShowCharacterForm] = useState(false)
-  const [showArtifactForm, setShowArtifactForm] = useState(false)
-  const [editingCharacter, setEditingCharacter] = useState(null)
-  const [editingArtifact, setEditingArtifact] = useState(null)
-  const [confirmDialog, setConfirmDialog] = useState(null)
+  // Authentication
+  authenticated, // Boolean: is admin logged in?
+  onLogin, // Callback: (password) => void
+  password, // Current password input value
+  setPassword, // Setter for password input
 
+  // Data
+  characters, // Array of all characters
+  artifacts, // Array of all artifacts
+  dropdownOptions, // Config for form selects
+
+  // Character CRUD callbacks from App.jsx
+  onAddCharacter, // (character) => void
+  onUpdateCharacter, // (character) => void
+  onDeleteCharacter, // (characterId) => void
+
+  // Artifact CRUD callbacks from App.jsx
+  onAddArtifact, // (artifact) => void
+  onUpdateArtifact, // (artifact) => void
+  onDeleteArtifact, // (artifactId) => void
+}) {
+  // ============== UI STATE ==============
+  const [showCharacterForm, setShowCharacterForm] = useState(false) // Show character add/edit form?
+  const [showArtifactForm, setShowArtifactForm] = useState(false) // Show artifact add/edit form?
+  const [editingCharacter, setEditingCharacter] = useState(null) // Character being edited (null = adding new)
+  const [editingArtifact, setEditingArtifact] = useState(null) // Artifact being edited (null = adding new)
+  const [confirmDialog, setConfirmDialog] = useState(null) // Delete confirmation modal data
+
+  /**
+   * Export a single character as JSON file
+   * User clicks "Download" and gets a JSON file they can share or backup
+   * Filename is based on character name
+   */
   const exportCharacterAsJSON = (character) => {
     const dataToExport = {
       character: character
@@ -38,6 +70,11 @@ export default function AdminPanel({
     URL.revokeObjectURL(url)
   }
 
+  /**
+   * Import characters from JSON file
+   * Prevents duplicate imports by checking for existing IDs
+   * Shows success message with count of imported characters
+   */
   const handleImportCharacters = async (event) => {
     const file = event.target.files[0]
     if (file) {

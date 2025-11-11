@@ -77,7 +77,7 @@ export default function CharacterDetail({ character, onBack }) {
               </div>
               <h2 className="text-4xl font-bold font-medieval text-gold-dark" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>{character.name}</h2>
               {character.title && (
-                <p className="text-lg italic text-gold mt-2" style={{ fontStyle: 'italic' }}>"{character.title}"</p>
+                <p className="text-lg italic text-gold mt-2">"{character.title}"</p>
               )}
             </div>
 

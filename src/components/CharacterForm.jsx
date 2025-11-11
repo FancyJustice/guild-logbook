@@ -1,6 +1,46 @@
 import { useState } from 'react'
 
+/**
+ * CharacterForm Component
+ *
+ * Handles creation and editing of character/criminal profiles.
+ * Supports two modes:
+ * 1. CREATE: Add a new character (editingCharacter is null)
+ * 2. EDIT: Modify existing character (editingCharacter is provided)
+ *
+ * PROPS:
+ * - dropdownOptions: Configuration options for select fields
+ * - characters: Array of all existing characters (for reference)
+ * - editingCharacter: Character object to edit, or null for new character
+ * - onSubmit: Callback when form is submitted with character data
+ * - onCancel: Callback when user cancels form
+ *
+ * FORM SECTIONS:
+ * - Character Information: Name, VRC player, type (guild/criminal)
+ * - Appearance: Race, class, gender, age, height, affiliation
+ * - Photo Upload: Character portrait (auto-resized to 230x300)
+ * - Personality: Personality type, flaw (guild) or personality (criminal)
+ * - Elemental Attunement: Magic/element type selection
+ * - Combat Skills: Add/remove combat spells with properties
+ * - Life Skills: Non-combat skills
+ * - Character Stats: 6 stat points (STR, AGI, DEX, INT, LUK, VIT) - max 40 total
+ * - Criminal Fields: Bounty and crime description (only for criminals)
+ *
+ * TO ADD A NEW FIELD:
+ * 1. Add to formData state initialization (around line 10-44)
+ * 2. Add onChange handler using handleInputChange (already set up)
+ * 3. Add JSX input field in form (around line 185+)
+ * 4. Update mergeUtils.js if field needs special merge logic
+ *
+ * FORM SUBMISSION FLOW:
+ * 1. User clicks "Add Character" or "Update Character"
+ * 2. handleSubmit() prevents default form action
+ * 3. onSubmit(formData) is called with complete form data
+ * 4. Parent component (AdminPanel) handles Firebase save
+ */
 export default function CharacterForm({ dropdownOptions, characters = [], editingCharacter, onSubmit, onCancel }) {
+  // Main form state - contains all character fields
+  // If editing, initialize with existing character data; if new, use defaults
   const [formData, setFormData] = useState(editingCharacter ? {
     ...editingCharacter,
     observations: Array.isArray(editingCharacter.observations) ? editingCharacter.observations : (editingCharacter.observations ? [editingCharacter.observations] : []),
@@ -8,7 +48,7 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
     lifeSkills: editingCharacter.lifeSkills || [],
     ultimateSkillColor: editingCharacter.ultimateSkillColor || 'gold',
   } : {
-    type: 'guild',
+    type: 'guild', // Default to guild member
     photo: '',
     title: '',
     name: '',
@@ -28,7 +68,7 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
     lore: '',
     personality: '',
     flaw: '',
-    elemeltanAttunement: '',
+    elementalAttunement: '',
     combatSkills: [],
     lifeSkills: [],
     observations: [],
@@ -43,23 +83,48 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
     vit: 0,
   })
 
-  const [skillInput, setSkillInput] = useState('')
-  const [skillDescription, setSkillDescription] = useState('')
-  const [skillHeal, setSkillHeal] = useState(false)
-  const [skillBuff, setSkillBuff] = useState(false)
-  const [skillPassive, setSkillPassive] = useState(false)
-  const [lifeSkillInput, setLifeSkillInput] = useState('')
-  const [observationInput, setObservationInput] = useState('')
-  const [photoPreview, setPhotoPreview] = useState(editingCharacter?.photo || '')
+  // ============== SKILL INPUT STATE ==============
+  // These track what the user is typing in the "Add Skill" input boxes
+  // They're separate from combatSkills array because they're just temporary input
+  const [skillInput, setSkillInput] = useState('') // Combat skill name being typed
+  const [skillDescription, setSkillDescription] = useState('') // Skill description
+  const [skillHeal, setSkillHeal] = useState(false) // Does skill heal allies?
+  const [skillBuff, setSkillBuff] = useState(false) // Does skill buff allies?
+  const [skillPassive, setSkillPassive] = useState(false) // Is skill always active?
 
+  // ============== FORM INPUT STATE ==============
+  // Temporary input fields for adding array items (skills, observations)
+  const [lifeSkillInput, setLifeSkillInput] = useState('') // Life skill being typed
+  const [observationInput, setObservationInput] = useState('') // Admin observation being typed
+  const [photoPreview, setPhotoPreview] = useState(editingCharacter?.photo || '') // Image preview for upload
+
+  // ============== HELPER FUNCTIONS ==============
+
+  /**
+   * Update a single form field
+   * Used by all text inputs, selects, etc. via onChange handlers
+   * @param {string} field - Field name in formData
+   * @param {any} value - New value for that field
+   */
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
+  /**
+   * Calculate total stat points used
+   * Stats are: STR, AGI, DEX, INT, LUK, VIT
+   * Maximum allowed: 40 points total
+   * Used to validate stat inputs and show user the total
+   */
   const getTotalStats = () => {
     return (formData.str || 0) + (formData.agi || 0) + (formData.dex || 0) + (formData.int || 0) + (formData.luk || 0) + (formData.vit || 0)
   }
 
+  /**
+   * Handle photo upload and resizing
+   * Converts uploaded image to 230x300px PNG and stores as base64 data URL
+   * This keeps everything in the database without needing external storage
+   */
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
     if (file) {
@@ -70,7 +135,7 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
       }
 
       try {
-        // Create canvas to resize image to 230x300
+        // Create canvas to resize image to 230x300px
         const reader = new FileReader()
         reader.onload = async (event) => {
           const img = new Image()
@@ -402,8 +467,8 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
         )}
         <ElementalAttunementSelect
           label="Elemental Attunement"
-          value={formData.elemeltanAttunement}
-          onChange={(value) => handleInputChange('elemeltanAttunement', value)}
+          value={formData.elementalAttunement}
+          onChange={(value) => handleInputChange('elementalAttunement', value)}
         />
       </div>
 
@@ -838,6 +903,14 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
   )
 }
 
+// ============== REUSABLE FORM COMPONENTS ==============
+// These are simple, styled input components used throughout the form
+// They handle their own rendering and onChange callbacks
+
+/**
+ * Standard text input wrapper
+ * Provides consistent styling and error handling
+ */
 function FormInput({ label, value, onChange, type = 'text', required = false, placeholder = '', max = null }) {
   return (
     <div>
@@ -857,6 +930,10 @@ function FormInput({ label, value, onChange, type = 'text', required = false, pl
   )
 }
 
+/**
+ * Standard dropdown/select component
+ * Renders a list of options from the provided array
+ */
 function FormSelect({ label, value, onChange, options = [] }) {
   return (
     <div>
@@ -876,6 +953,11 @@ function FormSelect({ label, value, onChange, options = [] }) {
   )
 }
 
+/**
+ * Specialized component for elemental attunement selection
+ * Displays colored buttons for each element with visual feedback
+ * 20 elements available with themed colors
+ */
 function ElementalAttunementSelect({ label, value, onChange }) {
   const elementColors = {
     'Fire': { bg: 'bg-red-900', border: 'border-red-600', text: 'text-red-100' },

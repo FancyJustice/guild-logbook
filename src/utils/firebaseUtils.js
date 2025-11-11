@@ -1,3 +1,39 @@
+/**
+ * Firebase Firestore Utilities for Guild Logbook
+ *
+ * Manages all read/write operations for character and artifact data in Firestore.
+ *
+ * DUAL STRUCTURE SUPPORT (for migration flexibility):
+ * The app supports two Firebase data structures simultaneously:
+ *
+ * NEW STRUCTURE (Preferred - Scalable):
+ * - collections/characters/ (collection)
+ *   - char_00001/ (document)
+ *     - { name, race, class, ... }
+ *   - char_00002/ (document)
+ * - collections/artifacts/ (collection)
+ * - app-data/config/ (configuration)
+ *
+ * OLD STRUCTURE (Legacy - Still Supported):
+ * - app-data/characters-data/ (single document)
+ *   - { characters: [...], artifacts: [...], dropdownOptions: {...} }
+ *
+ * HOW IT WORKS:
+ * 1. READ: Try new structure first, fall back to old if empty
+ * 2. WRITE: Write to BOTH structures for compatibility (new + legacy)
+ * 3. DELETE: Delete from BOTH structures
+ * 4. SUBSCRIBE: Listen to new structure (falls back to old on empty)
+ *
+ * This allows teams to migrate gradually from old to new structure
+ * without losing data or forcing users to upgrade at the same time.
+ *
+ * REAL-TIME UPDATES:
+ * All operations use Firebase onSnapshot() for real-time sync
+ * When one user edits a character, all other users see it instantly
+ *
+ * @module firebaseUtils
+ */
+
 import { db } from '../firebaseConfig';
 import {
   collection,
@@ -12,13 +48,23 @@ import {
   getDocs
 } from 'firebase/firestore';
 
-const DATA_COLLECTION = 'app-data';
-const CHARACTERS_COLLECTION = 'characters';
-const ARTIFACTS_COLLECTION = 'artifacts';
-const CONFIG_DOC = 'config';
+// ============== FIRESTORE COLLECTION NAMES ==============
+// These constants define where data is stored in Firebase
+const DATA_COLLECTION = 'app-data'; // Container for config and legacy data
+const CHARACTERS_COLLECTION = 'characters'; // New structure: individual character docs
+const ARTIFACTS_COLLECTION = 'artifacts'; // New structure: individual artifact docs
+const CONFIG_DOC = 'config'; // Configuration document in app-data collection
 
 /**
- * Read all characters and artifacts from Firestore
+ * Fetch all characters and artifacts from Firestore
+ *
+ * Attempts new structure first, falls back to old structure if empty.
+ * This ensures compatibility during migration between data models.
+ *
+ * @async
+ * @returns {Promise<{characters: Array, artifacts: Array, dropdownOptions: Object}>}
+ *          All application data
+ * @throws {Error} If database read fails
  */
 export async function fetchCharactersFromFirebase() {
   try {
@@ -71,7 +117,22 @@ export async function fetchCharactersFromFirebase() {
 }
 
 /**
- * Subscribe to real-time updates
+ * Subscribe to real-time character and artifact updates
+ *
+ * Establishes a live connection to Firestore and calls the callback
+ * whenever data changes. Handles the dual-structure support by trying
+ * the new structure first, then falling back to the legacy structure
+ * if empty.
+ *
+ * @param {Function} callback - Called with { characters, artifacts, dropdownOptions }
+ * @returns {Function} Unsubscribe function to stop listening
+ *
+ * @example
+ * const unsubscribe = subscribeToCharacters((data) => {
+ *   setCharacters(data.characters)
+ *   setArtifacts(data.artifacts)
+ * })
+ * // Later: unsubscribe() to stop listening
  */
 export function subscribeToCharacters(callback) {
   try {
@@ -149,7 +210,16 @@ export function subscribeToCharacters(callback) {
 }
 
 /**
- * Subscribe to old single-document structure
+ * Subscribe to legacy single-document structure
+ *
+ * Fallback subscription for the old data format where all characters,
+ * artifacts, and options were stored in a single document.
+ * Used when new collection-based structure is empty.
+ *
+ * @param {Function} callback - Called with { characters, artifacts, dropdownOptions }
+ * @returns {Function} Unsubscribe function
+ *
+ * @private - Internal fallback used by subscribeToCharacters
  */
 function subscribeToOldStructure(callback) {
   try {
@@ -198,7 +268,17 @@ async function updateConfigInFirebase(dropdownOptions) {
 }
 
 /**
- * Add a single character
+ * Add a new character to Firebase
+ *
+ * Adds the character to the new collection-based structure.
+ * Auto-generates an ID if not provided.
+ *
+ * @param {Object} character - Character data to add
+ * @param {string} [character.id] - Optional ID (auto-generated if missing)
+ * @param {Array} currentCharacters - Current character array (for reference)
+ * @param {Array} currentArtifacts - Current artifact array (for legacy sync)
+ * @param {Object} currentDropdown - Current dropdown options (for legacy sync)
+ * @throws {Error} If Firebase write fails
  */
 export async function addCharacterToFirebase(character, currentCharacters, currentArtifacts, currentDropdown) {
   try {

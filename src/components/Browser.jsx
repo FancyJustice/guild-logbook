@@ -15,15 +15,13 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
     type: 'all',
   })
 
-  const filteredCharacters = characters.filter(char => {
-    if (filters.type !== 'all' && char.type !== filters.type) return false
-    return true
-  })
+  const filteredCharacters = characters.filter(char =>
+    filters.type === 'all' || char.type === filters.type
+  )
 
-  const filteredArtifacts = artifacts.filter(artifact => {
-    if (filters.type !== 'all' && artifact.type !== filters.type) return false
-    return true
-  })
+  const filteredArtifacts = artifacts.filter(artifact =>
+    filters.type === 'all' || artifact.type === filters.type
+  )
 
   // Get unique artifact types
   const artifactTypes = ['all', ...new Set(artifacts.map(a => a.type).filter(Boolean))]

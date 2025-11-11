@@ -1,3 +1,26 @@
+/**
+ * Guild Logbook - Main Application Component
+ *
+ * Root component that manages:
+ * - Application state (characters, artifacts, authentication)
+ * - Navigation between views (browser, admin panel)
+ * - Data persistence with Firebase Firestore
+ * - Real-time data synchronization
+ * - Import/export functionality with merge preview
+ * - Admin authentication and session management
+ *
+ * ARCHITECTURE:
+ * - Browser View: Public character/artifact browsing interface
+ * - Admin Panel: Password-protected CRUD operations
+ * - Cover Screen: Splash screen shown on initial load
+ * - Merge Preview: Modal for reviewing data merge operations
+ *
+ * STATE MANAGEMENT:
+ * - Local React state for UI (showCover, view, isAuthenticated)
+ * - Firebase subscription for real-time data updates
+ * - LocalStorage for persisting authentication state
+ */
+
 import { useState, useEffect } from 'react'
 import Browser from './components/Browser'
 import AdminPanel from './components/AdminPanel'
@@ -17,19 +40,37 @@ import {
 } from './utils/firebaseUtils'
 import './App.css'
 
+/**
+ * Main App Component
+ *
+ * Manages the complete application lifecycle including:
+ * - Data synchronization with Firebase
+ * - User authentication for admin features
+ * - Navigation state and history
+ * - CRUD operations for characters and artifacts
+ */
 function App() {
-  const [showCover, setShowCover] = useState(true)
-  const [view, setView] = useState('browser')
-  const [characters, setCharacters] = useState([])
-  const [artifacts, setArtifacts] = useState([])
-  const [dropdownOptions, setDropdownOptions] = useState({})
-  const [password, setPassword] = useState('')
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [adminPassword, setAdminPassword] = useState('guild2024')
-  const [showMergePreview, setShowMergePreview] = useState(false)
-  const [pendingMergeData, setPendingMergeData] = useState(null)
-  const [mergeReport, setMergeReport] = useState(null)
-  const [navigationHistory, setNavigationHistory] = useState([])
+  // ============== UI STATE ==============
+  const [showCover, setShowCover] = useState(true) // Splash screen visibility on load
+  const [view, setView] = useState('browser') // Current view: 'browser' (public) or 'admin' (protected)
+
+  // ============== DATA STATE ==============
+  const [characters, setCharacters] = useState([]) // All characters from Firebase (guild members + criminals)
+  const [artifacts, setArtifacts] = useState([]) // All artifacts/weapons from Firebase
+  const [dropdownOptions, setDropdownOptions] = useState({}) // Shared config options for form selects
+
+  // ============== AUTHENTICATION STATE ==============
+  const [password, setPassword] = useState('') // Admin password input field value
+  const [isAuthenticated, setIsAuthenticated] = useState(false) // Whether admin is logged in
+  const [adminPassword, setAdminPassword] = useState('guild2024') // SECURITY NOTE: Should move to env variables
+
+  // ============== MERGE OPERATION STATE ==============
+  const [showMergePreview, setShowMergePreview] = useState(false) // Show merge confirmation modal
+  const [pendingMergeData, setPendingMergeData] = useState(null) // Data waiting to be merged from import
+  const [mergeReport, setMergeReport] = useState(null) // Summary of what will change in merge
+
+  // ============== NAVIGATION STATE ==============
+  const [navigationHistory, setNavigationHistory] = useState([]) // Track navigation for browser back button
 
   useEffect(() => {
     // Check if user was previously authenticated
