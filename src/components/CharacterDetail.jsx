@@ -58,9 +58,9 @@ export default function CharacterDetail({ character, onBack }) {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
         {/* Left Column - Image & Basic Info */}
-        <div className="md:col-span-1 space-y-3 md:space-y-4">
+        <div className="md:col-span-1 lg:col-span-2 space-y-3 md:space-y-4">
           <div className="bg-wood-light rounded-lg overflow-hidden shadow-lg border-2 border-gold">
             <img
               src={getImageSource(character.photo)}
@@ -117,6 +117,7 @@ export default function CharacterDetail({ character, onBack }) {
 
         {/* Main Content - Right 3 Columns */}
         <div className="lg:col-span-3 space-y-4">
+          {/* Hidden on large screens, visible on md */}
           {/* Header with Quote & Lore */}
           <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold space-y-4">
             {character.quote && (
