@@ -2,7 +2,7 @@ import { getImageSource } from '../utils/imageUtils'
 
 export default function CharacterGrid({ characters, onSelectCharacter }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-8">
       {characters.map(character => (
         <div
           key={character.id}
@@ -32,7 +32,7 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
             <div className={`h-1 ${character.type === 'guild' ? 'bg-gold' : 'bg-seal'}`}></div>
 
             {/* Character image with frame - responsive aspect ratio */}
-            <div className="relative overflow-hidden bg-wood-light p-2 md:p-3" style={{ aspectRatio: '230/300' }}>
+            <div className="relative overflow-hidden bg-wood-light p-1 sm:p-2 md:p-3" style={{ aspectRatio: '230/300' }}>
               <div className="border-2 border-gold-dark rounded h-full w-full overflow-hidden">
                 <img
                   src={getImageSource(character.photo)}
@@ -43,7 +43,7 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
             </div>
 
             {/* Content section with book-like styling - responsive spacing */}
-            <div className="p-2 md:p-3 lg:p-5 space-y-1 md:space-y-2 lg:space-y-3">
+            <div className="p-1 sm:p-2 md:p-3 lg:p-5 space-y-0 sm:space-y-1 md:space-y-2 lg:space-y-3">
               {/* Type label with decorative line */}
               <div className="flex items-center gap-1 md:gap-2">
                 <div className={`h-px flex-1 ${character.type === 'guild' ? 'bg-gold' : 'bg-seal'}`}></div>
@@ -61,24 +61,24 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
               )}
 
               {/* Name - prominent like a chapter title */}
-              <h3 className="text-base md:text-lg lg:text-2xl font-medieval font-bold text-wood text-center border-b-2 border-gold-dark pb-1 md:pb-2 line-clamp-2">
+              <h3 className="text-xs sm:text-base md:text-lg lg:text-2xl font-medieval font-bold text-wood text-center border-b border-gold-dark pb-0 sm:pb-1 md:pb-2 line-clamp-2">
                 {character.name}
               </h3>
 
               {/* Character details */}
-              <div className="text-[11px] md:text-sm space-y-0 md:space-y-1 text-center">
+              <div className="text-[9px] sm:text-[11px] md:text-sm space-y-0 text-center">
                 <div className="text-wood font-medieval line-clamp-1">
-                  {character.race} {character.class}
+                  {character.race}
                 </div>
-                <div className="text-[9px] md:text-xs text-wood-light italic line-clamp-1">
+                <div className="text-[8px] sm:text-[9px] md:text-xs text-wood-light italic line-clamp-1">
                   {character.vrcPlayerName}
                 </div>
               </div>
 
               {/* Footer details with book page aesthetic */}
-              <div className="border-t-2 border-gold-dark pt-1 md:pt-2 flex justify-between text-[9px] md:text-xs text-wood-light font-medieval">
+              <div className="border-t border-gold-dark pt-0 sm:pt-1 md:pt-2 flex justify-between text-[8px] sm:text-[9px] md:text-xs text-wood-light font-medieval">
                 <span className="line-clamp-1">{character.class || '—'}</span>
-                <span className="font-bold text-gold">Lv. {character.level || '—'}</span>
+                <span className="font-bold text-gold">Lv{character.level ? `. ${character.level}` : ''}</span>
               </div>
             </div>
 
