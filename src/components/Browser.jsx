@@ -172,6 +172,7 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
                 characters={characters}
                 onBack={() => setSelectedArtifact(null)}
                 onSelectCharacter={(character) => {
+                  setView('characters')
                   setSelectedCharacter(character)
                   setSelectedArtifact(null)
                 }}
