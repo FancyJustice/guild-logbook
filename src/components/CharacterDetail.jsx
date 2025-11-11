@@ -311,29 +311,29 @@ function StatBox({ label, value }) {
 }
 
 function AttributeBox({ label, value }) {
-  // Element color mapping
+  // Element color mapping with icons
   const elementColors = {
-    'Fire': { bg: 'bg-red-900', border: 'border-red-600', text: 'text-red-100' },
-    'Water': { bg: 'bg-blue-900', border: 'border-blue-600', text: 'text-blue-100' },
-    'Earth': { bg: 'bg-amber-900', border: 'border-amber-700', text: 'text-amber-100' },
-    'Air': { bg: 'bg-cyan-800', border: 'border-cyan-500', text: 'text-cyan-100' },
-    'Lightning': { bg: 'bg-yellow-900', border: 'border-yellow-600', text: 'text-yellow-100' },
-    'Ice': { bg: 'bg-sky-800', border: 'border-sky-500', text: 'text-sky-100' },
-    'Nature': { bg: 'bg-green-900', border: 'border-green-600', text: 'text-green-100' },
-    'Light': { bg: 'bg-yellow-100', border: 'border-yellow-300', text: 'text-yellow-900' },
-    'Dark': { bg: 'bg-gray-900', border: 'border-gray-700', text: 'text-gray-300' },
-    'Wind': { bg: 'bg-cyan-800', border: 'border-cyan-500', text: 'text-cyan-100' },
-    'Steam': { bg: 'bg-slate-700', border: 'border-slate-500', text: 'text-slate-100' },
-    'Magma': { bg: 'bg-orange-900', border: 'border-orange-600', text: 'text-orange-100' },
-    'Sand': { bg: 'bg-yellow-700', border: 'border-yellow-600', text: 'text-yellow-100' },
-    'Metal': { bg: 'bg-zinc-700', border: 'border-zinc-600', text: 'text-zinc-100' },
-    'Gravity': { bg: 'bg-purple-950', border: 'border-purple-700', text: 'text-purple-100' },
-    'Poison': { bg: 'bg-purple-900', border: 'border-purple-700', text: 'text-purple-100' },
-    'Blood': { bg: 'bg-red-950', border: 'border-red-800', text: 'text-red-100' },
-    'Ghost': { bg: 'bg-violet-950', border: 'border-violet-700', text: 'text-violet-100' },
-    'Prism': { bg: 'bg-pink-800', border: 'border-pink-600', text: 'text-pink-100' },
-    'Solar': { bg: 'bg-orange-700', border: 'border-orange-500', text: 'text-orange-100' },
-    'Darkflame': { bg: 'bg-red-950', border: 'border-red-900', text: 'text-red-100' }
+    'Fire': { bg: 'bg-red-900', border: 'border-red-600', text: 'text-red-100', icon: 'ra-fire' },
+    'Water': { bg: 'bg-blue-900', border: 'border-blue-600', text: 'text-blue-100', icon: 'ra-droplet' },
+    'Earth': { bg: 'bg-amber-900', border: 'border-amber-700', text: 'text-amber-100', icon: 'ra-mountain' },
+    'Air': { bg: 'bg-cyan-800', border: 'border-cyan-500', text: 'text-cyan-100', icon: 'ra-wind' },
+    'Lightning': { bg: 'bg-yellow-900', border: 'border-yellow-600', text: 'text-yellow-100', icon: 'ra-lightning' },
+    'Ice': { bg: 'bg-sky-800', border: 'border-sky-500', text: 'text-sky-100', icon: 'ra-snowflake' },
+    'Nature': { bg: 'bg-green-900', border: 'border-green-600', text: 'text-green-100', icon: 'ra-leaf' },
+    'Light': { bg: 'bg-yellow-100', border: 'border-yellow-300', text: 'text-yellow-900', icon: 'ra-sun' },
+    'Dark': { bg: 'bg-gray-900', border: 'border-gray-700', text: 'text-gray-300', icon: 'ra-moon' },
+    'Wind': { bg: 'bg-cyan-800', border: 'border-cyan-500', text: 'text-cyan-100', icon: 'ra-wind' },
+    'Steam': { bg: 'bg-slate-700', border: 'border-slate-500', text: 'text-slate-100', icon: 'ra-smoke' },
+    'Magma': { bg: 'bg-orange-900', border: 'border-orange-600', text: 'text-orange-100', icon: 'ra-fire' },
+    'Sand': { bg: 'bg-yellow-700', border: 'border-yellow-600', text: 'text-yellow-100', icon: 'ra-hourglass' },
+    'Metal': { bg: 'bg-zinc-700', border: 'border-zinc-600', text: 'text-zinc-100', icon: 'ra-anvil' },
+    'Gravity': { bg: 'bg-purple-950', border: 'border-purple-700', text: 'text-purple-100', icon: 'ra-hole' },
+    'Poison': { bg: 'bg-purple-900', border: 'border-purple-700', text: 'text-purple-100', icon: 'ra-toxic' },
+    'Blood': { bg: 'bg-red-950', border: 'border-red-800', text: 'text-red-100', icon: 'ra-blood' },
+    'Ghost': { bg: 'bg-violet-950', border: 'border-violet-700', text: 'text-violet-100', icon: 'ra-ghost' },
+    'Prism': { bg: 'bg-pink-800', border: 'border-pink-600', text: 'text-pink-100', icon: 'ra-gem' },
+    'Solar': { bg: 'bg-orange-700', border: 'border-orange-500', text: 'text-orange-100', icon: 'ra-sun' },
+    'Darkflame': { bg: 'bg-red-950', border: 'border-red-900', text: 'text-red-100', icon: 'ra-explosion' }
   }
 
   const colors = label === 'Elemental Attunement' && value ? elementColors[value] : null
@@ -345,7 +345,16 @@ function AttributeBox({ label, value }) {
   return (
     <div className={`${bgClass} ${textClass} p-4 rounded border-2 ${borderClass}`}>
       <div className={`text-sm ${labelClass} uppercase tracking-wide font-medieval mb-3`}>{label}</div>
-      <div className="font-medieval text-lg">{value || '—'}</div>
+      <div className="font-medieval text-lg flex items-center gap-3">
+        {label === 'Elemental Attunement' && colors?.icon ? (
+          <>
+            <i className={`ra ${colors.icon} text-2xl`}></i>
+            {value}
+          </>
+        ) : (
+          value || '—'
+        )}
+      </div>
     </div>
   )
 }
