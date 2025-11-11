@@ -193,34 +193,27 @@ export default function CharacterDetail({ character, onBack }) {
           </div>
 
           {/* Personality & Elements */}
-          <div className={`grid gap-4 ${character.type === 'guild' ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2'}`}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <AttributeBox label="Personality" value={character.personality} />
             {character.type === 'guild' ? (
-              <>
-                <AttributeBox label="Personality" value={character.personality} />
-                <AttributeBox label="Flaw" value={character.flaw} />
-              </>
+              <AttributeBox label="Flaw" value={character.flaw} />
             ) : (
-              <AttributeBox label="Personality" value={character.personality} />
+              <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
+                <h3 className="text-sm font-medieval font-bold mb-3 text-gold-dark">Criminal Record</h3>
+                <div className="space-y-2">
+                  <p className="text-xs">
+                    <strong>Bounty:</strong> {character.bounty || '—'}
+                  </p>
+                  {character.crime && (
+                    <p className="text-xs">
+                      <strong>Crime:</strong> {character.crime}
+                    </p>
+                  )}
+                </div>
+              </div>
             )}
             <AttributeBox label="Elemental Attunement" value={character.elemeltanAttunement} />
           </div>
-
-          {/* Criminal Only Fields */}
-          {character.type === 'criminal' && (
-            <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
-              <h3 className="text-lg font-medieval font-bold mb-3 text-gold-dark">Criminal Record</h3>
-              <div className="space-y-2">
-                <p className="text-sm">
-                  <strong>Bounty:</strong> {character.bounty || '—'}
-                </p>
-                {character.crime && (
-                  <p className="text-sm">
-                    <strong>Crime:</strong> {character.crime}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
 
           {/* Combat Skills */}
           {character.combatSkills && character.combatSkills.length > 0 && (
