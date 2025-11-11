@@ -56,6 +56,10 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
+  const getTotalStats = () => {
+    return (formData.str || 0) + (formData.agi || 0) + (formData.dex || 0) + (formData.int || 0) + (formData.luk || 0) + (formData.vit || 0)
+  }
+
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
     if (file) {
@@ -724,7 +728,12 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
 
       {/* Character Stats */}
       <div>
-        <label className="block text-sm font-medieval text-wood-light mb-3">Character Stats (Max 35 per stat)</label>
+        <div className="flex justify-between items-center mb-3">
+          <label className="block text-sm font-medieval text-wood-light">Character Stats (40 points total)</label>
+          <span className={`text-sm font-medieval ${getTotalStats() > 40 ? 'text-seal' : 'text-green-400'}`}>
+            Total: {getTotalStats()}/40
+          </span>
+        </div>
         <div className="grid grid-cols-3 gap-3">
           <FormInput
             label="STR"
@@ -732,9 +741,10 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
             value={formData.str || 0}
             onChange={(value) => {
               const parsed = parseInt(value) || 0
-              handleInputChange('str', Math.min(Math.max(parsed, 0), 35))
+              const otherStats = (formData.agi || 0) + (formData.dex || 0) + (formData.int || 0) + (formData.luk || 0) + (formData.vit || 0)
+              const maxForThisStat = 40 - otherStats
+              handleInputChange('str', Math.min(Math.max(parsed, 0), maxForThisStat))
             }}
-            max="35"
           />
           <FormInput
             label="AGI"
@@ -742,9 +752,10 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
             value={formData.agi || 0}
             onChange={(value) => {
               const parsed = parseInt(value) || 0
-              handleInputChange('agi', Math.min(Math.max(parsed, 0), 35))
+              const otherStats = (formData.str || 0) + (formData.dex || 0) + (formData.int || 0) + (formData.luk || 0) + (formData.vit || 0)
+              const maxForThisStat = 40 - otherStats
+              handleInputChange('agi', Math.min(Math.max(parsed, 0), maxForThisStat))
             }}
-            max="35"
           />
           <FormInput
             label="DEX"
@@ -752,9 +763,10 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
             value={formData.dex || 0}
             onChange={(value) => {
               const parsed = parseInt(value) || 0
-              handleInputChange('dex', Math.min(Math.max(parsed, 0), 35))
+              const otherStats = (formData.str || 0) + (formData.agi || 0) + (formData.int || 0) + (formData.luk || 0) + (formData.vit || 0)
+              const maxForThisStat = 40 - otherStats
+              handleInputChange('dex', Math.min(Math.max(parsed, 0), maxForThisStat))
             }}
-            max="35"
           />
           <FormInput
             label="INT"
@@ -762,9 +774,10 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
             value={formData.int || 0}
             onChange={(value) => {
               const parsed = parseInt(value) || 0
-              handleInputChange('int', Math.min(Math.max(parsed, 0), 35))
+              const otherStats = (formData.str || 0) + (formData.agi || 0) + (formData.dex || 0) + (formData.luk || 0) + (formData.vit || 0)
+              const maxForThisStat = 40 - otherStats
+              handleInputChange('int', Math.min(Math.max(parsed, 0), maxForThisStat))
             }}
-            max="35"
           />
           <FormInput
             label="LUK"
@@ -772,9 +785,10 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
             value={formData.luk || 0}
             onChange={(value) => {
               const parsed = parseInt(value) || 0
-              handleInputChange('luk', Math.min(Math.max(parsed, 0), 35))
+              const otherStats = (formData.str || 0) + (formData.agi || 0) + (formData.dex || 0) + (formData.int || 0) + (formData.vit || 0)
+              const maxForThisStat = 40 - otherStats
+              handleInputChange('luk', Math.min(Math.max(parsed, 0), maxForThisStat))
             }}
-            max="35"
           />
           <FormInput
             label="VIT"
@@ -782,9 +796,10 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
             value={formData.vit || 0}
             onChange={(value) => {
               const parsed = parseInt(value) || 0
-              handleInputChange('vit', Math.min(Math.max(parsed, 0), 35))
+              const otherStats = (formData.str || 0) + (formData.agi || 0) + (formData.dex || 0) + (formData.int || 0) + (formData.luk || 0)
+              const maxForThisStat = 40 - otherStats
+              handleInputChange('vit', Math.min(Math.max(parsed, 0), maxForThisStat))
             }}
-            max="35"
           />
         </div>
       </div>
