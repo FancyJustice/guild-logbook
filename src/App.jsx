@@ -262,14 +262,18 @@ function App() {
     localStorage.removeItem('adminAuth')
   }
 
-  if (showCover) {
-    return <Cover onFlip={() => setShowCover(false)} />
-  }
-
   return (
-    <div className="min-h-screen bg-wood flex flex-col animate-in fade-in duration-1000 border-8 border-gold-dark m-4 shadow-2xl" style={{
-      boxShadow: '0 0 40px 20px rgba(139, 111, 71, 0.5), 0 0 80px 40px rgba(139, 111, 71, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5)'
-    }}>
+    <>
+      {showCover && <Cover onFlip={() => setShowCover(false)} />}
+      <div
+        className="min-h-screen bg-wood flex flex-col border-8 border-gold-dark m-4 shadow-2xl"
+        style={{
+          boxShadow: '0 0 40px 20px rgba(139, 111, 71, 0.5), 0 0 80px 40px rgba(139, 111, 71, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5)',
+          opacity: showCover ? 0 : 1,
+          pointerEvents: showCover ? 'none' : 'auto',
+          transition: 'opacity 1.2s ease-in-out',
+          position: showCover ? 'absolute' : 'relative'
+        }}>
       <header className="bg-gradient-to-b from-wood-light to-wood border-b-4 border-gold shadow-2xl relative overflow-hidden">
         {/* Decorative background pattern */}
         <div className="absolute inset-0 opacity-10" style={{
@@ -365,7 +369,8 @@ function App() {
           report={mergeReport}
         />
       )}
-    </div>
+      </div>
+    </>
   )
 }
 
