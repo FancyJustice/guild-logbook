@@ -277,9 +277,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
           <div className="flex justify-between items-center gap-8">
             {/* Left side - Title with decorative elements */}
-            <div className="flex items-center gap-4">
-              <div className="text-gold text-4xl" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>📖</div>
-              <div>
+            <div>
                 <h1 className="text-5xl font-medieval text-gold font-bold tracking-wide" style={{
                   textShadow: '3px 3px 6px rgba(0,0,0,0.7), -1px -1px 2px rgba(255,255,255,0.1)'
                 }}>
@@ -288,7 +286,6 @@ function App() {
                 <p className="text-sm text-gold-dark italic tracking-widest uppercase">
                   Official Record of Adventurers & Criminals
                 </p>
-              </div>
             </div>
 
             {/* Right side - Navigation */}
