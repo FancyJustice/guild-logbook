@@ -37,38 +37,49 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
   }
 
   return (
-    <div className="space-y-4" style={{
-      '--gradient-color-1': ultimateColors.color1,
-      '--gradient-color-2': ultimateColors.color2,
-    }}>
-      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+    <>
+      {/* Fixed Navigation Arrows */}
+      {hasPrev && (
         <button
-          onClick={onBack}
-          className="px-3 sm:px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded text-sm sm:text-base"
+          onClick={onPrev}
+          className="fixed left-4 top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block z-50 cursor-pointer"
+          title="Previous character"
         >
-          ← Back
+          ◀
         </button>
+      )}
+      {hasNext && (
         <button
-          onClick={exportCharacterAsJSON}
-          className="px-3 sm:px-4 py-2 bg-gold text-wood hover:bg-gold-light transition rounded flex items-center gap-2 text-sm sm:text-base"
+          onClick={onNext}
+          className="fixed right-4 top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block z-50 cursor-pointer"
+          title="Next character"
         >
-          <i className="ra ra-download" style={{ color: '#2a2420' }}></i>
-          <span className="hidden sm:inline">Export {character.name}</span>
-          <span className="sm:hidden">Export</span>
+          ▶
         </button>
-      </div>
+      )}
 
-      <div className="relative">
-        {/* Left Arrow */}
-        {hasPrev && (
+      <div className="space-y-4" style={{
+        '--gradient-color-1': ultimateColors.color1,
+        '--gradient-color-2': ultimateColors.color2,
+      }}>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <button
-            onClick={onPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 text-4xl text-gold hover:text-gold-light transition hidden lg:block"
-            title="Previous character"
+            onClick={onBack}
+            className="px-3 sm:px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded text-sm sm:text-base"
           >
-            ◀
+            ← Back
           </button>
-        )}
+          <button
+            onClick={exportCharacterAsJSON}
+            className="px-3 sm:px-4 py-2 bg-gold text-wood hover:bg-gold-light transition rounded flex items-center gap-2 text-sm sm:text-base"
+          >
+            <i className="ra ra-download" style={{ color: '#2a2420' }}></i>
+            <span className="hidden sm:inline">Export {character.name}</span>
+            <span className="sm:hidden">Export</span>
+          </button>
+        </div>
+
+        <div className="relative">
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
@@ -295,19 +306,8 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
           )}
         </div>
         </div>
-
-        {/* Right Arrow */}
-        {hasNext && (
-          <button
-            onClick={onNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 text-4xl text-gold hover:text-gold-light transition hidden lg:block"
-            title="Next character"
-          >
-            ▶
-          </button>
-        )}
       </div>
-    </div>
+    </>
   )
 }
 
