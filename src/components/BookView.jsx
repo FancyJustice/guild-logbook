@@ -52,7 +52,7 @@ export default function BookView({ characters, onSelectCharacter }) {
         <div className="book-container" style={{ perspective: '1200px' }}>
           {/* Left Page (Previous) */}
           {currentPage > 0 && (
-            <div className="book-page book-page-left" onClick={handlePrevPage}>
+            <div className={`book-page book-page-left ${isFlipping ? `slide-${flipDirection}` : ''}`} onClick={handlePrevPage}>
               <div className="page-content">
                 <div className="page-number">← {currentPage}</div>
 
@@ -167,7 +167,7 @@ export default function BookView({ characters, onSelectCharacter }) {
 
           {/* Right Page (Back - for the flip effect) */}
           {nextCharacter && (
-            <div className="book-page book-page-back" onClick={handleNextPage}>
+            <div className={`book-page book-page-back ${isFlipping ? `slide-${flipDirection}` : ''}`} onClick={handleNextPage}>
               <div className="page-content">
                 <div className="page-number">{currentPage + 2} →</div>
 
