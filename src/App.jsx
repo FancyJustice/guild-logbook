@@ -268,25 +268,56 @@ function App() {
 
   return (
     <div className="min-h-screen bg-wood flex flex-col animate-in fade-in duration-1000">
-      <header className="bg-wood-light border-b-4 border-gold shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-4xl font-medieval text-gold">The Guild Logbook</h1>
-            <nav className="space-x-4">
+      <header className="bg-gradient-to-b from-wood-light to-wood border-b-4 border-gold shadow-2xl relative overflow-hidden">
+        {/* Decorative background pattern */}
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(212,165,116,0.3) 35px, rgba(212,165,116,0.3) 70px)`
+        }}></div>
+
+        <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
+          <div className="flex justify-between items-center gap-8">
+            {/* Left side - Title with decorative elements */}
+            <div className="flex items-center gap-4">
+              <div className="text-gold text-4xl" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>📖</div>
+              <div>
+                <h1 className="text-5xl font-medieval text-gold font-bold tracking-wide" style={{
+                  textShadow: '3px 3px 6px rgba(0,0,0,0.7), -1px -1px 2px rgba(255,255,255,0.1)'
+                }}>
+                  The Guild Logbook
+                </h1>
+                <p className="text-sm text-gold-dark italic tracking-widest uppercase">
+                  Official Record of Adventurers & Criminals
+                </p>
+              </div>
+            </div>
+
+            {/* Right side - Navigation */}
+            <nav className="flex gap-8 items-center">
               <button
                 onClick={() => { navigateTo('browser'); setIsAuthenticated(false) }}
-                className={`px-4 py-2 ${view === 'browser' && !isAuthenticated ? 'text-gold' : 'text-parchment'} hover:text-gold transition`}
+                className={`px-6 py-3 font-medieval font-bold text-sm tracking-wide transition rounded-lg border-2 ${
+                  view === 'browser' && !isAuthenticated
+                    ? 'bg-gold text-wood border-gold shadow-lg'
+                    : 'bg-transparent text-parchment border-gold-dark hover:bg-gold hover:text-wood hover:border-gold'
+                }`}
               >
-                Browse
+                📜 Browse
               </button>
               <button
                 onClick={() => navigateTo('admin')}
-                className={`px-4 py-2 ${view === 'admin' ? 'text-gold' : 'text-parchment'} hover:text-gold transition`}
+                className={`px-6 py-3 font-medieval font-bold text-sm tracking-wide transition rounded-lg border-2 ${
+                  view === 'admin'
+                    ? 'bg-gold text-wood border-gold shadow-lg'
+                    : 'bg-transparent text-parchment border-gold-dark hover:bg-gold hover:text-wood hover:border-gold'
+                }`}
               >
-                Admin
+                🔐 Admin
               </button>
             </nav>
           </div>
+
+          {/* Decorative divider line */}
+          <div className="mt-6 h-1 bg-gradient-to-r from-transparent via-gold to-transparent"></div>
         </div>
       </header>
 
