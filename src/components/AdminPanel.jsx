@@ -141,24 +141,31 @@ if (!authenticated) {
       </div>
 
       {showCharacterForm && (
-        <CharacterForm
-          dropdownOptions={dropdownOptions}
-          characters={characters}
-          editingCharacter={editingCharacter}
-          onSubmit={(character) => {
-            if (editingCharacter) {
-              onUpdateCharacter(character)
-            } else {
-              onAddCharacter(character)
-            }
-            setShowCharacterForm(false)
-            setEditingCharacter(null)
-          }}
-          onCancel={() => {
-            setShowCharacterForm(false)
-            setEditingCharacter(null)
-          }}
-        />
+        <>
+          <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
+            <h3 className="text-xl font-medieval font-bold text-gold-dark mb-4">
+              {editingCharacter ? 'Edit Character' : 'Add Character'}
+            </h3>
+          </div>
+          <CharacterForm
+            dropdownOptions={dropdownOptions}
+            characters={characters}
+            editingCharacter={editingCharacter}
+            onSubmit={(character) => {
+              if (editingCharacter) {
+                onUpdateCharacter(character)
+              } else {
+                onAddCharacter(character)
+              }
+              setShowCharacterForm(false)
+              setEditingCharacter(null)
+            }}
+            onCancel={() => {
+              setShowCharacterForm(false)
+              setEditingCharacter(null)
+            }}
+          />
+        </>
       )}
 
       <div className="space-y-4">
@@ -240,23 +247,30 @@ if (!authenticated) {
       </div>
 
       {showArtifactForm && (
-        <ArtifactForm
-          dropdownOptions={dropdownOptions}
-          editingArtifact={editingArtifact}
-          onSubmit={(artifact) => {
-            if (editingArtifact) {
-              onUpdateArtifact(artifact)
-            } else {
-              onAddArtifact(artifact)
-            }
-            setShowArtifactForm(false)
-            setEditingArtifact(null)
-          }}
-          onCancel={() => {
-            setShowArtifactForm(false)
-            setEditingArtifact(null)
-          }}
-        />
+        <>
+          <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
+            <h3 className="text-xl font-medieval font-bold text-gold-dark mb-4">
+              {editingArtifact ? 'Edit Artifact' : 'Add Artifact'}
+            </h3>
+          </div>
+          <ArtifactForm
+            dropdownOptions={dropdownOptions}
+            editingArtifact={editingArtifact}
+            onSubmit={(artifact) => {
+              if (editingArtifact) {
+                onUpdateArtifact(artifact)
+              } else {
+                onAddArtifact(artifact)
+              }
+              setShowArtifactForm(false)
+              setEditingArtifact(null)
+            }}
+            onCancel={() => {
+              setShowArtifactForm(false)
+              setEditingArtifact(null)
+            }}
+          />
+        </>
       )}
 
       <div className="space-y-4">
