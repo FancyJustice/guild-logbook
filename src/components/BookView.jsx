@@ -51,17 +51,40 @@ export default function BookView({ characters, onSelectCharacter }) {
       <div className="flex items-center justify-center perspective py-8">
         <div className="book-container" style={{ perspective: '1200px' }}>
           {/* Left Page (Previous) */}
-          <div className="book-page book-page-left">
-            {currentPage > 0 && (
+          {currentPage > 0 && (
+            <div className="book-page book-page-left" onClick={handlePrevPage}>
               <div className="page-content">
                 <div className="page-number">← {currentPage}</div>
-                <div className="text-center opacity-50">
-                  <p className="text-sm font-medieval text-gold-dark italic mb-4">Previous Entry</p>
-                  <p className="text-lg font-medieval font-bold">{prevCharacter?.name}</p>
+
+                {prevCharacter?.photo && (
+                  <div className="flex justify-center mb-2">
+                    <div className="w-24 h-32 border-2 border-gold-dark rounded overflow-hidden shadow-lg">
+                      <img
+                        src={getImageSource(prevCharacter.photo)}
+                        alt={prevCharacter.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="text-center">
+                  <p className="text-xs font-medieval text-gold-dark italic mb-2">Previous Entry</p>
+                  <p className="text-sm font-medieval font-bold text-wood">{prevCharacter?.name}</p>
+                  <p className="text-[10px] text-wood-light mb-2">{prevCharacter?.race} {prevCharacter?.class}</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onSelectCharacter(prevCharacter)
+                    }}
+                    className="text-[10px] px-2 py-1 bg-gold-dark text-parchment hover:bg-gold rounded transition font-medieval"
+                  >
+                    View
+                  </button>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Current Page (Front) */}
           <div
@@ -143,18 +166,40 @@ export default function BookView({ characters, onSelectCharacter }) {
           </div>
 
           {/* Right Page (Back - for the flip effect) */}
-          <div className="book-page book-page-back">
-            {nextCharacter && (
+          {nextCharacter && (
+            <div className="book-page book-page-back" onClick={handleNextPage}>
               <div className="page-content">
-                <div className="page-number text-center text-xs text-gold-dark italic mb-4">
-                  Next Entry
-                </div>
+                <div className="page-number">{currentPage + 2} →</div>
+
+                {nextCharacter.photo && (
+                  <div className="flex justify-center mb-2">
+                    <div className="w-24 h-32 border-2 border-gold-dark rounded overflow-hidden shadow-lg">
+                      <img
+                        src={getImageSource(nextCharacter.photo)}
+                        alt={nextCharacter.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
+
                 <div className="text-center">
-                  <p className="text-lg font-medieval font-bold opacity-50">{nextCharacter.name}</p>
+                  <p className="text-xs font-medieval text-gold-dark italic mb-2">Next Entry</p>
+                  <p className="text-sm font-medieval font-bold text-wood">{nextCharacter.name}</p>
+                  <p className="text-[10px] text-wood-light mb-2">{nextCharacter.race} {nextCharacter.class}</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onSelectCharacter(nextCharacter)
+                    }}
+                    className="text-[10px] px-2 py-1 bg-gold-dark text-parchment hover:bg-gold rounded transition font-medieval"
+                  >
+                    View
+                  </button>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
 

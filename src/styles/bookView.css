@@ -2,11 +2,14 @@
 
 .book-container {
   display: flex;
-  gap: 0;
-  max-width: 600px;
+  gap: 24px;
+  max-width: 100%;
   margin: 0 auto;
   position: relative;
   transform-style: preserve-3d;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
 }
 
 .book-page {
@@ -28,11 +31,17 @@
 }
 
 .book-page-left {
-  position: absolute;
-  left: -280px;
-  opacity: 0.7;
+  position: relative;
+  opacity: 0.6;
   z-index: 1;
-  transform: rotateY(15deg);
+  transform: rotateY(15deg) scale(0.95);
+  cursor: pointer;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.book-page-left:hover {
+  opacity: 0.85;
+  transform: rotateY(15deg) scale(1);
 }
 
 .book-page-front {
@@ -42,11 +51,17 @@
 }
 
 .book-page-back {
-  position: absolute;
-  right: -280px;
-  opacity: 0.7;
-  z-index: 0;
-  transform: rotateY(-15deg);
+  position: relative;
+  opacity: 0.6;
+  z-index: 1;
+  transform: rotateY(-15deg) scale(0.95);
+  cursor: pointer;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.book-page-back:hover {
+  opacity: 0.85;
+  transform: rotateY(-15deg) scale(1);
 }
 
 /* Page Flip Animations */
@@ -108,17 +123,29 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .book-container {
-    max-width: 100%;
+    gap: 12px;
     padding: 0 10px;
   }
 
   .book-page {
-    width: 100%;
-    max-width: 320px;
-    height: 400px;
+    width: 220px;
+    height: 380px;
     padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .book-container {
+    gap: 8px;
+    padding: 0 5px;
+  }
+
+  .book-page {
+    width: 180px;
+    height: 320px;
+    padding: 12px;
   }
 
   .book-page-left,
@@ -127,7 +154,7 @@
   }
 
   .book-page-front {
-    position: static;
+    position: relative;
   }
 }
 
