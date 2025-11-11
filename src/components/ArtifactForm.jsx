@@ -120,7 +120,7 @@ export default function ArtifactForm({ dropdownOptions, editingArtifact, onSubmi
                   reader.onload = (event) => {
                     setFormData(prev => ({ ...prev, modelPath: event.target.result }))
                   }
-                  reader.readAsArrayBuffer(file)
+                  reader.readAsDataURL(file)
                 }
               }}
               className="flex-1 px-4 py-2 border-2 border-gold-dark rounded bg-parchment text-wood cursor-pointer text-sm"
