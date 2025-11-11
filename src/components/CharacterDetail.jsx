@@ -345,7 +345,7 @@ function AttributeBox({ label, value }) {
   return (
     <div className={`${bgClass} ${textClass} p-4 rounded border-2 ${borderClass}`}>
       <div className={`text-sm ${labelClass} uppercase tracking-wide font-medieval mb-3`}>{label}</div>
-      <div className="font-medieval text-lg flex items-center gap-3">
+      <div className="font-medieval text-lg flex items-center justify-center gap-3">
         {label === 'Elemental Attunement' && colors?.icon ? (
           <>
             <i className={`ra ${colors.icon} text-2xl`}></i>
