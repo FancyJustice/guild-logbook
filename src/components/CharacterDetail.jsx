@@ -205,6 +205,23 @@ export default function CharacterDetail({ character, onBack }) {
             <AttributeBox label="Elemental Attunement" value={character.elemeltanAttunement} />
           </div>
 
+          {/* Criminal Only Fields */}
+          {character.type === 'criminal' && (
+            <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
+              <h3 className="text-lg font-medieval font-bold mb-3 text-gold-dark">Criminal Record</h3>
+              <div className="space-y-2">
+                <p className="text-sm">
+                  <strong>Bounty:</strong> {character.bounty || '—'}
+                </p>
+                {character.crime && (
+                  <p className="text-sm">
+                    <strong>Crime:</strong> {character.crime}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Combat Skills */}
           {character.combatSkills && character.combatSkills.length > 0 && (
             <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
@@ -258,14 +275,6 @@ export default function CharacterDetail({ character, onBack }) {
                   </li>
                 ))}
               </ul>
-            </div>
-          )}
-
-          {/* Criminal Only Fields */}
-          {character.type === 'criminal' && (
-            <div className="grid grid-cols-2 gap-4">
-              <StatBox label="Bounty" value={character.bounty || '—'} />
-              {character.crime && <StatBox label="Crime" value={character.crime} />}
             </div>
           )}
         </div>
