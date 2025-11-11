@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { uploadCharacterPhoto } from '../utils/firebaseUtils'
 
 export default function CharacterForm({ dropdownOptions, characters = [], editingCharacter, onSubmit, onCancel }) {
   const [formData, setFormData] = useState(editingCharacter ? {
@@ -51,6 +52,7 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
   const [lifeSkillInput, setLifeSkillInput] = useState('')
   const [observationInput, setObservationInput] = useState('')
   const [photoPreview, setPhotoPreview] = useState(editingCharacter?.photo || '')
+  const [uploading, setUploading] = useState(false)
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -70,47 +72,77 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
       }
 
       try {
+        setUploading(true)
+
         // Create canvas to resize image to 230x300
         const reader = new FileReader()
         reader.onload = async (event) => {
-          const img = new Image()
-          img.onload = async () => {
-            const canvas = document.createElement('canvas')
-            canvas.width = 230
-            canvas.height = 300
-            const ctx = canvas.getContext('2d')
+          try {
+            const img = new Image()
+            img.onload = async () => {
+              try {
+                const canvas = document.createElement('canvas')
+                canvas.width = 230
+                canvas.height = 300
+                const ctx = canvas.getContext('2d')
 
-            // Calculate dimensions to maintain aspect ratio
-            const imgRatio = img.width / img.height
-            const canvasRatio = 230 / 300
-            let drawWidth, drawHeight, offsetX = 0, offsetY = 0
+                // Calculate dimensions to maintain aspect ratio
+                const imgRatio = img.width / img.height
+                const canvasRatio = 230 / 300
+                let drawWidth, drawHeight, offsetX = 0, offsetY = 0
 
-            if (imgRatio > canvasRatio) {
-              drawHeight = 300
-              drawWidth = 300 * imgRatio
-              offsetX = (drawWidth - 230) / 2
-            } else {
-              drawWidth = 230
-              drawHeight = 230 / imgRatio
-              offsetY = (drawHeight - 300) / 2
+                if (imgRatio > canvasRatio) {
+                  drawHeight = 300
+                  drawWidth = 300 * imgRatio
+                  offsetX = (drawWidth - 230) / 2
+                } else {
+                  drawWidth = 230
+                  drawHeight = 230 / imgRatio
+                  offsetY = (drawHeight - 300) / 2
+                }
+
+                ctx.drawImage(img, -offsetX, -offsetY, drawWidth, drawHeight)
+                const dataUrl = canvas.toDataURL('image/png')
+                setPhotoPreview(dataUrl)
+
+                // Convert canvas to blob and upload to Firebase
+                canvas.toBlob(async (blob) => {
+                  try {
+                    const characterId = editingCharacter?.id || 'temp'
+                    const downloadURL = await uploadCharacterPhoto(blob, characterId)
+                    setFormData(prev => ({
+                      ...prev,
+                      photo: downloadURL
+                    }))
+                  } catch (error) {
+                    console.error('Error uploading image to Firebase:', error)
+                    alert('Error uploading image: ' + error.message)
+                  } finally {
+                    setUploading(false)
+                  }
+                }, 'image/png')
+              } catch (error) {
+                console.error('Error resizing image:', error)
+                alert('Error resizing image: ' + error.message)
+                setUploading(false)
+              }
             }
-
-            ctx.drawImage(img, -offsetX, -offsetY, drawWidth, drawHeight)
-            const dataUrl = canvas.toDataURL('image/png')
-            setPhotoPreview(dataUrl)
-
-            // Store the image directly as a base64 data URL
-            setFormData(prev => ({
-              ...prev,
-              photo: dataUrl
-            }))
+            img.onerror = () => {
+              alert('Error loading image')
+              setUploading(false)
+            }
+            img.src = event.target.result
+          } catch (error) {
+            console.error('Error processing image:', error)
+            alert('Error processing image: ' + error.message)
+            setUploading(false)
           }
-          img.src = event.target.result
         }
         reader.readAsDataURL(file)
       } catch (error) {
-        console.error('Error processing image:', error)
-        alert('Error processing image: ' + error.message)
+        console.error('Error starting image upload:', error)
+        alert('Error uploading image: ' + error.message)
+        setUploading(false)
       }
     }
   }
@@ -308,13 +340,19 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
         <label className="block text-sm font-medieval text-wood-light mb-3">Profile Photo (230x300 PNG)</label>
         <div className="flex gap-4">
           <div className="flex-1">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="w-full px-3 py-2 border-2 border-gold-dark rounded bg-parchment-dark text-wood focus:outline-none focus:border-gold text-sm cursor-pointer"
-            />
-            <p className="text-xs text-wood-light mt-2">Upload PNG, JPG, or other image format. Will be automatically resized to 230x300 and saved to <code className="bg-wood-light px-1 rounded">public/images/characters/</code></p>
+            <div className="flex gap-2 items-center">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={uploading}
+                className="flex-1 px-3 py-2 border-2 border-gold-dark rounded bg-parchment-dark text-wood focus:outline-none focus:border-gold text-sm cursor-pointer disabled:opacity-50"
+              />
+              {uploading && (
+                <span className="text-yellow-400 text-sm animate-pulse">↑ Uploading...</span>
+              )}
+            </div>
+            <p className="text-xs text-wood-light mt-2">Upload PNG, JPG, or other image format. Will be automatically resized to 230x300 and uploaded to Firebase Storage</p>
           </div>
           {photoPreview && (
             <div className="w-32 flex-shrink-0">
