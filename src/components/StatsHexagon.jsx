@@ -53,7 +53,7 @@ export default function StatsHexagon({ stats = {} }) {
   return (
     <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold overflow-hidden w-full">
       <div className="flex justify-center">
-        <svg width="150" height="150" viewBox="0 0 240 240" className="mx-auto">
+        <svg width="240" height="240" viewBox="0 0 240 240" className="mx-auto">
           {/* Background hexagon grid */}
           {[1, 0.75, 0.5, 0.25].map((scale, idx) => (
             <polygon
