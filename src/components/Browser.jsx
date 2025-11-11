@@ -2,6 +2,7 @@ import { useState } from 'react'
 import CharacterGrid from './CharacterGrid'
 import CharacterDetail from './CharacterDetail'
 import CharacterHierarchy from './CharacterHierarchy'
+import BookView from './BookView'
 
 import ArtifactGrid from './ArtifactGrid'
 import ArtifactDetail from './ArtifactDetail'
@@ -10,7 +11,7 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
   const [selectedCharacter, setSelectedCharacter] = useState(null)
   const [selectedArtifact, setSelectedArtifact] = useState(null)
   const [view, setView] = useState('characters') // 'characters' or 'artifacts'
-  const [displayMode, setDisplayMode] = useState('grid') // 'grid' or 'hierarchy'
+  const [displayMode, setDisplayMode] = useState('grid') // 'grid', 'hierarchy', or 'book'
   const [filters, setFilters] = useState({
     type: 'all',
   })
@@ -112,6 +113,16 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
                       Grid
                     </button>
                     <button
+                      onClick={() => setDisplayMode('book')}
+                      className={`px-3 py-1 text-sm rounded transition ${
+                        displayMode === 'book'
+                          ? 'bg-gold text-wood'
+                          : 'bg-gold-dark text-parchment hover:bg-gold'
+                      }`}
+                    >
+                      📖 Book
+                    </button>
+                    <button
                       onClick={() => setDisplayMode('hierarchy')}
                       className={`px-3 py-1 text-sm rounded transition ${
                         displayMode === 'hierarchy'
@@ -125,6 +136,11 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
                 </div>
                 {displayMode === 'grid' ? (
                   <CharacterGrid
+                    characters={filteredCharacters}
+                    onSelectCharacter={setSelectedCharacter}
+                  />
+                ) : displayMode === 'book' ? (
+                  <BookView
                     characters={filteredCharacters}
                     onSelectCharacter={setSelectedCharacter}
                   />
