@@ -13,14 +13,11 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
   const [displayMode, setDisplayMode] = useState('grid') // 'grid' or 'hierarchy'
   const [filters, setFilters] = useState({
     type: 'all',
-    status: 'all',
   })
 
-  const filteredCharacters = characters.filter(char => {
-    const typeMatch = filters.type === 'all' || char.type === filters.type
-    const statusMatch = filters.status === 'all' || char.status === filters.status
-    return typeMatch && statusMatch
-  })
+  const filteredCharacters = characters.filter(char =>
+    filters.type === 'all' || char.type === filters.type
+  )
 
   const filteredArtifacts = artifacts.filter(artifact =>
     filters.type === 'all' || artifact.type === filters.type

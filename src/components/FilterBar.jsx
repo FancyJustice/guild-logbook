@@ -75,20 +75,6 @@ export default function FilterBar({
             ...(dropdownOptions.personality || []).map(p => ({ value: p, label: p }))
           ]}
         />
-
-        <FilterSelect
-          label="Status"
-          value={filters.status}
-          onChange={(value) => handleFilterChange('status', value)}
-          options={[
-            { value: 'all', label: 'All Statuses' },
-            { value: 'Active', label: 'Active' },
-            { value: 'Inactive', label: 'Inactive' },
-            { value: 'Deceased', label: 'Deceased' },
-            { value: 'Retired', label: 'Retired' },
-            { value: 'Missing', label: 'Missing' },
-          ]}
-        />
       </div>
     </div>
   )
