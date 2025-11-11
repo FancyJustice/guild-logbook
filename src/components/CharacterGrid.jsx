@@ -31,8 +31,8 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
             {/* Decorative top border */}
             <div className={`h-1 ${character.type === 'guild' ? 'bg-gold' : 'bg-seal'}`}></div>
 
-            {/* Character image with frame */}
-            <div className="relative overflow-hidden bg-wood-light p-3" style={{ aspectRatio: '230/300' }}>
+            {/* Character image with frame - responsive aspect ratio */}
+            <div className="relative overflow-hidden bg-wood-light p-2 md:p-3" style={{ aspectRatio: '230/300' }}>
               <div className="border-2 border-gold-dark rounded h-full w-full overflow-hidden">
                 <img
                   src={getImageSource(character.photo)}
@@ -42,42 +42,42 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
               </div>
             </div>
 
-            {/* Content section with book-like styling */}
-            <div className="p-5 space-y-3">
+            {/* Content section with book-like styling - responsive spacing */}
+            <div className="p-2 md:p-3 lg:p-5 space-y-1 md:space-y-2 lg:space-y-3">
               {/* Type label with decorative line */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 md:gap-2">
                 <div className={`h-px flex-1 ${character.type === 'guild' ? 'bg-gold' : 'bg-seal'}`}></div>
-                <div className="text-xs text-gold uppercase tracking-widest font-medieval font-bold">
-                  {character.type === 'guild' ? 'Guild Member' : 'Criminal'}
+                <div className="text-[10px] md:text-xs text-gold uppercase tracking-widest font-medieval font-bold whitespace-nowrap">
+                  {character.type === 'guild' ? 'Guild' : 'Criminal'}
                 </div>
                 <div className={`h-px flex-1 ${character.type === 'guild' ? 'bg-gold' : 'bg-seal'}`}></div>
               </div>
 
-              {/* Title - italicized like a book */}
+              {/* Title - italicized like a book - hidden on mobile */}
               {character.title && (
-                <div className="text-sm text-gold-dark italic text-center font-medieval">
+                <div className="hidden md:block text-xs lg:text-sm text-gold-dark italic text-center font-medieval line-clamp-1">
                   "{character.title}"
                 </div>
               )}
 
               {/* Name - prominent like a chapter title */}
-              <h3 className="text-2xl font-medieval font-bold text-wood text-center border-b-2 border-gold-dark pb-2">
+              <h3 className="text-base md:text-lg lg:text-2xl font-medieval font-bold text-wood text-center border-b-2 border-gold-dark pb-1 md:pb-2 line-clamp-2">
                 {character.name}
               </h3>
 
               {/* Character details */}
-              <div className="text-sm space-y-1 text-center">
-                <div className="text-wood font-medieval">
+              <div className="text-[11px] md:text-sm space-y-0 md:space-y-1 text-center">
+                <div className="text-wood font-medieval line-clamp-1">
                   {character.race} {character.class}
                 </div>
-                <div className="text-xs text-wood-light italic">
+                <div className="text-[9px] md:text-xs text-wood-light italic line-clamp-1">
                   {character.vrcPlayerName}
                 </div>
               </div>
 
               {/* Footer details with book page aesthetic */}
-              <div className="border-t-2 border-gold-dark pt-3 flex justify-between text-xs text-wood-light font-medieval">
-                <span>{character.class || 'Unknown'}</span>
+              <div className="border-t-2 border-gold-dark pt-1 md:pt-2 flex justify-between text-[9px] md:text-xs text-wood-light font-medieval">
+                <span className="line-clamp-1">{character.class || '—'}</span>
                 <span className="font-bold text-gold">Lv. {character.level || '—'}</span>
               </div>
             </div>
