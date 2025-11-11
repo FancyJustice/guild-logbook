@@ -307,6 +307,7 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
         </div>
         </div>
       </div>
+      </div>
     </>
   )
 }
