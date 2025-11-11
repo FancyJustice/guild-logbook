@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
-export default function ArtifactDetail({ artifact, onBack }) {
+export default function ArtifactDetail({ artifact, characters = [], onBack, onSelectCharacter }) {
   const [showModel, setShowModel] = useState(false)
   const [meshVisibility, setMeshVisibility] = useState({})
   const [isLoading, setIsLoading] = useState(false)
@@ -409,7 +409,26 @@ export default function ArtifactDetail({ artifact, onBack }) {
               <h2 className="text-xl font-bold font-medieval text-wood">{artifact.name}</h2>
             </div>
             <div className="text-sm space-y-1">
-              <p className="text-wood-light"><strong>Owner:</strong> {artifact.owner || '—'}</p>
+              <p className="text-wood-light">
+                <strong>Owner:</strong>{' '}
+                {artifact.owner ? (
+                  (() => {
+                    const owner = characters.find(char => char.name === artifact.owner)
+                    return owner ? (
+                      <button
+                        onClick={() => onSelectCharacter && onSelectCharacter(owner)}
+                        className="text-gold hover:text-gold-dark transition underline cursor-pointer"
+                      >
+                        {artifact.owner}
+                      </button>
+                    ) : (
+                      <span>{artifact.owner}</span>
+                    )
+                  })()
+                ) : (
+                  '—'
+                )}
+              </p>
             </div>
           </div>
         </div>

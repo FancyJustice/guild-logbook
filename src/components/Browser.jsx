@@ -169,7 +169,12 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
             {selectedArtifact ? (
               <ArtifactDetail
                 artifact={selectedArtifact}
+                characters={characters}
                 onBack={() => setSelectedArtifact(null)}
+                onSelectCharacter={(character) => {
+                  setSelectedCharacter(character)
+                  setSelectedArtifact(null)
+                }}
               />
             ) : (
               <>
