@@ -2,12 +2,12 @@ import { getImageSource } from '../utils/imageUtils'
 
 export default function CharacterGrid({ characters, onSelectCharacter }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-8">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-8 auto-rows-fr">
       {characters.map(character => (
         <div
           key={character.id}
           onClick={() => onSelectCharacter(character)}
-          className={`relative cursor-pointer transform transition hover:scale-105`}
+          className={`relative cursor-pointer transform transition hover:scale-105 h-full`}
           style={{
             perspective: '1000px'
           }}
@@ -18,7 +18,7 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
           }`}></div>
 
           {/* Main card with book-like appearance */}
-          <div className={`relative bg-parchment text-wood rounded-lg overflow-hidden shadow-2xl border-2 ${
+          <div className={`relative bg-parchment text-wood rounded-lg overflow-hidden shadow-2xl border-2 h-full flex flex-col ${
             character.type === 'guild' ? 'border-gold-dark' : 'border-seal-light'
           }`}
             style={{
@@ -43,7 +43,7 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
             </div>
 
             {/* Content section with book-like styling - responsive spacing */}
-            <div className="p-1 sm:p-2 md:p-3 lg:p-5 space-y-0 sm:space-y-1 md:space-y-2 lg:space-y-3">
+            <div className="p-1 sm:p-2 md:p-3 lg:p-5 space-y-0 sm:space-y-1 md:space-y-2 lg:space-y-3 flex-1 flex flex-col justify-between">
               {/* Type label with decorative line */}
               <div className="flex items-center gap-1 md:gap-2">
                 <div className={`h-px flex-1 ${character.type === 'guild' ? 'bg-gold' : 'bg-seal'}`}></div>
