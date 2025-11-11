@@ -104,20 +104,59 @@ export default function ArtifactForm({ dropdownOptions, editingArtifact, onSubmi
         />
       </div>
 
-      {/* 3D Model Paths */}
+      {/* 3D Model and Texture Upload */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormInput
-          label="Model Path (FBX file)"
-          value={formData.modelPath}
-          onChange={(value) => handleInputChange('modelPath', value)}
-          placeholder="e.g., /models/sword.fbx"
-        />
-        <FormInput
-          label="Texture Path (Image file)"
-          value={formData.texturePath}
-          onChange={(value) => handleInputChange('texturePath', value)}
-          placeholder="e.g., /textures/sword.jpg"
-        />
+        {/* FBX Model Upload */}
+        <div className="bg-parchment-dark p-4 rounded border-2 border-gold-dark">
+          <label className="block text-sm font-medieval text-wood-light mb-3">3D Model (FBX)</label>
+          <div className="flex gap-2 items-center">
+            <input
+              type="file"
+              accept=".fbx,.FBX"
+              onChange={(e) => {
+                const file = e.target.files[0]
+                if (file) {
+                  const reader = new FileReader()
+                  reader.onload = (event) => {
+                    setFormData(prev => ({ ...prev, modelPath: event.target.result }))
+                  }
+                  reader.readAsArrayBuffer(file)
+                }
+              }}
+              className="flex-1 px-4 py-2 border-2 border-gold-dark rounded bg-parchment text-wood cursor-pointer text-sm"
+            />
+            {formData.modelPath && (
+              <span className="text-green-400 text-xs">✓ Loaded</span>
+            )}
+          </div>
+          <p className="text-xs text-wood-light mt-2">Upload .fbx model file</p>
+        </div>
+
+        {/* Texture Upload */}
+        <div className="bg-parchment-dark p-4 rounded border-2 border-gold-dark">
+          <label className="block text-sm font-medieval text-wood-light mb-3">Texture (Image)</label>
+          <div className="flex gap-2 items-center">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files[0]
+                if (file) {
+                  const reader = new FileReader()
+                  reader.onload = (event) => {
+                    setFormData(prev => ({ ...prev, texturePath: event.target.result }))
+                  }
+                  reader.readAsDataURL(file)
+                }
+              }}
+              className="flex-1 px-4 py-2 border-2 border-gold-dark rounded bg-parchment text-wood cursor-pointer text-sm"
+            />
+            {formData.texturePath && (
+              <span className="text-green-400 text-xs">✓ Loaded</span>
+            )}
+          </div>
+          <p className="text-xs text-wood-light mt-2">Upload texture image file</p>
+        </div>
       </div>
 
       {/* Toggleable Meshes */}
