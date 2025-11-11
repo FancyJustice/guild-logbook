@@ -1,4 +1,4 @@
-import { db, storage } from '../firebaseConfig';
+import { db } from '../firebaseConfig';
 import {
   collection,
   doc,
@@ -11,12 +11,6 @@ import {
   where,
   getDocs
 } from 'firebase/firestore';
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject
-} from 'firebase/storage';
 
 const DATA_COLLECTION = 'app-data';
 const CHARACTERS_COLLECTION = 'characters';
@@ -357,104 +351,5 @@ export async function mergeCharactersInFirebase(mergedCharacters, mergedArtifact
   } catch (error) {
     console.error('Error merging data:', error);
     throw error;
-  }
-}
-
-/**
- * Upload character photo to Firebase Storage
- * Returns the download URL
- */
-export async function uploadCharacterPhoto(file, characterId) {
-  try {
-    if (!file) return null;
-
-    const fileName = `${Date.now()}_${file.name}`;
-    const storageRef = ref(storage, `characters/${characterId}/${fileName}`);
-
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-
-    return downloadURL;
-  } catch (error) {
-    console.error('Error uploading character photo:', error);
-    throw error;
-  }
-}
-
-/**
- * Upload artifact photo to Firebase Storage
- * Returns the download URL
- */
-export async function uploadArtifactPhoto(file, artifactId) {
-  try {
-    if (!file) return null;
-
-    const fileName = `${Date.now()}_${file.name}`;
-    const storageRef = ref(storage, `artifacts/${artifactId}/photo/${fileName}`);
-
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-
-    return downloadURL;
-  } catch (error) {
-    console.error('Error uploading artifact photo:', error);
-    throw error;
-  }
-}
-
-/**
- * Upload FBX model to Firebase Storage
- * Returns the download URL
- */
-export async function uploadFBXModel(file, artifactId) {
-  try {
-    if (!file) return null;
-
-    const fileName = `${Date.now()}_${file.name}`;
-    const storageRef = ref(storage, `artifacts/${artifactId}/models/${fileName}`);
-
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-
-    return downloadURL;
-  } catch (error) {
-    console.error('Error uploading FBX model:', error);
-    throw error;
-  }
-}
-
-/**
- * Upload artifact texture to Firebase Storage
- * Returns the download URL
- */
-export async function uploadArtifactTexture(file, artifactId) {
-  try {
-    if (!file) return null;
-
-    const fileName = `${Date.now()}_${file.name}`;
-    const storageRef = ref(storage, `artifacts/${artifactId}/textures/${fileName}`);
-
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-
-    return downloadURL;
-  } catch (error) {
-    console.error('Error uploading artifact texture:', error);
-    throw error;
-  }
-}
-
-/**
- * Delete a file from Firebase Storage
- */
-export async function deleteStorageFile(storagePath) {
-  try {
-    if (!storagePath) return;
-
-    const storageRef = ref(storage, storagePath);
-    await deleteObject(storageRef);
-  } catch (error) {
-    console.error('Error deleting storage file:', error);
-    // Don't throw - file may have already been deleted or path may be invalid
   }
 }

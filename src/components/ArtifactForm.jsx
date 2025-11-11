@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { uploadArtifactPhoto, uploadFBXModel, uploadArtifactTexture } from '../utils/firebaseUtils'
 
 export default function ArtifactForm({ dropdownOptions, editingArtifact, onSubmit, onCancel }) {
   const [formData, setFormData] = useState(editingArtifact || {
@@ -13,14 +12,12 @@ export default function ArtifactForm({ dropdownOptions, editingArtifact, onSubmi
     toggleableMeshes: '',
   })
   const [photoPreview, setPhotoPreview] = useState(editingArtifact?.photo || '')
-  const [uploading, setUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState({ photo: false, model: false, texture: false })
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const handlePhotoUpload = async (e) => {
+  const handlePhotoUpload = (e) => {
     const file = e.target.files[0]
     if (file) {
       if (!file.type.startsWith('image/')) {
@@ -28,24 +25,13 @@ export default function ArtifactForm({ dropdownOptions, editingArtifact, onSubmi
         return
       }
 
-      // Show preview immediately
       const reader = new FileReader()
       reader.onload = (event) => {
-        setPhotoPreview(event.target.result)
+        const dataUrl = event.target.result
+        setPhotoPreview(dataUrl)
+        setFormData(prev => ({ ...prev, photo: dataUrl }))
       }
       reader.readAsDataURL(file)
-
-      // Upload to Firebase Storage
-      setUploadProgress(prev => ({ ...prev, photo: true }))
-      try {
-        const downloadURL = await uploadArtifactPhoto(file, editingArtifact?.id || 'temp')
-        setFormData(prev => ({ ...prev, photo: downloadURL }))
-      } catch (error) {
-        alert('Failed to upload photo: ' + error.message)
-        setPhotoPreview('')
-      } finally {
-        setUploadProgress(prev => ({ ...prev, photo: false }))
-      }
     }
   }
 
@@ -127,27 +113,19 @@ export default function ArtifactForm({ dropdownOptions, editingArtifact, onSubmi
             <input
               type="file"
               accept=".fbx,.FBX"
-              onChange={async (e) => {
+              onChange={(e) => {
                 const file = e.target.files[0]
                 if (file) {
-                  setUploadProgress(prev => ({ ...prev, model: true }))
-                  try {
-                    const downloadURL = await uploadFBXModel(file, editingArtifact?.id || 'temp')
-                    setFormData(prev => ({ ...prev, modelPath: downloadURL }))
-                  } catch (error) {
-                    alert('Failed to upload model: ' + error.message)
-                  } finally {
-                    setUploadProgress(prev => ({ ...prev, model: false }))
+                  const reader = new FileReader()
+                  reader.onload = (event) => {
+                    setFormData(prev => ({ ...prev, modelPath: event.target.result }))
                   }
+                  reader.readAsDataURL(file)
                 }
               }}
-              disabled={uploading || uploadProgress.model}
-              className="flex-1 px-4 py-2 border-2 border-gold-dark rounded bg-parchment text-wood cursor-pointer text-sm disabled:opacity-50"
+              className="flex-1 px-4 py-2 border-2 border-gold-dark rounded bg-parchment text-wood cursor-pointer text-sm"
             />
-            {uploadProgress.model && (
-              <span className="text-yellow-400 text-xs animate-pulse">↑ Uploading...</span>
-            )}
-            {formData.modelPath && !uploadProgress.model && (
+            {formData.modelPath && (
               <span className="text-green-400 text-xs">✓ Loaded</span>
             )}
           </div>
@@ -161,27 +139,19 @@ export default function ArtifactForm({ dropdownOptions, editingArtifact, onSubmi
             <input
               type="file"
               accept="image/*"
-              onChange={async (e) => {
+              onChange={(e) => {
                 const file = e.target.files[0]
                 if (file) {
-                  setUploadProgress(prev => ({ ...prev, texture: true }))
-                  try {
-                    const downloadURL = await uploadArtifactTexture(file, editingArtifact?.id || 'temp')
-                    setFormData(prev => ({ ...prev, texturePath: downloadURL }))
-                  } catch (error) {
-                    alert('Failed to upload texture: ' + error.message)
-                  } finally {
-                    setUploadProgress(prev => ({ ...prev, texture: false }))
+                  const reader = new FileReader()
+                  reader.onload = (event) => {
+                    setFormData(prev => ({ ...prev, texturePath: event.target.result }))
                   }
+                  reader.readAsDataURL(file)
                 }
               }}
-              disabled={uploading || uploadProgress.texture}
-              className="flex-1 px-4 py-2 border-2 border-gold-dark rounded bg-parchment text-wood cursor-pointer text-sm disabled:opacity-50"
+              className="flex-1 px-4 py-2 border-2 border-gold-dark rounded bg-parchment text-wood cursor-pointer text-sm"
             />
-            {uploadProgress.texture && (
-              <span className="text-yellow-400 text-xs animate-pulse">↑ Uploading...</span>
-            )}
-            {formData.texturePath && !uploadProgress.texture && (
+            {formData.texturePath && (
               <span className="text-green-400 text-xs">✓ Loaded</span>
             )}
           </div>
