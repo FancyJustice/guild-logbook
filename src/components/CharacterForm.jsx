@@ -724,43 +724,67 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
 
       {/* Character Stats */}
       <div>
-        <label className="block text-sm font-medieval text-wood-light mb-3">Character Stats</label>
+        <label className="block text-sm font-medieval text-wood-light mb-3">Character Stats (Max 35 per stat)</label>
         <div className="grid grid-cols-3 gap-3">
           <FormInput
             label="STR"
             type="number"
             value={formData.str || 0}
-            onChange={(value) => handleInputChange('str', parseInt(value) || 0)}
+            onChange={(value) => {
+              const parsed = parseInt(value) || 0
+              handleInputChange('str', Math.min(Math.max(parsed, 0), 35))
+            }}
+            max="35"
           />
           <FormInput
             label="AGI"
             type="number"
             value={formData.agi || 0}
-            onChange={(value) => handleInputChange('agi', parseInt(value) || 0)}
+            onChange={(value) => {
+              const parsed = parseInt(value) || 0
+              handleInputChange('agi', Math.min(Math.max(parsed, 0), 35))
+            }}
+            max="35"
           />
           <FormInput
             label="DEX"
             type="number"
             value={formData.dex || 0}
-            onChange={(value) => handleInputChange('dex', parseInt(value) || 0)}
+            onChange={(value) => {
+              const parsed = parseInt(value) || 0
+              handleInputChange('dex', Math.min(Math.max(parsed, 0), 35))
+            }}
+            max="35"
           />
           <FormInput
             label="INT"
             type="number"
             value={formData.int || 0}
-            onChange={(value) => handleInputChange('int', parseInt(value) || 0)}
+            onChange={(value) => {
+              const parsed = parseInt(value) || 0
+              handleInputChange('int', Math.min(Math.max(parsed, 0), 35))
+            }}
+            max="35"
           />
           <FormInput
             label="LUK"
             type="number"
             value={formData.luk || 0}
-            onChange={(value) => handleInputChange('luk', parseInt(value) || 0)}
+            onChange={(value) => {
+              const parsed = parseInt(value) || 0
+              handleInputChange('luk', Math.min(Math.max(parsed, 0), 35))
+            }}
+            max="35"
           />
           <FormInput
             label="VIT"
             type="number"
             value={formData.vit || 0}
-            onChange={(value) => handleInputChange('vit', parseInt(value) || 0)}
+            onChange={(value) => {
+              const parsed = parseInt(value) || 0
+              handleInputChange('vit', Math.min(Math.max(parsed, 0), 35))
+            }}
+            max="35"
           />
         </div>
       </div>
@@ -799,7 +823,7 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
   )
 }
 
-function FormInput({ label, value, onChange, type = 'text', required = false, placeholder = '' }) {
+function FormInput({ label, value, onChange, type = 'text', required = false, placeholder = '', max = null }) {
   return (
     <div>
       <label className="block text-xs text-gold-dark uppercase tracking-wide font-medieval mb-1">
@@ -811,6 +835,7 @@ function FormInput({ label, value, onChange, type = 'text', required = false, pl
         onChange={(e) => onChange(e.target.value)}
         required={required}
         placeholder={placeholder}
+        max={max}
         className="w-full px-2 py-1 border-2 border-gold-dark rounded bg-parchment-dark text-wood focus:outline-none focus:border-gold text-sm"
       />
     </div>
