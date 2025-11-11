@@ -30,9 +30,9 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
   const isViewingDetail = selectedCharacter || selectedArtifact
 
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-col md:flex-row gap-2 md:gap-4">
       {/* Left Sidebar - Type Tabs */}
-      {!isViewingDetail && <div className="flex flex-col gap-2 pt-2">
+      {!isViewingDetail && <div className="flex flex-row md:flex-col gap-2 pt-0 md:pt-2 overflow-x-auto md:overflow-x-visible">
         {view === 'characters' ? (
           <>
             <button
@@ -191,7 +191,7 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
       </div>
 
       {/* Right Sidebar - View Tabs */}
-      {!isViewingDetail && <div className="flex flex-col gap-2 pt-2">
+      {!isViewingDetail && <div className="flex flex-row md:flex-col gap-2 pt-0 md:pt-2">
         <button
           onClick={() => { setView('characters'); setSelectedCharacter(null); setSelectedArtifact(null) }}
           className={`px-4 py-3 text-sm font-medieval whitespace-nowrap transition rounded-l-lg border-r-4 ${

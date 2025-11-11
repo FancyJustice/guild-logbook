@@ -2,7 +2,7 @@ import { getImageSource } from '../utils/imageUtils'
 
 export default function CharacterGrid({ characters, onSelectCharacter }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
       {characters.map(character => (
         <div
           key={character.id}

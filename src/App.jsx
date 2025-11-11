@@ -307,7 +307,7 @@ function App() {
     <>
       {showCover && <Cover onFlip={() => setShowCover(false)} />}
       <div
-        className="min-h-screen bg-wood flex flex-col border-8 border-gold-dark m-4 shadow-2xl"
+        className="min-h-screen bg-wood flex flex-col border-8 border-gold-dark m-2 md:m-4 shadow-2xl"
         style={{
           boxShadow: '0 0 40px 20px rgba(139, 111, 71, 0.5), 0 0 80px 40px rgba(139, 111, 71, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5)',
           opacity: showCover ? 0 : 1,
@@ -321,41 +321,41 @@ function App() {
           backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(212,165,116,0.3) 35px, rgba(212,165,116,0.3) 70px)`
         }}></div>
 
-        <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
-          <div className="flex justify-between items-center gap-8">
+        <div className="max-w-7xl mx-auto px-2 md:px-4 py-4 md:py-8 relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-8">
             {/* Left side - Title with decorative elements */}
-            <div>
-                <h1 className="text-5xl font-medieval text-gold font-bold tracking-wide" style={{
+            <div className="flex-1">
+                <h1 className="text-3xl md:text-5xl font-medieval text-gold font-bold tracking-wide" style={{
                   textShadow: '3px 3px 6px rgba(0,0,0,0.7), -1px -1px 2px rgba(255,255,255,0.1)'
                 }}>
                   The Guild Logbook
                 </h1>
-                <p className="text-sm text-gold-dark italic tracking-widest uppercase">
+                <p className="text-xs md:text-sm text-gold-dark italic tracking-widest uppercase">
                   Official Record of Adventurers & Criminals
                 </p>
             </div>
 
             {/* Right side - Navigation */}
-            <nav className="flex gap-8 items-center">
+            <nav className="flex gap-2 md:gap-8 items-center w-full md:w-auto">
               <button
                 onClick={() => { navigateTo('browser'); setIsAuthenticated(false) }}
-                className={`px-6 py-3 font-medieval font-bold text-sm tracking-wide transition rounded-lg border-2 ${
+                className={`flex-1 md:flex-none px-3 md:px-6 py-2 md:py-3 font-medieval font-bold text-xs md:text-sm tracking-wide transition rounded-lg border-2 ${
                   view === 'browser' && !isAuthenticated
                     ? 'bg-gold text-wood border-gold shadow-lg'
                     : 'bg-transparent text-parchment border-gold-dark hover:bg-gold hover:text-wood hover:border-gold'
                 }`}
               >
-                📜 Browse
+                <span className="hidden md:inline">📜 </span>Browse
               </button>
               <button
                 onClick={() => navigateTo('admin')}
-                className={`px-6 py-3 font-medieval font-bold text-sm tracking-wide transition rounded-lg border-2 ${
+                className={`flex-1 md:flex-none px-3 md:px-6 py-2 md:py-3 font-medieval font-bold text-xs md:text-sm tracking-wide transition rounded-lg border-2 ${
                   view === 'admin'
                     ? 'bg-gold text-wood border-gold shadow-lg'
                     : 'bg-transparent text-parchment border-gold-dark hover:bg-gold hover:text-wood hover:border-gold'
                 }`}
               >
-                🔐 Admin
+                <span className="hidden md:inline">🔐 </span>Admin
               </button>
             </nav>
           </div>
@@ -365,7 +365,7 @@ function App() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-2 md:px-4 py-4 md:py-8">
         {view === 'browser' && !isAuthenticated && (
           <Browser characters={characters} artifacts={artifacts} dropdownOptions={dropdownOptions} />
         )}

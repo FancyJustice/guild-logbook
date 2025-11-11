@@ -291,15 +291,16 @@ export default function ArtifactDetail({ artifact, characters = [], onBack, onSe
             if (artifact.texturePath) {
               console.log('Applying texture from:', artifact.texturePath)
               const textureLoader = new THREE.TextureLoader()
-              const texturePath = artifact.texturePath.startsWith('/')
-                ? artifact.texturePath.substring(1)
-                : artifact.texturePath
+              // Normalize path: remove leading slash and convert backslashes to forward slashes
+              const texturePath = artifact.texturePath
+                .replace(/\\/g, '/') // Convert backslashes to forward slashes
+                .replace(/^\/+/, '') // Remove leading slashes
               const fullTexturePath = `${import.meta.env.BASE_URL}${texturePath}`
 
               textureLoader.load(
                 fullTexturePath,
                 (texture) => {
-                  console.log('Texture loaded successfully')
+                  console.log('Texture loaded successfully from:', fullTexturePath)
                   fbx.traverse((child) => {
                     if (child.isMesh) {
                       child.material.map = texture
@@ -309,7 +310,7 @@ export default function ArtifactDetail({ artifact, characters = [], onBack, onSe
                 },
                 undefined,
                 (error) => {
-                  console.warn('Texture load error:', error)
+                  console.debug(`Texture not found at "${fullTexturePath}". Model will display without texture.`)
                 }
               )
             }

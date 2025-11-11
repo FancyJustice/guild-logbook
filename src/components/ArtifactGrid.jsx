@@ -2,7 +2,7 @@ import { getImageSource } from '../utils/imageUtils'
 
 export default function ArtifactGrid({ artifacts, onSelectArtifact }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
       {artifacts.map(artifact => (
         <div
           key={artifact.id}

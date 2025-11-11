@@ -41,25 +41,26 @@ export default function CharacterDetail({ character, onBack }) {
       '--gradient-color-1': ultimateColors.color1,
       '--gradient-color-2': ultimateColors.color2,
     }}>
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
         <button
           onClick={onBack}
-          className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded"
+          className="px-3 sm:px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded text-sm sm:text-base"
         >
-          ← Back to Browse
+          ← Back
         </button>
         <button
           onClick={exportCharacterAsJSON}
-          className="px-4 py-2 bg-gold text-wood hover:bg-gold-light transition rounded flex items-center gap-2"
+          className="px-3 sm:px-4 py-2 bg-gold text-wood hover:bg-gold-light transition rounded flex items-center gap-2 text-sm sm:text-base"
         >
           <i className="ra ra-download" style={{ color: '#2a2420' }}></i>
-          Export {character.name}
+          <span className="hidden sm:inline">Export {character.name}</span>
+          <span className="sm:hidden">Export</span>
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         {/* Left Column - Image & Basic Info */}
-        <div className="lg:col-span-1 space-y-4">
+        <div className="md:col-span-1 space-y-3 md:space-y-4">
           <div className="bg-wood-light rounded-lg overflow-hidden shadow-lg border-2 border-gold">
             <img
               src={getImageSource(character.photo)}
@@ -69,19 +70,19 @@ export default function CharacterDetail({ character, onBack }) {
           </div>
 
           {/* Quick Stats */}
-          <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold space-y-3">
+          <div className="bg-parchment text-wood p-3 md:p-4 rounded-lg border-2 border-gold space-y-2 md:space-y-3">
             <div className="border-b-2 border-gold-dark pb-2">
-              <div className="inline-block px-4 py-2 bg-gold text-wood text-sm uppercase tracking-widest font-medieval font-bold rounded mb-2">
+              <div className="inline-block px-3 md:px-4 py-1 md:py-2 bg-gold text-wood text-xs md:text-sm uppercase tracking-widest font-medieval font-bold rounded mb-2">
                 <i className={`ra ${character.type === 'guild' ? 'ra-shield' : 'ra-dragon-emblem'}`} style={{ marginRight: '0.5rem', color: '#2a2420' }}></i>
                 {character.type === 'guild' ? 'Guild Member' : 'Criminal'}
               </div>
-              <h2 className="text-4xl font-bold font-medieval text-gold-dark" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>{character.name}</h2>
+              <h2 className="text-2xl md:text-4xl font-bold font-medieval text-gold-dark" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>{character.name}</h2>
               {character.title && (
-                <p className="text-lg italic text-gold mt-2">"{character.title}"</p>
+                <p className="text-sm md:text-lg italic text-gold mt-2">"{character.title}"</p>
               )}
             </div>
 
-            <div className="text-base space-y-3">
+            <div className="text-sm md:text-base space-y-2 md:space-y-3">
               <p className="text-wood-light"><i className="ra ra-explosion" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Lvl:</strong> {character.level}</p>
               <img src="/VRLogo.png" alt="VRChat" style={{ height: '1.2rem', width: 'auto', marginRight: '0.5rem', display: 'inline-block' }} /><p className="text-wood-light" style={{ display: 'inline' }}><strong>Player:</strong> {character.vrcPlayerName && (
                 <a
