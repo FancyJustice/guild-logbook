@@ -3,12 +3,11 @@ import { getImageSource } from '../utils/imageUtils'
 import '../styles/bookView.css'
 
 /**
- * BookView Component - Displays characters in a realistic flipbook style
- * Shows two pages at a time (like an open book) with page-turning animation
+ * BookView Component - Simple character card selector
+ * Scroll through characters one at a time with next/previous buttons
  */
 export default function BookView({ characters, onSelectCharacter }) {
-  const [currentPage, setCurrentPage] = useState(0) // Left page number
-  const [isFlipping, setIsFlipping] = useState(false)
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   if (characters.length === 0) {
     return (
@@ -18,110 +17,94 @@ export default function BookView({ characters, onSelectCharacter }) {
     )
   }
 
-  const handleNextPage = () => {
-    // Move to next pair of pages
-    if (currentPage + 2 < characters.length && !isFlipping) {
-      setIsFlipping(true)
-      setTimeout(() => {
-        setCurrentPage(currentPage + 2)
-        setIsFlipping(false)
-      }, 600)
+  const character = characters[currentIndex]
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1)
     }
   }
 
-  const handlePrevPage = () => {
-    // Move to previous pair of pages
-    if (currentPage > 0 && !isFlipping) {
-      setIsFlipping(true)
-      setTimeout(() => {
-        setCurrentPage(Math.max(0, currentPage - 2))
-        setIsFlipping(false)
-      }, 600)
+  const handleNext = () => {
+    if (currentIndex < characters.length - 1) {
+      setCurrentIndex(currentIndex + 1)
     }
   }
-
-  // Get the two pages to display (left and right of open book)
-  const leftCharacter = characters[currentPage] || null
-  const rightCharacter = characters[currentPage + 1] || null
 
   return (
-    <div className="space-y-6">
-      {/* Open Book Display */}
-      <div className="flex items-center justify-center perspective py-8">
-        <div className="book-container" style={{ perspective: '1200px' }}>
-          {/* Left Page */}
-          <div className={`book-page book-page-left ${isFlipping ? 'flip-out' : ''}`}>
-            {leftCharacter && (
-              <div className="page-content">
-                <div className="page-number">← {currentPage + 1}</div>
-
-                {leftCharacter.photo && (
-                  <div className="flex justify-center mb-2">
-                    <div className="w-40 h-56 border-2 border-gold-dark rounded overflow-hidden shadow-lg">
-                      <img
-                        src={getImageSource(leftCharacter.photo)}
-                        alt={leftCharacter.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <div className="text-center flex-1 flex flex-col justify-end">
-                  <h3 className="text-lg font-medieval font-bold text-wood mb-1">{leftCharacter.name}</h3>
-                  <p className="text-[10px] text-wood-light mb-2">{leftCharacter.race} {leftCharacter.class}</p>
-                  <button
-                    onClick={() => onSelectCharacter(leftCharacter)}
-                    className="text-[10px] px-2 py-1 bg-gold-dark text-parchment hover:bg-gold rounded transition font-medieval"
-                  >
-                    View Full
-                  </button>
-                </div>
+    <div className="space-y-6 flex flex-col items-center">
+      {/* Character Card */}
+      <div className="character-card">
+        <div className="card-content">
+          {/* Character Photo */}
+          {character.photo && (
+            <div className="flex justify-center mb-4">
+              <div className="w-40 h-56 border-2 border-gold-dark rounded overflow-hidden shadow-lg">
+                <img
+                  src={getImageSource(character.photo)}
+                  alt={character.name}
+                  className="w-full h-full object-cover"
+                />
               </div>
-            )}
+            </div>
+          )}
+
+          {/* Character Name */}
+          <h2 className="text-3xl font-medieval font-bold text-wood text-center mb-2">
+            {character.name}
+          </h2>
+
+          {/* Character Title */}
+          {character.title && (
+            <p className="text-sm text-gold-dark italic text-center mb-3">
+              "{character.title}"
+            </p>
+          )}
+
+          {/* Character Details */}
+          <div className="space-y-2 text-center mb-4">
+            <p className="text-wood font-medieval">
+              {character.race} {character.class}
+            </p>
+            <p className="text-wood-light">
+              Level {character.level || '—'}
+            </p>
+            <p className="text-wood-light">
+              {character.affiliation || 'Unknown Affiliation'}
+            </p>
+            <p className="text-wood-light italic text-sm">
+              {character.vrcPlayerName}
+            </p>
           </div>
 
-          {/* Right Page */}
-          <div className={`book-page book-page-right ${isFlipping ? 'flip-in' : ''}`}>
-            {rightCharacter && (
-              <div className="page-content">
-                <div className="page-number">{currentPage + 2} →</div>
-
-                {rightCharacter.photo && (
-                  <div className="flex justify-center mb-2">
-                    <div className="w-40 h-56 border-2 border-gold-dark rounded overflow-hidden shadow-lg">
-                      <img
-                        src={getImageSource(rightCharacter.photo)}
-                        alt={rightCharacter.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <div className="text-center flex-1 flex flex-col justify-end">
-                  <h3 className="text-lg font-medieval font-bold text-wood mb-1">{rightCharacter.name}</h3>
-                  <p className="text-[10px] text-wood-light mb-2">{rightCharacter.race} {rightCharacter.class}</p>
-                  <button
-                    onClick={() => onSelectCharacter(rightCharacter)}
-                    className="text-[10px] px-2 py-1 bg-gold-dark text-parchment hover:bg-gold rounded transition font-medieval"
-                  >
-                    View Full
-                  </button>
-                </div>
-              </div>
-            )}
+          {/* Type Badge */}
+          <div className="flex justify-center mb-4">
+            <span className={`px-3 py-1 text-xs uppercase font-medieval font-bold rounded ${
+              character.type === 'guild'
+                ? 'bg-gold text-wood'
+                : 'bg-seal text-parchment'
+            }`}>
+              {character.type === 'guild' ? '⚔ Guild Member' : '👑 Criminal'}
+            </span>
           </div>
+
+          {/* View Full Button */}
+          <button
+            onClick={() => onSelectCharacter(character)}
+            className="w-full px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded font-medieval text-sm font-bold"
+          >
+            View Full Entry
+          </button>
         </div>
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center justify-center gap-4 flex-wrap">
+      <div className="flex items-center justify-center gap-6">
         <button
-          onClick={handlePrevPage}
-          disabled={currentPage === 0 || isFlipping}
-          className={`px-4 py-2 font-medieval font-bold rounded transition ${
-            currentPage === 0 || isFlipping
+          onClick={handlePrev}
+          disabled={currentIndex === 0}
+          className={`px-6 py-3 font-medieval font-bold rounded transition ${
+            currentIndex === 0
               ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
               : 'bg-gold-dark text-parchment hover:bg-gold'
           }`}
@@ -129,15 +112,15 @@ export default function BookView({ characters, onSelectCharacter }) {
           ← Previous
         </button>
 
-        <div className="text-wood font-medieval text-sm">
-          Pages {currentPage + 1}-{Math.min(currentPage + 2, characters.length)} of {characters.length}
+        <div className="text-wood font-medieval text-lg font-bold">
+          {currentIndex + 1} / {characters.length}
         </div>
 
         <button
-          onClick={handleNextPage}
-          disabled={currentPage + 2 >= characters.length || isFlipping}
-          className={`px-4 py-2 font-medieval font-bold rounded transition ${
-            currentPage + 2 >= characters.length || isFlipping
+          onClick={handleNext}
+          disabled={currentIndex === characters.length - 1}
+          className={`px-6 py-3 font-medieval font-bold rounded transition ${
+            currentIndex === characters.length - 1
               ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
               : 'bg-gold-dark text-parchment hover:bg-gold'
           }`}
