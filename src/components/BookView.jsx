@@ -10,6 +10,7 @@ export default function BookView({ characters, onSelectCharacter }) {
   const [currentPage, setCurrentPage] = useState(0)
   const [isFlipping, setIsFlipping] = useState(false)
   const [flipDirection, setFlipDirection] = useState('next') // 'next' or 'prev'
+  const [displayPage, setDisplayPage] = useState(0) // Actual page being displayed
 
   if (characters.length === 0) {
     return (
@@ -23,8 +24,10 @@ export default function BookView({ characters, onSelectCharacter }) {
     if (currentPage < characters.length - 1 && !isFlipping) {
       setFlipDirection('next')
       setIsFlipping(true)
+      // Update display after animation completes
       setTimeout(() => {
         setCurrentPage(currentPage + 1)
+        setDisplayPage(currentPage + 1)
         setIsFlipping(false)
       }, 600)
     }
@@ -34,16 +37,19 @@ export default function BookView({ characters, onSelectCharacter }) {
     if (currentPage > 0 && !isFlipping) {
       setFlipDirection('prev')
       setIsFlipping(true)
+      // Update display after animation completes
       setTimeout(() => {
         setCurrentPage(currentPage - 1)
+        setDisplayPage(currentPage - 1)
         setIsFlipping(false)
       }, 600)
     }
   }
 
-  const character = characters[currentPage]
-  const prevCharacter = currentPage > 0 ? characters[currentPage - 1] : null
-  const nextCharacter = currentPage < characters.length - 1 ? characters[currentPage + 1] : null
+  // Use currentPage for state tracking, displayPage for rendering
+  const character = characters[displayPage]
+  const prevCharacter = displayPage > 0 ? characters[displayPage - 1] : null
+  const nextCharacter = displayPage < characters.length - 1 ? characters[displayPage + 1] : null
 
   return (
     <div className="space-y-6">
@@ -51,10 +57,10 @@ export default function BookView({ characters, onSelectCharacter }) {
       <div className="flex items-center justify-center perspective py-8">
         <div className="book-container" style={{ perspective: '1200px' }}>
           {/* Left Page (Previous) */}
-          {currentPage > 0 && (
+          {displayPage > 0 && (
             <div className={`book-page book-page-left ${isFlipping ? `slide-${flipDirection}` : ''}`} onClick={handlePrevPage}>
               <div className="page-content">
-                <div className="page-number">← {currentPage}</div>
+                <div className="page-number">← {displayPage}</div>
 
                 {prevCharacter?.photo && (
                   <div className="flex justify-center mb-2">
@@ -93,7 +99,7 @@ export default function BookView({ characters, onSelectCharacter }) {
             <div className="page-content">
               {/* Page Number */}
               <div className="page-number text-center text-xs text-gold-dark italic mb-4">
-                Entry {currentPage + 1} of {characters.length}
+                Entry {displayPage + 1} of {characters.length}
               </div>
 
               {/* Character Image */}
@@ -169,7 +175,7 @@ export default function BookView({ characters, onSelectCharacter }) {
           {nextCharacter && (
             <div className={`book-page book-page-back ${isFlipping ? `slide-${flipDirection}` : ''}`} onClick={handleNextPage}>
               <div className="page-content">
-                <div className="page-number">{currentPage + 2} →</div>
+                <div className="page-number">{displayPage + 2} →</div>
 
                 {nextCharacter.photo && (
                   <div className="flex justify-center mb-2">
@@ -207,9 +213,9 @@ export default function BookView({ characters, onSelectCharacter }) {
       <div className="flex items-center justify-center gap-4 flex-wrap">
         <button
           onClick={handlePrevPage}
-          disabled={currentPage === 0 || isFlipping}
+          disabled={displayPage === 0 || isFlipping}
           className={`px-4 py-2 font-medieval font-bold rounded transition ${
-            currentPage === 0 || isFlipping
+            displayPage === 0 || isFlipping
               ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
               : 'bg-gold-dark text-parchment hover:bg-gold'
           }`}
@@ -218,14 +224,14 @@ export default function BookView({ characters, onSelectCharacter }) {
         </button>
 
         <div className="text-wood font-medieval text-sm">
-          Page {currentPage + 1} of {characters.length}
+          Page {displayPage + 1} of {characters.length}
         </div>
 
         <button
           onClick={handleNextPage}
-          disabled={currentPage === characters.length - 1 || isFlipping}
+          disabled={displayPage === characters.length - 1 || isFlipping}
           className={`px-4 py-2 font-medieval font-bold rounded transition ${
-            currentPage === characters.length - 1 || isFlipping
+            displayPage === characters.length - 1 || isFlipping
               ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
               : 'bg-gold-dark text-parchment hover:bg-gold'
           }`}
@@ -239,9 +245,14 @@ export default function BookView({ characters, onSelectCharacter }) {
         {characters.map((_, index) => (
           <button
             key={index}
-            onClick={() => !isFlipping && setCurrentPage(index)}
+            onClick={() => {
+              if (!isFlipping) {
+                setCurrentPage(index)
+                setDisplayPage(index)
+              }
+            }}
             className={`w-2 h-2 rounded-full transition ${
-              index === currentPage ? 'bg-gold w-8' : 'bg-gold-dark hover:bg-gold'
+              index === displayPage ? 'bg-gold w-8' : 'bg-gold-dark hover:bg-gold'
             }`}
             disabled={isFlipping}
             title={characters[index].name}
