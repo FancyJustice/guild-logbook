@@ -28,6 +28,21 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
               `
             }}
           >
+            {/* Status Badge */}
+            {character.status && character.status !== 'Active' && (
+              <div className="absolute top-2 right-2 z-10">
+                <span className={`px-2 py-1 text-[9px] sm:text-[10px] font-medieval font-bold rounded whitespace-nowrap ${
+                  character.status === 'Inactive' ? 'bg-gray-400 text-white' :
+                  character.status === 'Deceased' ? 'bg-gray-700 text-gray-300' :
+                  character.status === 'Retired' ? 'bg-gold-dark text-parchment' :
+                  character.status === 'Missing' ? 'bg-orange-600 text-white' :
+                  'bg-blue-600 text-white'
+                }`}>
+                  {character.status}
+                </span>
+              </div>
+            )}
+
             {/* Decorative top border */}
             <div className={`h-1 ${character.type === 'guild' ? 'bg-gold' : 'bg-seal'}`}></div>
 
