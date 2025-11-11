@@ -193,7 +193,7 @@ export default function CharacterDetail({ character, onBack }) {
           </div>
 
           {/* Personality & Elements */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className={`grid gap-4 ${character.type === 'guild' ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2'}`}>
             {character.type === 'guild' ? (
               <>
                 <AttributeBox label="Personality" value={character.personality} />
