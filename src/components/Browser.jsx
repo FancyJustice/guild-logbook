@@ -94,6 +94,20 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
               <CharacterDetail
                 character={selectedCharacter}
                 onBack={() => setSelectedCharacter(null)}
+                onNext={() => {
+                  const currentIndex = filteredCharacters.findIndex(c => c.id === selectedCharacter.id)
+                  if (currentIndex < filteredCharacters.length - 1) {
+                    setSelectedCharacter(filteredCharacters[currentIndex + 1])
+                  }
+                }}
+                onPrev={() => {
+                  const currentIndex = filteredCharacters.findIndex(c => c.id === selectedCharacter.id)
+                  if (currentIndex > 0) {
+                    setSelectedCharacter(filteredCharacters[currentIndex - 1])
+                  }
+                }}
+                hasNext={filteredCharacters.findIndex(c => c.id === selectedCharacter.id) < filteredCharacters.length - 1}
+                hasPrev={filteredCharacters.findIndex(c => c.id === selectedCharacter.id) > 0}
               />
             ) : (
               <>

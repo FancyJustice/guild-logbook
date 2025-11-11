@@ -14,7 +14,7 @@ const colorPalette = {
   blue: { color1: '#4361ee', color2: '#7209b7' },
 }
 
-export default function CharacterDetail({ character, onBack }) {
+export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev }) {
   const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
 
   // Scroll to top when character changes
@@ -58,7 +58,20 @@ export default function CharacterDetail({ character, onBack }) {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+      <div className="relative">
+        {/* Left Arrow */}
+        {hasPrev && (
+          <button
+            onClick={onPrev}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 text-4xl text-gold hover:text-gold-light transition hidden lg:block"
+            title="Previous character"
+          >
+            ◀
+          </button>
+        )}
+
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
         {/* Left Column - Image & Basic Info */}
         <div className="md:col-span-1 lg:col-span-2 space-y-3 md:space-y-4">
           <div className="bg-wood-light rounded-lg overflow-hidden shadow-lg border-2 border-gold">
@@ -281,6 +294,18 @@ export default function CharacterDetail({ character, onBack }) {
             </div>
           )}
         </div>
+        </div>
+
+        {/* Right Arrow */}
+        {hasNext && (
+          <button
+            onClick={onNext}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 text-4xl text-gold hover:text-gold-light transition hidden lg:block"
+            title="Next character"
+          >
+            ▶
+          </button>
+        )}
       </div>
     </div>
   )
