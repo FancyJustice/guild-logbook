@@ -197,6 +197,7 @@ if (!authenticated) {
                 onClick={() => {
                   setEditingCharacter(character)
                   setShowCharacterForm(true)
+                  window.scrollTo(0, 0)
                 }}
                 className="px-3 py-1 bg-gold-dark text-parchment hover:bg-gold transition rounded text-sm font-medieval"
               >
@@ -300,6 +301,7 @@ if (!authenticated) {
                   onClick={() => {
                     setEditingArtifact(artifact)
                     setShowArtifactForm(true)
+                    window.scrollTo(0, 0)
                   }}
                   className="px-3 py-1 bg-gold-dark text-parchment hover:bg-gold transition rounded text-sm font-medieval"
                 >
