@@ -193,13 +193,18 @@ export default function CharacterDetail({ character, onBack }) {
           </div>
 
           {/* Personality & Elements */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <AttributeBox label="Personality" value={character.personality} />
-            <AttributeBox label="Elemental Attunement" value={character.elemeltanAttunement} />
-            {character.type === 'guild' && (
+          {character.type === 'guild' ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <AttributeBox label="Personality" value={character.personality} />
               <AttributeBox label="Flaw" value={character.flaw} />
-            )}
-          </div>
+              <AttributeBox label="Elemental Attunement" value={character.elemeltanAttunement} />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <AttributeBox label="Personality" value={character.personality} />
+              <AttributeBox label="Elemental Attunement" value={character.elemeltanAttunement} />
+            </div>
+          )}
 
           {/* Criminal Record - Below the personality boxes */}
           {character.type === 'criminal' && (
