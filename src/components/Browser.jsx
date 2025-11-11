@@ -88,7 +88,13 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
       </div>}
 
       {/* Main Content */}
-      <div className="flex-1 space-y-6">
+      <div className="flex-1 space-y-6 relative">
+        {/* Book spine on the right */}
+        <div className="fixed right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-wood-light to-wood-light/50 border-l-4 border-gold shadow-lg" style={{
+          zIndex: -1,
+          backgroundImage: `repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 6px)`
+        }}></div>
+
         {view === 'characters' ? (
           <>
             {selectedCharacter ? (
@@ -98,31 +104,65 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
               />
             ) : (
               <>
-                <div className="flex justify-between items-center">
-                  <div className="text-sm text-parchment-dark">
-                    Showing {filteredCharacters.length} of {characters.length} characters
+                {/* Header with book aesthetic */}
+                <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold shadow-lg relative">
+                  {/* Decorative corner elements */}
+                  <div className="absolute top-2 left-4 text-gold text-2xl">✦</div>
+                  <div className="absolute top-2 right-4 text-gold text-2xl">✦</div>
+                  <div className="absolute bottom-2 left-4 text-gold text-2xl">✦</div>
+                  <div className="absolute bottom-2 right-4 text-gold text-2xl">✦</div>
+
+                  <div className="flex justify-between items-center gap-4">
+                    <div>
+                      <h2 className="text-3xl font-medieval font-bold text-gold-dark mb-1">
+                        {view === 'characters' ? 'Guild Logbook' : 'Artifact Registry'}
+                      </h2>
+                      <p className="text-sm text-wood-light italic">
+                        {view === 'characters'
+                          ? filters.type === 'guild'
+                            ? 'Adventurers of Renown'
+                            : filters.type === 'criminal'
+                            ? 'Wanted Individuals'
+                            : 'A Complete Record'
+                          : 'Treasures & Relics'
+                        }
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-gold uppercase tracking-wide font-medieval font-bold mb-2">Catalogue</div>
+                      <div className="text-2xl font-medieval font-bold text-gold">
+                        {view === 'characters' ? filteredCharacters.length : filteredArtifacts.length}
+                      </div>
+                      <div className="text-xs text-wood-light">
+                        of {view === 'characters' ? characters.length : artifacts.length}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setDisplayMode('grid')}
-                      className={`px-3 py-1 text-sm rounded transition ${
-                        displayMode === 'grid'
-                          ? 'bg-gold text-wood'
-                          : 'bg-gold-dark text-parchment hover:bg-gold'
-                      }`}
-                    >
-                      Grid
-                    </button>
-                    <button
-                      onClick={() => setDisplayMode('hierarchy')}
-                      className={`px-3 py-1 text-sm rounded transition ${
-                        displayMode === 'hierarchy'
-                          ? 'bg-gold text-wood'
-                          : 'bg-gold-dark text-parchment hover:bg-gold'
-                      }`}
-                    >
-                      Hierarchy
-                    </button>
+
+                  {/* Divider line */}
+                  <div className="border-t-2 border-gold-dark mt-4 pt-4">
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        onClick={() => setDisplayMode('grid')}
+                        className={`px-4 py-2 text-sm font-medieval rounded transition ${
+                          displayMode === 'grid'
+                            ? 'bg-gold text-wood shadow-lg'
+                            : 'bg-gold-dark text-parchment hover:bg-gold'
+                        }`}
+                      >
+                        Grid View
+                      </button>
+                      <button
+                        onClick={() => setDisplayMode('hierarchy')}
+                        className={`px-4 py-2 text-sm font-medieval rounded transition ${
+                          displayMode === 'hierarchy'
+                            ? 'bg-gold text-wood shadow-lg'
+                            : 'bg-gold-dark text-parchment hover:bg-gold'
+                        }`}
+                      >
+                        Hierarchy
+                      </button>
+                    </div>
                   </div>
                 </div>
                 {displayMode === 'grid' ? (
