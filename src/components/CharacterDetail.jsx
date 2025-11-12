@@ -15,9 +15,10 @@ const colorPalette = {
   blue: { color1: '#4361ee', color2: '#7209b7' },
 }
 
-export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev, navDirection = 'right' }) {
+export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev, navDirection = 'right', currentUser = null, onEdit = null, onDelete = null }) {
   const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
   const [slideDirection, setSlideDirection] = useState(navDirection)
+  const isOwner = currentUser && character.ownerId === currentUser.uid
 
   // Update slide direction when navDirection prop changes
   useEffect(() => {
@@ -67,6 +68,24 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
             <span className="hidden sm:inline">Export {character.name}</span>
             <span className="sm:hidden">Export</span>
           </button>
+          {isOwner && (
+            <>
+              <button
+                onClick={() => onEdit && onEdit(character)}
+                className="px-3 sm:px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition rounded flex items-center gap-2 text-sm sm:text-base"
+              >
+                <i className="ra ra-pencil" style={{ color: 'white' }}></i>
+                <span className="hidden sm:inline">Edit</span>
+              </button>
+              <button
+                onClick={() => onDelete && onDelete(character.id)}
+                className="px-3 sm:px-4 py-2 bg-red-600 text-white hover:bg-red-700 transition rounded flex items-center gap-2 text-sm sm:text-base"
+              >
+                <i className="ra ra-trash" style={{ color: 'white' }}></i>
+                <span className="hidden sm:inline">Delete</span>
+              </button>
+            </>
+          )}
         </div>
 
         {/* Main Grid */}

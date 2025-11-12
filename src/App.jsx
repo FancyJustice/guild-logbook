@@ -26,7 +26,6 @@ import Browser from './components/Browser'
 import AdminPanel from './components/AdminPanel'
 import Cover from './components/Cover'
 import MergePreview from './components/MergePreview'
-import GoogleLogin from './components/GoogleLogin'
 import { findDifferences, mergeCharacters, generateMergeReport, validateImportedData } from './utils/mergeUtils'
 import { subscribeToAuthState } from './utils/authUtils'
 import {
@@ -244,7 +243,7 @@ function App() {
     const characterWithId = { ...newCharacter, id: `char_${Date.now()}` }
 
     try {
-      await addCharacterToFirebase(characterWithId, characters, artifacts, dropdownOptions)
+      await addCharacterToFirebase(characterWithId, characters, artifacts, dropdownOptions, googleUser?.uid)
     } catch (error) {
       console.error('Error adding character:', error)
       alert('Error adding character: ' + error.message)
@@ -370,11 +369,6 @@ function App() {
               >
                 <span className="hidden md:inline">🔐 </span>Admin
               </button>
-              <GoogleLogin
-                user={googleUser}
-                onLoginSuccess={() => console.log('Google login successful')}
-                onLogoutSuccess={() => console.log('Google logout successful')}
-              />
             </nav>
           </div>
 
@@ -385,7 +379,14 @@ function App() {
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-2 md:px-4 py-4 md:py-8">
         {view === 'browser' && !isAuthenticated && (
-          <Browser characters={characters} artifacts={artifacts} dropdownOptions={dropdownOptions} />
+          <Browser
+            characters={characters}
+            artifacts={artifacts}
+            dropdownOptions={dropdownOptions}
+            currentUser={googleUser}
+            onUpdateCharacter={handleUpdateCharacter}
+            onDeleteCharacter={handleDeleteCharacter}
+          />
         )}
         {view === 'admin' && !isAuthenticated && (
           <AdminPanel

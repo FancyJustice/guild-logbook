@@ -7,7 +7,7 @@ import BookView from './BookView'
 import ArtifactGrid from './ArtifactGrid'
 import ArtifactDetail from './ArtifactDetail'
 
-export default function Browser({ characters, artifacts, dropdownOptions }) {
+export default function Browser({ characters, artifacts, dropdownOptions, currentUser = null, onUpdateCharacter = null, onDeleteCharacter = null }) {
   const [selectedCharacter, setSelectedCharacter] = useState(null)
   const [selectedArtifact, setSelectedArtifact] = useState(null)
   const [view, setView] = useState('characters') // 'characters' or 'artifacts'
@@ -112,6 +112,9 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
                 hasNext={filteredCharacters.findIndex(c => c.id === selectedCharacter.id) < filteredCharacters.length - 1}
                 hasPrev={filteredCharacters.findIndex(c => c.id === selectedCharacter.id) > 0}
                 navDirection={navDirection}
+                currentUser={currentUser}
+                onEdit={onUpdateCharacter}
+                onDelete={onDeleteCharacter}
               />
             ) : (
               <>

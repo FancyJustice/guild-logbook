@@ -280,12 +280,13 @@ async function updateConfigInFirebase(dropdownOptions) {
  * @param {Object} currentDropdown - Current dropdown options (for legacy sync)
  * @throws {Error} If Firebase write fails
  */
-export async function addCharacterToFirebase(character, currentCharacters, currentArtifacts, currentDropdown) {
+export async function addCharacterToFirebase(character, currentCharacters, currentArtifacts, currentDropdown, userId) {
   try {
     const charId = character.id || `char_${Date.now()}`;
     const charRef = doc(db, CHARACTERS_COLLECTION, charId);
     const { id, ...charData } = character;
-    await setDoc(charRef, charData);
+    // Add userId as owner when creating character
+    await setDoc(charRef, { ...charData, ownerId: userId });
   } catch (error) {
     console.error('Error adding character:', error);
     throw error;
