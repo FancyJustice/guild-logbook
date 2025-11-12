@@ -48,11 +48,23 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
       window.removeEventListener('scroll', updateArrowPositions)
       window.removeEventListener('resize', updateArrowPositions)
     }
-  }, [character.id])
+  }, [])
 
-  // Scroll to top when character changes
+  // Scroll to top when character changes and update arrow positions
   useEffect(() => {
     window.scrollTo(0, 0)
+    // Small delay to ensure DOM has updated
+    setTimeout(() => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect()
+        const containerCenterY = rect.top + rect.height / 2
+        setArrowPositions({
+          left: rect.left - 80,
+          right: rect.right + 20,
+          centerY: containerCenterY
+        })
+      }
+    }, 0)
   }, [character.id])
 
   const exportCharacterAsJSON = () => {
