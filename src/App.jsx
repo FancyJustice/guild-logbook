@@ -53,7 +53,6 @@ function App() {
   // ============== UI STATE ==============
   const [showCover, setShowCover] = useState(true) // Splash screen visibility on load
   const [view, setView] = useState('browser') // Current view: 'browser' (public) or 'admin' (protected)
-  const [isTransitioning, setIsTransitioning] = useState(false) // Track page transition animation
 
   // ============== DATA STATE ==============
   const [characters, setCharacters] = useState([]) // All characters from Firebase (guild members + criminals)
@@ -122,15 +121,9 @@ function App() {
 
   // Helper function to change view and update history
   const navigateTo = (newView) => {
-    if (view === newView) return // Don't animate if already on this page
-
-    setIsTransitioning(true)
-    setTimeout(() => {
-      setNavigationHistory(prev => [...prev, newView])
-      setView(newView)
-      window.history.pushState({ view: newView }, '')
-      setIsTransitioning(false)
-    }, 300) // Wait for exit animation before changing page
+    setNavigationHistory(prev => [...prev, newView])
+    setView(newView)
+    window.history.pushState({ view: newView }, '')
   }
 
   const exportCharactersAsJSON = () => {
@@ -372,7 +365,7 @@ function App() {
         </div>
       </header>
 
-      <main className={`flex-1 max-w-7xl mx-auto w-full px-2 md:px-4 py-4 md:py-8 ${isTransitioning ? 'page-exit' : 'page-enter'}`}>
+      <main className="flex-1 max-w-7xl mx-auto w-full px-2 md:px-4 py-4 md:py-8">
         {view === 'browser' && !isAuthenticated && (
           <Browser characters={characters} artifacts={artifacts} dropdownOptions={dropdownOptions} />
         )}
