@@ -15,13 +15,15 @@ const colorPalette = {
   blue: { color1: '#4361ee', color2: '#7209b7' },
 }
 
-export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev, navDirection = 'right', isAdmin = false, onEdit = null, onDelete = null }) {
+export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev, navDirection = 'right', isAdmin = false, onEdit = null, onDelete = null, dropdownOptions = {} }) {
   const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
   const [slideDirection, setSlideDirection] = useState(navDirection)
   const [showPinDialog, setShowPinDialog] = useState(false)
   const [pinInput, setPinInput] = useState('')
   const [pinError, setPinError] = useState('')
   const [pendingAction, setPendingAction] = useState(null) // 'edit' or 'delete'
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [editData, setEditData] = useState(character)
 
   // Update slide direction when navDirection prop changes
   useEffect(() => {
@@ -80,8 +82,8 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
       setPinError('')
 
       if (pendingAction === 'edit') {
-        onEdit && onEdit(character)
-        alert('Edit functionality not yet implemented in public view. Please use admin panel to edit.')
+        setIsEditMode(true)
+        setEditData(character)
       } else if (pendingAction === 'delete') {
         if (window.confirm(`Are you sure you want to delete ${character.name}? This cannot be undone.`)) {
           onDelete && onDelete(character.id)
@@ -92,11 +94,82 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
     }
   }
 
+  const handleSaveEdit = () => {
+    onEdit && onEdit(editData)
+    setIsEditMode(false)
+  }
+
+  const handleCancelEdit = () => {
+    setIsEditMode(false)
+    setEditData(character)
+  }
+
   const handlePinCancel = () => {
     setShowPinDialog(false)
     setPinInput('')
     setPinError('')
     setPendingAction(null)
+  }
+
+  if (isEditMode) {
+    return (
+      <div className="bg-parchment text-wood p-6 rounded-lg border-4 border-gold">
+        <h2 className="text-2xl font-medieval font-bold text-gold-dark mb-4">Edit {character.name}</h2>
+        <div className="space-y-4 max-h-96 overflow-y-auto">
+          <div>
+            <label className="block text-sm font-medieval text-gold-dark mb-1">Name</label>
+            <input
+              type="text"
+              value={editData.name}
+              onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+              className="w-full px-3 py-2 border-2 border-gold rounded bg-white text-wood"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medieval text-gold-dark mb-1">VRC Player Name</label>
+              <input
+                type="text"
+                value={editData.vrcPlayerName}
+                onChange={(e) => setEditData({ ...editData, vrcPlayerName: e.target.value })}
+                className="w-full px-3 py-2 border-2 border-gold rounded bg-white text-wood"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medieval text-gold-dark mb-1">Race</label>
+              <input
+                type="text"
+                value={editData.race}
+                onChange={(e) => setEditData({ ...editData, race: e.target.value })}
+                className="w-full px-3 py-2 border-2 border-gold rounded bg-white text-wood"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medieval text-gold-dark mb-1">Lore</label>
+            <textarea
+              value={editData.lore}
+              onChange={(e) => setEditData({ ...editData, lore: e.target.value })}
+              className="w-full px-3 py-2 border-2 border-gold rounded bg-white text-wood h-32"
+            />
+          </div>
+        </div>
+        <div className="flex gap-3 mt-6">
+          <button
+            onClick={handleSaveEdit}
+            className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition rounded font-medieval font-bold"
+          >
+            Save Changes
+          </button>
+          <button
+            onClick={handleCancelEdit}
+            className="flex-1 px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded font-medieval font-bold"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (

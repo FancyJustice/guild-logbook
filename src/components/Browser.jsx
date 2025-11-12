@@ -115,6 +115,7 @@ export default function Browser({ characters, artifacts, dropdownOptions, isAdmi
                 isAdmin={isAdmin}
                 onEdit={onUpdateCharacter}
                 onDelete={onDeleteCharacter}
+                dropdownOptions={dropdownOptions}
               />
             ) : (
               <>
