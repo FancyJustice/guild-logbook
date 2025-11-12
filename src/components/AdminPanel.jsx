@@ -75,12 +75,18 @@ export default function AdminPanel({
    * Prevents duplicate imports by checking for existing IDs
    * Shows success message with count of imported characters
    */
-  const handleGenerateRandomPins = () => {
-    const updated = characters.map(char => {
+  const handleGenerateRandomPins = async () => {
+    const updated = []
+    for (let i = 0; i < characters.length; i++) {
+      const char = characters[i]
       const pin = Math.floor(Math.random() * 10000).toString().padStart(4, '0')
       onUpdateCharacter({ ...char, pin })
-      return { ...char, pin }
-    })
+      updated.push({ ...char, pin })
+      // Add 100ms delay between updates to avoid rate limiting
+      if (i < characters.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+    }
     alert(`Generated random PINs for ${updated.length} characters!`)
   }
 
