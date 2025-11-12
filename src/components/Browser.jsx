@@ -2,17 +2,19 @@ import { useState } from 'react'
 import CharacterGrid from './CharacterGrid'
 import CharacterDetail from './CharacterDetail'
 import CharacterHierarchy from './CharacterHierarchy'
+import CharacterForm from './CharacterForm'
 import BookView from './BookView'
 
 import ArtifactGrid from './ArtifactGrid'
 import ArtifactDetail from './ArtifactDetail'
 
-export default function Browser({ characters, artifacts, dropdownOptions, isAdmin = false, onUpdateCharacter = null, onDeleteCharacter = null }) {
+export default function Browser({ characters, artifacts, dropdownOptions, isAdmin = false, onUpdateCharacter = null, onDeleteCharacter = null, onAddCharacter = null }) {
   const [selectedCharacter, setSelectedCharacter] = useState(null)
   const [selectedArtifact, setSelectedArtifact] = useState(null)
   const [view, setView] = useState('characters') // 'characters' or 'artifacts'
   const [displayMode, setDisplayMode] = useState('grid') // 'grid', 'hierarchy', or 'book'
   const [navDirection, setNavDirection] = useState('right') // Track which direction user is navigating
+  const [isCreatingCharacter, setIsCreatingCharacter] = useState(false)
   const [filters, setFilters] = useState({
     type: 'all',
   })
@@ -125,6 +127,18 @@ export default function Browser({ characters, artifacts, dropdownOptions, isAdmi
                   </div>
                   <div className="flex gap-2">
                     <button
+                      onClick={() => {
+                        setIsCreatingCharacter(!isCreatingCharacter)
+                      }}
+                      className={`px-3 py-1 text-sm rounded transition ${
+                        isCreatingCharacter
+                          ? 'bg-green-600 text-white'
+                          : 'bg-green-700 text-white hover:bg-green-600'
+                      }`}
+                    >
+                      {isCreatingCharacter ? '✕ Cancel' : '+ Create Character'}
+                    </button>
+                    <button
                       onClick={() => setDisplayMode('grid')}
                       className={`px-3 py-1 text-sm rounded transition ${
                         displayMode === 'grid'
@@ -156,6 +170,21 @@ export default function Browser({ characters, artifacts, dropdownOptions, isAdmi
                     </button>
                   </div>
                 </div>
+                {isCreatingCharacter && (
+                  <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
+                    <h3 className="text-xl font-medieval font-bold text-gold-dark mb-4">Create New Character</h3>
+                    <CharacterForm
+                      dropdownOptions={dropdownOptions}
+                      characters={characters}
+                      editingCharacter={null}
+                      onSubmit={(newCharacter) => {
+                        onAddCharacter && onAddCharacter(newCharacter)
+                        setIsCreatingCharacter(false)
+                      }}
+                      onCancel={() => setIsCreatingCharacter(false)}
+                    />
+                  </div>
+                )}
                 {displayMode === 'grid' ? (
                   <CharacterGrid
                     characters={filteredCharacters}

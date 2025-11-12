@@ -384,6 +384,7 @@ function App() {
             artifacts={artifacts}
             dropdownOptions={dropdownOptions}
             isAdmin={false}
+            onAddCharacter={handleAddCharacter}
             onUpdateCharacter={handleUpdateCharacter}
             onDeleteCharacter={handleDeleteCharacter}
           />
