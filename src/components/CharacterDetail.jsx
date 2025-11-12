@@ -50,27 +50,7 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
   }
 
   return (
-    <>
-      {/* Fixed Navigation Arrows */}
-      {hasPrev && (
-        <button
-          onClick={onPrev}
-          className="fixed left-4 top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block z-50 cursor-pointer"
-          title="Previous character"
-        >
-          ◀
-        </button>
-      )}
-      {hasNext && (
-        <button
-          onClick={onNext}
-          className="fixed right-4 top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block z-50 cursor-pointer"
-          title="Next character"
-        >
-          ▶
-        </button>
-      )}
-
+    <div className="relative">
       <div className={`space-y-4 character-detail-container slide-${slideDirection}`} style={{
         '--gradient-color-1': ultimateColors.color1,
         '--gradient-color-2': ultimateColors.color2,
@@ -320,8 +300,27 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
         </div>
         </div>
       </div>
-      </div>
-    </>
+
+      {/* Navigation Arrows */}
+      {hasPrev && (
+        <button
+          onClick={onPrev}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer"
+          title="Previous character"
+        >
+          ◀
+        </button>
+      )}
+      {hasNext && (
+        <button
+          onClick={onNext}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer"
+          title="Next character"
+        >
+          ▶
+        </button>
+      )}
+    </div>
   )
 }
 
