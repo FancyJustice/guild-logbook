@@ -319,7 +319,7 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
       {hasPrev && (
         <button
           onClick={onPrev}
-          className="fixed left-8 top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer z-50"
+          className="absolute -left-20 top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer z-50"
           title="Previous character"
         >
           ◀
@@ -328,7 +328,7 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
       {hasNext && (
         <button
           onClick={onNext}
-          className="fixed right-8 top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer z-50"
+          className="absolute -right-20 top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer z-50"
           title="Next character"
         >
           ▶
