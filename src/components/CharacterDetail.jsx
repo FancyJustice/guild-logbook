@@ -76,10 +76,16 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
   const handlePinSubmit = () => {
     if (pinInput === String(character.pin)) {
       setShowPinDialog(false)
+      setPinInput('')
+      setPinError('')
+
       if (pendingAction === 'edit') {
         onEdit && onEdit(character)
+        alert('Edit functionality not yet implemented in public view. Please use admin panel to edit.')
       } else if (pendingAction === 'delete') {
-        onDelete && onDelete(character.id)
+        if (window.confirm(`Are you sure you want to delete ${character.name}? This cannot be undone.`)) {
+          onDelete && onDelete(character.id)
+        }
       }
     } else {
       setPinError('Incorrect PIN')
