@@ -383,7 +383,7 @@ function App() {
             characters={characters}
             artifacts={artifacts}
             dropdownOptions={dropdownOptions}
-            currentUser={googleUser}
+            isAdmin={false}
             onUpdateCharacter={handleUpdateCharacter}
             onDeleteCharacter={handleDeleteCharacter}
           />

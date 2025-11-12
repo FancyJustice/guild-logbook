@@ -15,10 +15,13 @@ const colorPalette = {
   blue: { color1: '#4361ee', color2: '#7209b7' },
 }
 
-export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev, navDirection = 'right', currentUser = null, onEdit = null, onDelete = null }) {
+export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev, navDirection = 'right', isAdmin = false, onEdit = null, onDelete = null }) {
   const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
   const [slideDirection, setSlideDirection] = useState(navDirection)
-  const isOwner = currentUser && character.ownerId === currentUser.uid
+  const [showPinDialog, setShowPinDialog] = useState(false)
+  const [pinInput, setPinInput] = useState('')
+  const [pinError, setPinError] = useState('')
+  const [pendingAction, setPendingAction] = useState(null) // 'edit' or 'delete'
 
   // Update slide direction when navDirection prop changes
   useEffect(() => {
@@ -42,6 +45,52 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
     link.download = `${character.name.replace(/\s+/g, '_')}.json`
     link.click()
     URL.revokeObjectURL(url)
+  }
+
+  const handleEditClick = () => {
+    if (isAdmin) {
+      // Admins bypass PIN requirement
+      onEdit && onEdit(character)
+    } else {
+      // Regular users need to enter PIN
+      setPendingAction('edit')
+      setShowPinDialog(true)
+      setPinInput('')
+      setPinError('')
+    }
+  }
+
+  const handleDeleteClick = () => {
+    if (isAdmin) {
+      // Admins bypass PIN requirement
+      onDelete && onDelete(character.id)
+    } else {
+      // Regular users need to enter PIN
+      setPendingAction('delete')
+      setShowPinDialog(true)
+      setPinInput('')
+      setPinError('')
+    }
+  }
+
+  const handlePinSubmit = () => {
+    if (pinInput === String(character.pin)) {
+      setShowPinDialog(false)
+      if (pendingAction === 'edit') {
+        onEdit && onEdit(character)
+      } else if (pendingAction === 'delete') {
+        onDelete && onDelete(character.id)
+      }
+    } else {
+      setPinError('Incorrect PIN')
+    }
+  }
+
+  const handlePinCancel = () => {
+    setShowPinDialog(false)
+    setPinInput('')
+    setPinError('')
+    setPendingAction(null)
   }
 
   return (
@@ -68,24 +117,23 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
             <span className="hidden sm:inline">Export {character.name}</span>
             <span className="sm:hidden">Export</span>
           </button>
-          {isOwner && (
-            <>
-              <button
-                onClick={() => onEdit && onEdit(character)}
-                className="px-3 sm:px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition rounded flex items-center gap-2 text-sm sm:text-base"
-              >
-                <i className="ra ra-pencil" style={{ color: 'white' }}></i>
-                <span className="hidden sm:inline">Edit</span>
-              </button>
-              <button
-                onClick={() => onDelete && onDelete(character.id)}
-                className="px-3 sm:px-4 py-2 bg-red-600 text-white hover:bg-red-700 transition rounded flex items-center gap-2 text-sm sm:text-base"
-              >
-                <i className="ra ra-trash" style={{ color: 'white' }}></i>
-                <span className="hidden sm:inline">Delete</span>
-              </button>
-            </>
-          )}
+          <>
+            <button
+              onClick={handleEditClick}
+              className="px-3 sm:px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition rounded flex items-center gap-2 text-sm sm:text-base"
+            >
+              <i className="ra ra-pencil" style={{ color: 'white' }}></i>
+              <span className="hidden sm:inline">Edit</span>
+            </button>
+            <button
+              onClick={handleDeleteClick}
+              className="px-3 sm:px-4 py-2 bg-red-600 text-white hover:bg-red-700 transition rounded flex items-center gap-2 text-sm sm:text-base"
+            >
+              <i className="ra ra-trash" style={{ color: 'white' }}></i>
+              <span className="hidden sm:inline">Delete</span>
+            </button>
+          </>
+
         </div>
 
         {/* Main Grid */}
@@ -314,6 +362,47 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
         </div>
         </div>
       </div>
+
+      {/* PIN Verification Dialog */}
+      {showPinDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100]">
+          <div className="bg-parchment p-6 rounded-lg shadow-xl border-4 border-gold max-w-sm w-full mx-4">
+            <h2 className="text-2xl font-medieval text-wood mb-4">Enter PIN</h2>
+            <p className="text-wood-light mb-4">
+              {pendingAction === 'edit' ? 'Enter the PIN to edit this character' : 'Enter the PIN to delete this character'}
+            </p>
+            <input
+              type="password"
+              value={pinInput}
+              onChange={(e) => {
+                setPinInput(e.target.value)
+                setPinError('')
+              }}
+              onKeyPress={(e) => e.key === 'Enter' && handlePinSubmit()}
+              placeholder="PIN"
+              className="w-full px-3 py-2 border-2 border-gold rounded mb-2 text-center text-2xl tracking-widest font-bold"
+              autoFocus
+            />
+            {pinError && (
+              <div className="text-red-600 text-sm mb-4">{pinError}</div>
+            )}
+            <div className="flex gap-2">
+              <button
+                onClick={handlePinCancel}
+                className="flex-1 px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handlePinSubmit}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition rounded"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Navigation Arrows - positioned outside the max-width container */}
       {hasPrev && (

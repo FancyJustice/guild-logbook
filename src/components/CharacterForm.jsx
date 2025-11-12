@@ -81,6 +81,7 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
     int: 0,
     luk: 0,
     vit: 0,
+    pin: '',
   })
 
   // ============== SKILL INPUT STATE ==============
@@ -867,6 +868,19 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
             }}
           />
         </div>
+      </div>
+
+      {/* PIN for public edit access */}
+      <div className="bg-parchment p-4 rounded-lg border-2 border-gold">
+        <h3 className="text-lg font-medieval text-gold-dark mb-3">Edit PIN</h3>
+        <p className="text-sm text-wood-light mb-3">Enter a PIN code for public edit/delete access. Leave blank for no PIN.</p>
+        <FormInput
+          label="PIN Code"
+          value={formData.pin}
+          onChange={(value) => handleInputChange('pin', value)}
+          type="text"
+          placeholder="e.g., 1234"
+        />
       </div>
 
       {formData.type === 'criminal' && (
