@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import StatsHexagon from './StatsHexagon'
 import { getImageSource } from '../utils/imageUtils'
 import '../styles/characterDetail.css'
@@ -18,12 +18,37 @@ const colorPalette = {
 export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev, navDirection = 'right', currentUser = null, onEdit = null, onDelete = null }) {
   const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
   const [slideDirection, setSlideDirection] = useState(navDirection)
+  const [arrowPositions, setArrowPositions] = useState({ left: 0, right: 0 })
+  const containerRef = useRef(null)
   const isOwner = currentUser && character.ownerId === currentUser.uid
 
   // Update slide direction when navDirection prop changes
   useEffect(() => {
     setSlideDirection(navDirection)
   }, [character.id, navDirection])
+
+  // Calculate arrow positions based on container location
+  useEffect(() => {
+    const updateArrowPositions = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect()
+        const containerCenterY = rect.top + rect.height / 2
+        setArrowPositions({
+          left: rect.left - 80,
+          right: rect.right + 20,
+          centerY: containerCenterY
+        })
+      }
+    }
+
+    updateArrowPositions()
+    window.addEventListener('scroll', updateArrowPositions)
+    window.addEventListener('resize', updateArrowPositions)
+    return () => {
+      window.removeEventListener('scroll', updateArrowPositions)
+      window.removeEventListener('resize', updateArrowPositions)
+    }
+  }, [character.id])
 
   // Scroll to top when character changes
   useEffect(() => {
@@ -47,6 +72,7 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
   return (
     <div className="relative">
       <div
+        ref={containerRef}
         key={`${character.id}-${slideDirection}`}
         className={`space-y-4 character-detail-container slide-${slideDirection}`}
         style={{
@@ -319,7 +345,13 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
       {hasPrev && (
         <button
           onClick={onPrev}
-          className="absolute -left-20 top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer z-50"
+          style={{
+            position: 'fixed',
+            left: `${arrowPositions.left}px`,
+            top: `${arrowPositions.centerY}px`,
+            transform: 'translateY(-50%)',
+          }}
+          className="text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer z-50"
           title="Previous character"
         >
           ◀
@@ -328,7 +360,13 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
       {hasNext && (
         <button
           onClick={onNext}
-          className="absolute -right-20 top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer z-50"
+          style={{
+            position: 'fixed',
+            right: `${window.innerWidth - arrowPositions.right}px`,
+            top: `${arrowPositions.centerY}px`,
+            transform: 'translateY(-50%)',
+          }}
+          className="text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer z-50"
           title="Next character"
         >
           ▶
