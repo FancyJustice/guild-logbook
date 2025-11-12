@@ -27,7 +27,6 @@ import AdminPanel from './components/AdminPanel'
 import Cover from './components/Cover'
 import MergePreview from './components/MergePreview'
 import { findDifferences, mergeCharacters, generateMergeReport, validateImportedData } from './utils/mergeUtils'
-import { subscribeToAuthState } from './utils/authUtils'
 import {
   fetchCharactersFromFirebase,
   subscribeToCharacters,
@@ -73,9 +72,6 @@ function App() {
   // ============== NAVIGATION STATE ==============
   const [navigationHistory, setNavigationHistory] = useState([]) // Track navigation for browser back button
 
-  // ============== GOOGLE AUTH STATE ==============
-  const [googleUser, setGoogleUser] = useState(null) // Current Google-authenticated user
-
   useEffect(() => {
     // Check if user was previously authenticated
     const savedAuth = localStorage.getItem('adminAuth')
@@ -104,15 +100,9 @@ function App() {
       setDropdownOptions(data.dropdownOptions || {})
     })
 
-    // Subscribe to Google auth state changes
-    const unsubscribeAuth = subscribeToAuthState((user) => {
-      setGoogleUser(user)
-    })
-
     // Cleanup subscriptions on unmount
     return () => {
       unsubscribe()
-      unsubscribeAuth()
     }
   }, [])
 
@@ -243,7 +233,7 @@ function App() {
     const characterWithId = { ...newCharacter, id: `char_${Date.now()}` }
 
     try {
-      await addCharacterToFirebase(characterWithId, characters, artifacts, dropdownOptions, googleUser?.uid)
+      await addCharacterToFirebase(characterWithId, characters, artifacts, dropdownOptions)
     } catch (error) {
       console.error('Error adding character:', error)
       alert('Error adding character: ' + error.message)
