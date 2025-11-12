@@ -321,7 +321,7 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
           onClick={onPrev}
           className="fixed top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer z-50"
           style={{
-            left: 'calc(50% - 420px)',
+            left: 'calc(50% - 700px)',
           }}
           title="Previous character"
         >
@@ -333,7 +333,7 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
           onClick={onNext}
           className="fixed top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer z-50"
           style={{
-            right: 'calc(50% - 420px)',
+            right: 'calc(50% - 700px)',
           }}
           title="Next character"
         >
