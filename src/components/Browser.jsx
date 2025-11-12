@@ -12,6 +12,7 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
   const [selectedArtifact, setSelectedArtifact] = useState(null)
   const [view, setView] = useState('characters') // 'characters' or 'artifacts'
   const [displayMode, setDisplayMode] = useState('grid') // 'grid', 'hierarchy', or 'book'
+  const [navDirection, setNavDirection] = useState('right') // Track which direction user is navigating
   const [filters, setFilters] = useState({
     type: 'all',
   })
@@ -95,12 +96,14 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
                 character={selectedCharacter}
                 onBack={() => setSelectedCharacter(null)}
                 onNext={() => {
+                  setNavDirection('right')
                   const currentIndex = filteredCharacters.findIndex(c => c.id === selectedCharacter.id)
                   if (currentIndex < filteredCharacters.length - 1) {
                     setSelectedCharacter(filteredCharacters[currentIndex + 1])
                   }
                 }}
                 onPrev={() => {
+                  setNavDirection('left')
                   const currentIndex = filteredCharacters.findIndex(c => c.id === selectedCharacter.id)
                   if (currentIndex > 0) {
                     setSelectedCharacter(filteredCharacters[currentIndex - 1])
@@ -108,6 +111,7 @@ export default function Browser({ characters, artifacts, dropdownOptions }) {
                 }}
                 hasNext={filteredCharacters.findIndex(c => c.id === selectedCharacter.id) < filteredCharacters.length - 1}
                 hasPrev={filteredCharacters.findIndex(c => c.id === selectedCharacter.id) > 0}
+                navDirection={navDirection}
               />
             ) : (
               <>

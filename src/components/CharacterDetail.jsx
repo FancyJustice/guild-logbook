@@ -15,20 +15,14 @@ const colorPalette = {
   blue: { color1: '#4361ee', color2: '#7209b7' },
 }
 
-export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev }) {
+export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev, navDirection = 'right' }) {
   const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
-  const [slideDirection, setSlideDirection] = useState('right')
-  const [prevCharacterId, setPrevCharacterId] = useState(character.id)
+  const [slideDirection, setSlideDirection] = useState(navDirection)
 
-  // Detect direction of character change and animate accordingly
+  // Update slide direction when navDirection prop changes
   useEffect(() => {
-    if (character.id !== prevCharacterId) {
-      // Determine direction based on character change
-      // This is a simple heuristic - in a real app, you'd pass direction from parent
-      setSlideDirection('right')
-      setPrevCharacterId(character.id)
-    }
-  }, [character.id, prevCharacterId])
+    setSlideDirection(navDirection)
+  }, [character.id, navDirection])
 
   // Scroll to top when character changes
   useEffect(() => {
