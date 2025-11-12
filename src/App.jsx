@@ -387,6 +387,7 @@ function App() {
             onAddCharacter={handleAddCharacter}
             onUpdateCharacter={handleUpdateCharacter}
             onDeleteCharacter={handleDeleteCharacter}
+            onAddArtifact={handleAddArtifact}
           />
         )}
         {view === 'admin' && !isAuthenticated && (

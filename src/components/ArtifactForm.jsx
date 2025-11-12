@@ -104,34 +104,6 @@ export default function ArtifactForm({ dropdownOptions, editingArtifact, onSubmi
         />
       </div>
 
-      {/* 3D Model and Texture Paths */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormInput
-          label="3D Model (FBX) Path"
-          value={formData.modelPath}
-          onChange={(value) => handleInputChange('modelPath', value)}
-          placeholder="e.g., /models/sword.fbx"
-        />
-        <FormInput
-          label="Texture (Image) Path"
-          value={formData.texturePath}
-          onChange={(value) => handleInputChange('texturePath', value)}
-          placeholder="e.g., /textures/sword_texture.png"
-        />
-      </div>
-
-      {/* Toggleable Meshes */}
-      <div>
-        <label className="block text-sm font-medieval text-wood-light mb-2">Toggleable Meshes (comma-separated)</label>
-        <input
-          type="text"
-          value={formData.toggleableMeshes}
-          onChange={(e) => handleInputChange('toggleableMeshes', e.target.value)}
-          className="w-full px-4 py-2 border-2 border-gold-dark rounded bg-parchment-dark text-wood focus:outline-none focus:border-gold"
-          placeholder="e.g., Sheath, Handle, Blade"
-        />
-        <p className="text-xs text-wood-light mt-1">Names of mesh parts that can be toggled on/off in the viewer</p>
-      </div>
 
       {/* Form Actions */}
       <div className="flex gap-4 justify-end">

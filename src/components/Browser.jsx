@@ -7,14 +7,16 @@ import BookView from './BookView'
 
 import ArtifactGrid from './ArtifactGrid'
 import ArtifactDetail from './ArtifactDetail'
+import ArtifactForm from './ArtifactForm'
 
-export default function Browser({ characters, artifacts, dropdownOptions, isAdmin = false, onUpdateCharacter = null, onDeleteCharacter = null, onAddCharacter = null }) {
+export default function Browser({ characters, artifacts, dropdownOptions, isAdmin = false, onAddCharacter = null, onUpdateCharacter = null, onDeleteCharacter = null, onAddArtifact = null }) {
   const [selectedCharacter, setSelectedCharacter] = useState(null)
   const [selectedArtifact, setSelectedArtifact] = useState(null)
   const [view, setView] = useState('characters') // 'characters' or 'artifacts'
   const [displayMode, setDisplayMode] = useState('grid') // 'grid', 'hierarchy', or 'book'
   const [navDirection, setNavDirection] = useState('right') // Track which direction user is navigating
   const [isCreatingCharacter, setIsCreatingCharacter] = useState(false)
+  const [isCreatingArtifact, setIsCreatingArtifact] = useState(false)
   const [filters, setFilters] = useState({
     type: 'all',
   })
@@ -244,9 +246,37 @@ export default function Browser({ characters, artifacts, dropdownOptions, isAdmi
               />
             ) : (
               <>
-                <div className="text-sm text-parchment-dark">
-                  Showing {filteredArtifacts.length} of {artifacts.length} artifacts
+                <div className="flex justify-between items-center">
+                  <div className="text-sm text-parchment-dark">
+                    Showing {filteredArtifacts.length} of {artifacts.length} artifacts
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsCreatingArtifact(!isCreatingArtifact)
+                    }}
+                    className={`px-3 py-1 text-sm rounded transition ${
+                      isCreatingArtifact
+                        ? 'bg-green-600 text-white'
+                        : 'bg-green-700 text-white hover:bg-green-600'
+                    }`}
+                  >
+                    {isCreatingArtifact ? '✕ Cancel' : '+ Create Artifact'}
+                  </button>
                 </div>
+                {isCreatingArtifact && (
+                  <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
+                    <h3 className="text-xl font-medieval font-bold text-gold-dark mb-4">Create New Artifact</h3>
+                    <ArtifactForm
+                      dropdownOptions={dropdownOptions}
+                      editingArtifact={null}
+                      onSubmit={(newArtifact) => {
+                        onAddArtifact && onAddArtifact(newArtifact)
+                        setIsCreatingArtifact(false)
+                      }}
+                      onCancel={() => setIsCreatingArtifact(false)}
+                    />
+                  </div>
+                )}
                 <ArtifactGrid
                   artifacts={filteredArtifacts}
                   onSelectArtifact={setSelectedArtifact}
