@@ -228,6 +228,11 @@ if (!authenticated) {
               <p className="text-xs text-gold-dark mt-1">
                 {character.type === 'guild' ? 'Guild Member' : 'Criminal'} • {character.affiliation}
               </p>
+              {character.pin && (
+                <p className="text-sm font-bold text-seal-light mt-2">
+                  PIN: <span className="font-mono bg-parchment px-2 py-1 rounded">{character.pin}</span>
+                </p>
+              )}
             </div>
             <div className="space-x-2 flex">
               <button

@@ -62,7 +62,7 @@
       "int": 5,
       "luk": 2,
       "vit": 8,
-      "pin": "8117"
+      "pin": "4169"
     },
     {
       "type": "guild",
@@ -118,7 +118,7 @@
       "bounty": "",
       "crime": "",
       "id": "char_1762543831577",
-      "pin": "6255"
+      "pin": "2066"
     },
     {
       "type": "criminal",
@@ -188,7 +188,7 @@
       "crime": "War",
       "id": "char_1762546633163",
       "ultimateSkillColor": "orange",
-      "pin": "6256"
+      "pin": "2744"
     },
     {
       "type": "guild",
@@ -258,7 +258,7 @@
       "crime": "",
       "id": "char_1762574632159",
       "ultimateSkillColor": "red",
-      "pin": "6057"
+      "pin": "6786"
     },
     {
       "type": "criminal",
@@ -299,7 +299,7 @@
       "crime": "Illegal magic and experimentation.",
       "ultimateSkillColor": "gold",
       "id": "char_1762576160578",
-      "pin": "7983"
+      "pin": "4425"
     },
     {
       "type": "criminal",
@@ -329,7 +329,7 @@
       "crime": "Rampant Destruction.",
       "ultimateSkillColor": "gold",
       "id": "char_1762576249743",
-      "pin": "8813"
+      "pin": "5497"
     },
     {
       "type": "criminal",
@@ -359,7 +359,7 @@
       "crime": "9 counts of Loitering and 7 counts of Littering.",
       "ultimateSkillColor": "gold",
       "id": "char_1762576492638",
-      "pin": "7265"
+      "pin": "3877"
     }
   ]
 }
