@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import StatsHexagon from './StatsHexagon'
 import { getImageSource } from '../utils/imageUtils'
+import '../styles/characterDetail.css'
 
 // Color palette for ultimate skills
 const colorPalette = {
@@ -16,6 +17,18 @@ const colorPalette = {
 
 export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev }) {
   const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
+  const [slideDirection, setSlideDirection] = useState('right')
+  const [prevCharacterId, setPrevCharacterId] = useState(character.id)
+
+  // Detect direction of character change and animate accordingly
+  useEffect(() => {
+    if (character.id !== prevCharacterId) {
+      // Determine direction based on character change
+      // This is a simple heuristic - in a real app, you'd pass direction from parent
+      setSlideDirection('right')
+      setPrevCharacterId(character.id)
+    }
+  }, [character.id, prevCharacterId])
 
   // Scroll to top when character changes
   useEffect(() => {
@@ -58,7 +71,7 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
         </button>
       )}
 
-      <div className="space-y-4" style={{
+      <div className={`space-y-4 character-detail-container slide-${slideDirection}`} style={{
         '--gradient-color-1': ultimateColors.color1,
         '--gradient-color-2': ultimateColors.color2,
       }}>

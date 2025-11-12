@@ -1,0 +1,59 @@
+/* Character detail transition animations */
+
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToLeft {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+}
+
+@keyframes slideOutToRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+}
+
+/* Direction-aware character detail animations */
+.character-detail-container {
+  animation-duration: 0.4s;
+  animation-fill-mode: forwards;
+}
+
+.character-detail-container.slide-right {
+  animation-name: slideInFromRight;
+}
+
+.character-detail-container.slide-left {
+  animation-name: slideInFromLeft;
+}
