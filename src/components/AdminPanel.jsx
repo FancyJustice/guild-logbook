@@ -75,6 +75,15 @@ export default function AdminPanel({
    * Prevents duplicate imports by checking for existing IDs
    * Shows success message with count of imported characters
    */
+  const handleGenerateRandomPins = () => {
+    const updated = characters.map(char => {
+      const pin = Math.floor(Math.random() * 10000).toString().padStart(4, '0')
+      onUpdateCharacter({ ...char, pin })
+      return { ...char, pin }
+    })
+    alert(`Generated random PINs for ${updated.length} characters!`)
+  }
+
   const handleImportCharacters = async (event) => {
     const file = event.target.files[0]
     if (file) {
@@ -155,6 +164,13 @@ if (!authenticated) {
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-medieval font-bold text-gold-dark">Character Management</h2>
           <div className="flex gap-2">
+            <button
+              onClick={handleGenerateRandomPins}
+              className="px-4 py-2 bg-purple-600 text-white hover:bg-purple-700 transition rounded font-medieval"
+              title="Randomly assign PINs to all characters"
+            >
+              🎲 Generate Random PINs
+            </button>
             <label className="px-4 py-2 bg-seal text-parchment hover:bg-seal-light transition rounded font-medieval cursor-pointer">
               Import Characters
               <input
