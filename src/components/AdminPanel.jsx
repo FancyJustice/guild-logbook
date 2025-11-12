@@ -238,7 +238,7 @@ if (!authenticated) {
                 <img
                   src={getImageSource(character.photo)}
                   alt={character.name}
-                  className="w-16 h-20 object-cover rounded border border-gold-dark"
+                  className="w-32 h-40 object-cover rounded border border-gold-dark"
                 />
               </div>
             )}
@@ -350,7 +350,7 @@ if (!authenticated) {
                   <img
                     src={getImageSource(artifact.photo)}
                     alt={artifact.name}
-                    className="w-16 h-20 object-cover rounded border border-gold-dark"
+                    className="w-32 h-40 object-cover rounded border border-gold-dark"
                   />
                 </div>
               )}

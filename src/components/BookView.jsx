@@ -39,7 +39,7 @@ export default function BookView({ characters, onSelectCharacter }) {
           {/* Character Photo */}
           {character.photo && (
             <div className="flex justify-center mb-4">
-              <div className="w-40 h-56 border-2 border-gold-dark rounded overflow-hidden shadow-lg">
+              <div className="w-80 h-full border-2 border-gold-dark rounded overflow-hidden shadow-lg" style={{ maxWidth: '460px', height: '600px' }}>
                 <img
                   src={getImageSource(character.photo)}
                   alt={character.name}

@@ -136,29 +136,29 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
       }
 
       try {
-        // Create canvas to resize image to 230x300px
+        // Create canvas to resize image to 460x600px
         const reader = new FileReader()
         reader.onload = async (event) => {
           const img = new Image()
           img.onload = async () => {
             const canvas = document.createElement('canvas')
-            canvas.width = 230
-            canvas.height = 300
+            canvas.width = 460
+            canvas.height = 600
             const ctx = canvas.getContext('2d')
 
             // Calculate dimensions to maintain aspect ratio
             const imgRatio = img.width / img.height
-            const canvasRatio = 230 / 300
+            const canvasRatio = 460 / 600
             let drawWidth, drawHeight, offsetX = 0, offsetY = 0
 
             if (imgRatio > canvasRatio) {
-              drawHeight = 300
-              drawWidth = 300 * imgRatio
-              offsetX = (drawWidth - 230) / 2
+              drawHeight = 600
+              drawWidth = 600 * imgRatio
+              offsetX = (drawWidth - 460) / 2
             } else {
-              drawWidth = 230
-              drawHeight = 230 / imgRatio
-              offsetY = (drawHeight - 300) / 2
+              drawWidth = 460
+              drawHeight = 460 / imgRatio
+              offsetY = (drawHeight - 600) / 2
             }
 
             ctx.drawImage(img, -offsetX, -offsetY, drawWidth, drawHeight)

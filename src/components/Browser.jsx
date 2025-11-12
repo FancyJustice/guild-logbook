@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import CharacterGrid from './CharacterGrid'
 import CharacterDetail from './CharacterDetail'
 import CharacterHierarchy from './CharacterHierarchy'
@@ -34,6 +34,11 @@ export default function Browser({ characters, artifacts, dropdownOptions, isAdmi
   const characterTypes = ['guild', 'criminal', 'all']
 
   const isViewingDetail = selectedCharacter || selectedArtifact
+
+  // Reset filters when switching between views
+  useEffect(() => {
+    setFilters({ type: 'all' })
+  }, [view])
 
   return (
     <div className="flex flex-col md:flex-row gap-2 md:gap-4">
@@ -300,7 +305,7 @@ export default function Browser({ characters, artifacts, dropdownOptions, isAdmi
           Characters
         </button>
         <button
-          onClick={() => { setView('artifacts'); setFilters({ type: 'all' }); setSelectedCharacter(null); setSelectedArtifact(null) }}
+          onClick={() => { setView('artifacts'); setSelectedCharacter(null); setSelectedArtifact(null) }}
           className={`px-4 py-3 text-sm font-medieval whitespace-nowrap transition rounded-l-lg border-r-4 ${
             view === 'artifacts'
               ? 'bg-wood-light text-parchment border-r-wood-light'

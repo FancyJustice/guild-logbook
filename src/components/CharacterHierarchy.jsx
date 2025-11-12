@@ -88,12 +88,12 @@ export default function CharacterHierarchy({ characters, onSelectCharacter }) {
                       }`}
                     >
                       {/* Character Photo */}
-                      <div className="overflow-hidden bg-wood-light" style={{ aspectRatio: '230/300' }}>
+                      <div className="overflow-hidden bg-wood-light" style={{ aspectRatio: '460/600' }}>
                         <img
                           src={getImageSource(character.photo)}
                           alt={character.name}
                           className="w-full h-full object-cover"
-                          style={{ height: '100px' }}
+                          style={{ height: '200px' }}
                         />
                       </div>
 

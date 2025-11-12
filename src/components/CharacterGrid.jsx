@@ -32,7 +32,7 @@ export default function CharacterGrid({ characters, onSelectCharacter }) {
             <div className={`h-1 ${character.type === 'guild' ? 'bg-gold' : 'bg-seal'}`}></div>
 
             {/* Character image with frame - responsive aspect ratio */}
-            <div className="relative overflow-hidden bg-wood-light p-1 sm:p-2 md:p-3" style={{ aspectRatio: '230/300' }}>
+            <div className="relative overflow-hidden bg-wood-light p-1 sm:p-2 md:p-3" style={{ aspectRatio: '460/600' }}>
               <div className="border-2 border-gold-dark rounded h-full w-full overflow-hidden">
                 <img
                   src={getImageSource(character.photo)}
