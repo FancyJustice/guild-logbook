@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import StatsHexagon from './StatsHexagon'
+import CharacterForm from './CharacterForm'
 import { getImageSource } from '../utils/imageUtils'
 import '../styles/characterDetail.css'
 
@@ -114,60 +115,22 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
   if (isEditMode) {
     return (
       <div className="bg-parchment text-wood p-6 rounded-lg border-4 border-gold">
-        <h2 className="text-2xl font-medieval font-bold text-gold-dark mb-4">Edit {character.name}</h2>
-        <div className="space-y-4 max-h-96 overflow-y-auto">
-          <div>
-            <label className="block text-sm font-medieval text-gold-dark mb-1">Name</label>
-            <input
-              type="text"
-              value={editData.name}
-              onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-              className="w-full px-3 py-2 border-2 border-gold rounded bg-white text-wood"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medieval text-gold-dark mb-1">VRC Player Name</label>
-              <input
-                type="text"
-                value={editData.vrcPlayerName}
-                onChange={(e) => setEditData({ ...editData, vrcPlayerName: e.target.value })}
-                className="w-full px-3 py-2 border-2 border-gold rounded bg-white text-wood"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medieval text-gold-dark mb-1">Race</label>
-              <input
-                type="text"
-                value={editData.race}
-                onChange={(e) => setEditData({ ...editData, race: e.target.value })}
-                className="w-full px-3 py-2 border-2 border-gold rounded bg-white text-wood"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medieval text-gold-dark mb-1">Lore</label>
-            <textarea
-              value={editData.lore}
-              onChange={(e) => setEditData({ ...editData, lore: e.target.value })}
-              className="w-full px-3 py-2 border-2 border-gold rounded bg-white text-wood h-32"
-            />
-          </div>
-        </div>
-        <div className="flex gap-3 mt-6">
-          <button
-            onClick={handleSaveEdit}
-            className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition rounded font-medieval font-bold"
-          >
-            Save Changes
-          </button>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-medieval font-bold text-gold-dark">Edit {character.name}</h2>
           <button
             onClick={handleCancelEdit}
-            className="flex-1 px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded font-medieval font-bold"
+            className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded font-medieval"
           >
-            Cancel
+            Close
           </button>
         </div>
+        <CharacterForm
+          dropdownOptions={dropdownOptions}
+          characters={[]}
+          editingCharacter={editData}
+          onSubmit={handleSaveEdit}
+          onCancel={handleCancelEdit}
+        />
       </div>
     )
   }
