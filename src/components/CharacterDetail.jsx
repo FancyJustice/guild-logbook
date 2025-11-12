@@ -45,10 +45,13 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
 
   return (
     <div className="relative">
-      <div className={`space-y-4 character-detail-container slide-${slideDirection}`} style={{
-        '--gradient-color-1': ultimateColors.color1,
-        '--gradient-color-2': ultimateColors.color2,
-      }}>
+      <div
+        key={`${character.id}-${slideDirection}`}
+        className={`space-y-4 character-detail-container slide-${slideDirection}`}
+        style={{
+          '--gradient-color-1': ultimateColors.color1,
+          '--gradient-color-2': ultimateColors.color2,
+        }}>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <button
             onClick={onBack}
@@ -66,32 +69,30 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
           </button>
         </div>
 
-        <div className="relative">
-
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
-        {/* Left Column - Image & Basic Info */}
-        <div className="md:col-span-1 lg:col-span-2 space-y-3 md:space-y-4">
-          <div className="bg-wood-light rounded-lg overflow-hidden shadow-lg border-2 border-gold">
-            <img
-              src={getImageSource(character.photo)}
-              alt={character.name}
-              className="w-full h-auto"
-            />
-          </div>
-
-          {/* Quick Stats */}
-          <div className="bg-parchment text-wood p-3 md:p-4 rounded-lg border-2 border-gold space-y-2 md:space-y-3">
-            <div className="border-b-2 border-gold-dark pb-2">
-              <div className="inline-block px-3 md:px-4 py-1 md:py-2 bg-gold text-wood text-xs md:text-sm uppercase tracking-widest font-medieval font-bold rounded mb-2">
-                <i className={`ra ${character.type === 'guild' ? 'ra-shield' : 'ra-dragon-emblem'}`} style={{ marginRight: '0.5rem', color: '#2a2420' }}></i>
-                {character.type === 'guild' ? 'Guild Member' : 'Criminal'}
-              </div>
-              <h2 className="text-2xl md:text-4xl font-bold font-medieval text-gold-dark" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>{character.name}</h2>
-              {character.title && (
-                <p className="text-sm md:text-lg italic text-gold mt-2">"{character.title}"</p>
-              )}
+          {/* Left Column - Image & Basic Info */}
+          <div className="md:col-span-1 lg:col-span-2 space-y-3 md:space-y-4">
+            <div className="bg-wood-light rounded-lg overflow-hidden shadow-lg border-2 border-gold">
+              <img
+                src={getImageSource(character.photo)}
+                alt={character.name}
+                className="w-full h-auto"
+              />
             </div>
+
+            {/* Quick Stats */}
+            <div className="bg-parchment text-wood p-3 md:p-4 rounded-lg border-2 border-gold space-y-2 md:space-y-3">
+              <div className="border-b-2 border-gold-dark pb-2">
+                <div className="inline-block px-3 md:px-4 py-1 md:py-2 bg-gold text-wood text-xs md:text-sm uppercase tracking-widest font-medieval font-bold rounded mb-2">
+                  <i className={`ra ${character.type === 'guild' ? 'ra-shield' : 'ra-dragon-emblem'}`} style={{ marginRight: '0.5rem', color: '#2a2420' }}></i>
+                  {character.type === 'guild' ? 'Guild Member' : 'Criminal'}
+                </div>
+                <h2 className="text-2xl md:text-4xl font-bold font-medieval text-gold-dark" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>{character.name}</h2>
+                {character.title && (
+                  <p className="text-sm md:text-lg italic text-gold mt-2">"{character.title}"</p>
+                )}
+              </div>
 
             <div className="text-sm md:text-base space-y-2 md:space-y-3">
               <p className="text-wood-light"><i className="ra ra-explosion" style={{ marginRight: '0.5rem', color: '#d4a574' }}></i><strong>Lvl:</strong> {character.level}</p>
@@ -124,7 +125,7 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
             luk: character.luk || 0,
             vit: character.vit || 0,
           }} />
-        </div>
+          </div>
 
         {/* Main Content - Right 3 Columns */}
         <div className="lg:col-span-3 space-y-4">
@@ -299,7 +300,7 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
       {hasPrev && (
         <button
           onClick={onPrev}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer"
+          className="fixed left-8 top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer z-50"
           title="Previous character"
         >
           ◀
@@ -308,7 +309,7 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
       {hasNext && (
         <button
           onClick={onNext}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer"
+          className="fixed right-8 top-1/2 -translate-y-1/2 text-5xl text-gold hover:text-gold-light transition hidden lg:block cursor-pointer z-50"
           title="Next character"
         >
           ▶

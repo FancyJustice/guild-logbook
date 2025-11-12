@@ -26,7 +26,9 @@ import Browser from './components/Browser'
 import AdminPanel from './components/AdminPanel'
 import Cover from './components/Cover'
 import MergePreview from './components/MergePreview'
+import GoogleLogin from './components/GoogleLogin'
 import { findDifferences, mergeCharacters, generateMergeReport, validateImportedData } from './utils/mergeUtils'
+import { subscribeToAuthState } from './utils/authUtils'
 import {
   fetchCharactersFromFirebase,
   subscribeToCharacters,
@@ -72,6 +74,9 @@ function App() {
   // ============== NAVIGATION STATE ==============
   const [navigationHistory, setNavigationHistory] = useState([]) // Track navigation for browser back button
 
+  // ============== GOOGLE AUTH STATE ==============
+  const [googleUser, setGoogleUser] = useState(null) // Current Google-authenticated user
+
   useEffect(() => {
     // Check if user was previously authenticated
     const savedAuth = localStorage.getItem('adminAuth')
@@ -100,8 +105,16 @@ function App() {
       setDropdownOptions(data.dropdownOptions || {})
     })
 
-    // Cleanup subscription on unmount
-    return () => unsubscribe()
+    // Subscribe to Google auth state changes
+    const unsubscribeAuth = subscribeToAuthState((user) => {
+      setGoogleUser(user)
+    })
+
+    // Cleanup subscriptions on unmount
+    return () => {
+      unsubscribe()
+      unsubscribeAuth()
+    }
   }, [])
 
   // Handle browser back button
@@ -336,7 +349,7 @@ function App() {
             </div>
 
             {/* Right side - Navigation */}
-            <nav className="flex gap-2 md:gap-8 items-center w-full md:w-auto">
+            <nav className="flex gap-2 md:gap-4 items-center w-full md:w-auto flex-wrap md:flex-nowrap">
               <button
                 onClick={() => { navigateTo('browser'); setIsAuthenticated(false) }}
                 className={`flex-1 md:flex-none px-3 md:px-6 py-2 md:py-3 font-medieval font-bold text-xs md:text-sm tracking-wide transition rounded-lg border-2 ${
@@ -357,6 +370,11 @@ function App() {
               >
                 <span className="hidden md:inline">🔐 </span>Admin
               </button>
+              <GoogleLogin
+                user={googleUser}
+                onLoginSuccess={() => console.log('Google login successful')}
+                onLogoutSuccess={() => console.log('Google logout successful')}
+              />
             </nav>
           </div>
 
