@@ -81,7 +81,7 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
     int: 0,
     luk: 0,
     vit: 0,
-    pin: '',
+    pin: Math.floor(Math.random() * 10000).toString().padStart(4, '0'),
   })
 
   // ============== SKILL INPUT STATE ==============
@@ -874,13 +874,25 @@ export default function CharacterForm({ dropdownOptions, characters = [], editin
       <div className="bg-parchment p-4 rounded-lg border-2 border-gold">
         <h3 className="text-lg font-medieval text-gold-dark mb-3">Edit PIN</h3>
         <p className="text-sm text-wood-light mb-3">Enter a PIN code for public edit/delete access. Leave blank for no PIN.</p>
-        <FormInput
-          label="PIN Code"
-          value={formData.pin}
-          onChange={(value) => handleInputChange('pin', value)}
-          type="text"
-          placeholder="e.g., 1234"
-        />
+        <div className="flex gap-2 items-end">
+          <div className="flex-1">
+            <FormInput
+              label="PIN Code"
+              value={formData.pin}
+              onChange={(value) => handleInputChange('pin', value)}
+              type="text"
+              placeholder="e.g., 1234"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => handleInputChange('pin', Math.floor(Math.random() * 10000).toString().padStart(4, '0'))}
+            className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition rounded font-medieval mb-1"
+            title="Generate a random PIN"
+          >
+            🎲 Randomize
+          </button>
+        </div>
       </div>
 
       {formData.type === 'criminal' && (
