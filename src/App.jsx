@@ -36,7 +36,11 @@ import {
   addArtifactToFirebase,
   updateArtifactInFirebase,
   deleteArtifactFromFirebase,
-  mergeCharactersInFirebase
+  mergeCharactersInFirebase,
+  subscribeLore,
+  addLoreEntry,
+  updateLoreEntry,
+  deleteLoreEntry
 } from './utils/firebaseUtils'
 import './App.css'
 
@@ -57,6 +61,7 @@ function App() {
   // ============== DATA STATE ==============
   const [characters, setCharacters] = useState([]) // All characters from Firebase (guild members + criminals)
   const [artifacts, setArtifacts] = useState([]) // All artifacts/weapons from Firebase
+  const [lore, setLore] = useState([]) // All lore entries for places and affiliations
   const [dropdownOptions, setDropdownOptions] = useState({}) // Shared config options for form selects
 
   // ============== AUTHENTICATION STATE ==============
@@ -100,9 +105,15 @@ function App() {
       setDropdownOptions(data.dropdownOptions || {})
     })
 
+    // Subscribe to lore entries
+    const unsubscribeLore = subscribeLore((loreEntries) => {
+      setLore(loreEntries)
+    })
+
     // Cleanup subscriptions on unmount
     return () => {
       unsubscribe()
+      unsubscribeLore()
     }
   }, [])
 
@@ -287,6 +298,34 @@ function App() {
     }
   }
 
+  const handleAddLore = async (newLore) => {
+    const loreWithId = { ...newLore, id: `lore_${Date.now()}` }
+    try {
+      await addLoreEntry(loreWithId)
+    } catch (error) {
+      console.error('Error adding lore:', error)
+      alert('Error adding lore: ' + error.message)
+    }
+  }
+
+  const handleUpdateLore = async (updatedLore) => {
+    try {
+      await updateLoreEntry(updatedLore)
+    } catch (error) {
+      console.error('Error updating lore:', error)
+      alert('Error updating lore: ' + error.message)
+    }
+  }
+
+  const handleDeleteLore = async (loreId) => {
+    try {
+      await deleteLoreEntry(loreId)
+    } catch (error) {
+      console.error('Error deleting lore:', error)
+      alert('Error deleting lore: ' + error.message)
+    }
+  }
+
   const handleAdminLogin = (inputPassword) => {
     if (inputPassword === adminPassword) {
       setIsAuthenticated(true)
@@ -372,44 +411,42 @@ function App() {
           <Browser
             characters={characters}
             artifacts={artifacts}
+            lore={lore}
             dropdownOptions={dropdownOptions}
             isAdmin={false}
             onAddCharacter={handleAddCharacter}
             onUpdateCharacter={handleUpdateCharacter}
             onDeleteCharacter={handleDeleteCharacter}
             onAddArtifact={handleAddArtifact}
+            onUpdateLore={handleUpdateLore}
           />
         )}
         {view === 'admin' && !isAuthenticated && (
           <AdminPanel
+            authenticated={false}
             onLogin={handleAdminLogin}
             password={password}
             setPassword={setPassword}
           />
         )}
         {isAuthenticated && (
-          <div className="space-y-6">
-            <div className="flex gap-4 items-center">
-              <button
-                onClick={handleAdminLogout}
-                className="px-4 py-2 bg-seal text-parchment hover:bg-seal-light transition rounded"
-              >
-                Logout
-              </button>
-            </div>
-            <AdminPanel
-              authenticated={true}
-              characters={characters}
-              artifacts={artifacts}
-              dropdownOptions={dropdownOptions}
-              onAddCharacter={handleAddCharacter}
-              onUpdateCharacter={handleUpdateCharacter}
-              onDeleteCharacter={handleDeleteCharacter}
-              onAddArtifact={handleAddArtifact}
-              onUpdateArtifact={handleUpdateArtifact}
-              onDeleteArtifact={handleDeleteArtifact}
-            />
-          </div>
+          <AdminPanel
+            authenticated={true}
+            characters={characters}
+            artifacts={artifacts}
+            lore={lore}
+            dropdownOptions={dropdownOptions}
+            onAddCharacter={handleAddCharacter}
+            onUpdateCharacter={handleUpdateCharacter}
+            onDeleteCharacter={handleDeleteCharacter}
+            onAddArtifact={handleAddArtifact}
+            onUpdateArtifact={handleUpdateArtifact}
+            onDeleteArtifact={handleDeleteArtifact}
+            onAddLore={handleAddLore}
+            onUpdateLore={handleUpdateLore}
+            onDeleteLore={handleDeleteLore}
+            onLogout={handleAdminLogout}
+          />
         )}
       </main>
 

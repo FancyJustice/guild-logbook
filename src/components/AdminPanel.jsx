@@ -1,425 +1,204 @@
 import { useState } from 'react'
-import CharacterForm from './CharacterForm'
-import ArtifactForm from './ArtifactForm'
-import { getImageSource } from '../utils/imageUtils'
+import AdminCharacterList from './AdminCharacterList'
+import AdminArtifactList from './AdminArtifactList'
+import AdminLoreList from './AdminLoreList'
 
 /**
- * AdminPanel Component
+ * AdminPanel Component - Tabbed Interface
  *
- * Password-protected admin interface for managing characters and artifacts
+ * Manages three tabs:
+ * 1. Characters - Create, edit, delete characters with collapsible list
+ * 2. Artifacts - Create, edit, delete artifacts with collapsible list
+ * 3. Lore - Create, edit, delete lore entries with collapsible list
  *
- * Two modes:
- * 1. NOT AUTHENTICATED: Shows password login form
- * 2. AUTHENTICATED: Shows full admin interface with CRUD operations
- *
- * Displays:
- * - Character list with edit/delete/export buttons
- * - Add/edit character form (modal)
- * - Artifact list with edit/delete buttons
- * - Add/edit artifact form (modal)
- * - Confirmation dialogs for destructive actions
- *
- * All actual database operations are handled by parent (App.jsx)
- * This component just manages UI state and calls callback functions
+ * Features:
+ * - Global search bar that filters current tab
+ * - Bulk delete with checkboxes
+ * - Collapsible items to keep page length manageable
+ * - PIN generation for characters
  */
 export default function AdminPanel({
-  // Authentication
-  authenticated, // Boolean: is admin logged in?
-  onLogin, // Callback: (password) => void
-  password, // Current password input value
-  setPassword, // Setter for password input
+  authenticated,
+  onLogin,
+  password,
+  setPassword,
 
-  // Data
-  characters, // Array of all characters
-  artifacts, // Array of all artifacts
-  dropdownOptions, // Config for form selects
+  characters,
+  artifacts,
+  lore,
+  dropdownOptions,
 
-  // Character CRUD callbacks from App.jsx
-  onAddCharacter, // (character) => void
-  onUpdateCharacter, // (character) => void
-  onDeleteCharacter, // (characterId) => void
+  onAddCharacter,
+  onUpdateCharacter,
+  onDeleteCharacter,
 
-  // Artifact CRUD callbacks from App.jsx
-  onAddArtifact, // (artifact) => void
-  onUpdateArtifact, // (artifact) => void
-  onDeleteArtifact, // (artifactId) => void
+  onAddArtifact,
+  onUpdateArtifact,
+  onDeleteArtifact,
+
+  onAddLore,
+  onUpdateLore,
+  onDeleteLore,
+
+  onLogout,
 }) {
   // ============== UI STATE ==============
-  const [showCharacterForm, setShowCharacterForm] = useState(false) // Show character add/edit form?
-  const [showArtifactForm, setShowArtifactForm] = useState(false) // Show artifact add/edit form?
-  const [editingCharacter, setEditingCharacter] = useState(null) // Character being edited (null = adding new)
-  const [editingArtifact, setEditingArtifact] = useState(null) // Artifact being edited (null = adding new)
-  const [confirmDialog, setConfirmDialog] = useState(null) // Delete confirmation modal data
+  const [activeTab, setActiveTab] = useState('characters') // 'characters', 'artifacts', 'lore'
+  const [searchTerm, setSearchTerm] = useState('')
 
-  /**
-   * Export a single character as JSON file
-   * User clicks "Download" and gets a JSON file they can share or backup
-   * Filename is based on character name
-   */
-  const exportCharacterAsJSON = (character) => {
-    const dataToExport = {
-      character: character
-    }
-    const dataStr = JSON.stringify(dataToExport, null, 2)
-    const dataBlob = new Blob([dataStr], { type: 'application/json' })
-    const url = URL.createObjectURL(dataBlob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${character.name.replace(/\s+/g, '_')}.json`
-    link.click()
-    URL.revokeObjectURL(url)
-  }
-
-  /**
-   * Import characters from JSON file
-   * Prevents duplicate imports by checking for existing IDs
-   * Shows success message with count of imported characters
-   */
-  const handleGenerateRandomPins = async () => {
-    const updated = []
-    for (let i = 0; i < characters.length; i++) {
-      const char = characters[i]
-      const pin = Math.floor(Math.random() * 10000).toString().padStart(4, '0')
-      onUpdateCharacter({ ...char, pin })
-      updated.push({ ...char, pin })
-      // Add 100ms delay between updates to avoid rate limiting
-      if (i < characters.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 100))
-      }
-    }
-    alert(`Generated random PINs for ${updated.length} characters!`)
-  }
-
-  const handleImportCharacters = async (event) => {
-    const file = event.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        try {
-          const data = JSON.parse(e.target.result)
-          const charsToImport = data.characters || []
-
-          if (charsToImport.length === 0) {
-            alert('No characters found in file')
-            return
-          }
-
-          // Get existing character IDs to avoid duplicates
-          const existingIds = new Set(characters.map(c => c.id))
-
-          // Import each character sequentially with a small delay
-          let imported = 0
-          let skipped = 0
-          for (const char of charsToImport) {
-            // Skip if this character already exists
-            if (existingIds.has(char.id)) {
-              skipped++
-              continue
-            }
-
-            const charWithId = { ...char, id: char.id || `char_${Date.now()}_${Math.random()}` }
-            onAddCharacter(charWithId)
-            // Wait a bit between imports to let Firebase process
-            await new Promise(resolve => setTimeout(resolve, 100))
-            imported++
-          }
-
-          alert(`Successfully imported ${imported} characters!${skipped > 0 ? ` (${skipped} skipped as duplicates)` : ''}`)
-          event.target.value = '' // Reset file input
-        } catch (error) {
-          alert('Error parsing JSON file: ' + error.message)
-        }
-      }
-      reader.readAsText(file)
-    }
-  }
-
-if (!authenticated) {
+  // ============== LOGIN FLOW ==============
+  if (!authenticated) {
     return (
-      <div className="max-w-md mx-auto">
-        <div className="bg-parchment text-wood p-8 rounded-lg border-2 border-gold">
-          <h2 className="text-2xl font-medieval font-bold mb-6 text-gold-dark">Admin Access</h2>
-          <div className="space-y-4">
+      <div className="max-w-md mx-auto py-16 space-y-6">
+        <div className="bg-parchment text-wood p-8 rounded-lg border-4 border-gold">
+          <h2 className="text-3xl font-medieval font-bold text-gold-dark mb-6 text-center">Admin Login</h2>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              onLogin(password)
+            }}
+            className="space-y-4"
+          >
             <div>
-              <label className="block text-sm font-medieval text-wood-light mb-2">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && onLogin(password)}
-                className="w-full px-4 py-2 border-2 border-gold-dark rounded bg-parchment-dark text-wood focus:outline-none focus:border-gold"
-                placeholder="Enter admin password"
+                placeholder="Enter admin password..."
+                className="w-full px-4 py-2 bg-wood text-parchment rounded border-2 border-gold-dark"
               />
             </div>
             <button
-              onClick={() => onLogin(password)}
-              className="w-full px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded font-medieval"
+              type="submit"
+              className="w-full px-4 py-3 bg-gold-dark text-parchment hover:bg-gold transition rounded font-medieval font-bold text-lg"
             >
-              Login
+              Enter
             </button>
-          </div>
+          </form>
         </div>
       </div>
     )
   }
 
+  // ============== AUTHENTICATED ADMIN VIEW ==============
   return (
     <div className="space-y-6">
-      {/* Character Management Section */}
-      <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-medieval font-bold text-gold-dark">Character Management</h2>
-          <div className="flex gap-2">
-            <button
-              onClick={handleGenerateRandomPins}
-              className="px-4 py-2 bg-purple-600 text-white hover:bg-purple-700 transition rounded font-medieval"
-              title="Randomly assign PINs to all characters"
-            >
-              🎲 Generate Random PINs
-            </button>
-            <label className="px-4 py-2 bg-seal text-parchment hover:bg-seal-light transition rounded font-medieval cursor-pointer">
-              Import Characters
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleImportCharacters}
-                className="hidden"
-              />
-            </label>
-            <button
-              onClick={() => {
-                setShowCharacterForm(!showCharacterForm)
-                setEditingCharacter(null)
-              }}
-              className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded font-medieval"
-            >
-              {showCharacterForm ? 'Cancel' : '+ Add Character'}
-            </button>
-          </div>
-        </div>
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-medieval font-bold text-gold-dark">Admin Panel</h1>
+        <button
+          onClick={onLogout}
+          className="px-4 py-2 bg-red-700 text-white hover:bg-red-800 transition rounded font-medieval"
+        >
+          Logout
+        </button>
       </div>
 
-      {showCharacterForm && (
-        <>
-          <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
-            <h3 className="text-xl font-medieval font-bold text-gold-dark mb-4">
-              {editingCharacter ? 'Edit Character' : 'Add Character'}
-            </h3>
-          </div>
-          <CharacterForm
-            dropdownOptions={dropdownOptions}
-            characters={characters}
-            editingCharacter={editingCharacter}
-            onSubmit={(character) => {
-              if (editingCharacter) {
-                onUpdateCharacter(character)
-              } else {
-                onAddCharacter(character)
-              }
-              setShowCharacterForm(false)
-              setEditingCharacter(null)
-            }}
-            onCancel={() => {
-              setShowCharacterForm(false)
-              setEditingCharacter(null)
-            }}
-          />
-        </>
-      )}
+      {/* Search Bar */}
+      <div className="bg-parchment text-wood p-4 rounded-lg border-2 border-gold">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder={`Search ${activeTab}...`}
+          className="w-full px-4 py-2 bg-wood text-parchment rounded border border-gold-dark"
+        />
+      </div>
 
-      <div className="space-y-4">
-        {characters.map(character => (
-          <div
-            key={character.id}
-            className="bg-parchment text-wood p-4 rounded border-2 border-gold flex justify-between items-start gap-4"
+      {/* Tabs */}
+      <div className="flex gap-2 border-b-2 border-gold-dark">
+        {['characters', 'artifacts', 'lore'].map(tab => (
+          <button
+            key={tab}
+            onClick={() => {
+              setActiveTab(tab)
+              setSearchTerm('') // Clear search when switching tabs
+            }}
+            className={`px-6 py-3 font-medieval text-lg transition ${
+              activeTab === tab
+                ? 'bg-gold text-wood border-b-4 border-gold'
+                : 'bg-gold-dark text-parchment hover:bg-gold'
+            }`}
           >
-            {character.photo && (
-              <div className="flex-shrink-0">
-                <img
-                  src={getImageSource(character.photo)}
-                  alt={character.name}
-                  className="w-32 h-40 object-cover rounded border border-gold-dark"
-                />
-              </div>
-            )}
-            <div className="flex-1">
-              <h3 className="text-lg font-medieval font-bold">{character.name}</h3>
-              <p className="text-sm text-wood-light">
-                {character.race} {character.class} • {character.vrcPlayerName}
-              </p>
-              <p className="text-xs text-gold-dark mt-1">
-                {character.type === 'guild' ? 'Guild Member' : 'Criminal'} • {character.affiliation}
-              </p>
-              {character.pin && (
-                <p className="text-sm font-bold text-seal-light mt-2">
-                  PIN: <span className="font-mono bg-parchment px-2 py-1 rounded">{character.pin}</span>
-                </p>
-              )}
-            </div>
-            <div className="space-x-2 flex">
-              <button
-                onClick={() => {
-                  setEditingCharacter(character)
-                  setShowCharacterForm(true)
-                  window.scrollTo(0, 0)
-                }}
-                className="px-3 py-1 bg-gold-dark text-parchment hover:bg-gold transition rounded text-sm font-medieval"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => exportCharacterAsJSON(character)}
-                className="px-3 py-1 bg-gold text-wood hover:bg-gold-light transition rounded text-sm font-medieval flex items-center gap-1"
-              >
-                <i className="ra ra-download" style={{ color: '#2a2420' }}></i>
-                Export
-              </button>
-              <button
-                onClick={() => {
-                  setConfirmDialog({
-                    title: `Delete ${character.name}?`,
-                    message: 'This action cannot be undone.',
-                    onConfirm: () => {
-                      onDeleteCharacter(character.id)
-                      setConfirmDialog(null)
-                    },
-                    onCancel: () => setConfirmDialog(null)
-                  })
-                }}
-                className="px-3 py-1 bg-seal text-parchment hover:bg-seal-light transition rounded text-sm font-medieval"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
         ))}
       </div>
 
-      {/* Artifact Management Section */}
-      <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-medieval font-bold text-gold-dark">Artifact Management</h2>
-          <button
-            onClick={() => {
-              setShowArtifactForm(!showArtifactForm)
-              setEditingArtifact(null)
-            }}
-            className="px-4 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded font-medieval"
-          >
-            {showArtifactForm ? 'Cancel' : '+ Add Artifact'}
-          </button>
-        </div>
-      </div>
-
-      {showArtifactForm && (
-        <>
-          <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold">
-            <h3 className="text-xl font-medieval font-bold text-gold-dark mb-4">
-              {editingArtifact ? 'Edit Artifact' : 'Add Artifact'}
-            </h3>
-          </div>
-          <ArtifactForm
-            dropdownOptions={dropdownOptions}
-            editingArtifact={editingArtifact}
-            onSubmit={(artifact) => {
-              if (editingArtifact) {
-                onUpdateArtifact(artifact)
-              } else {
-                onAddArtifact(artifact)
-              }
-              setShowArtifactForm(false)
-              setEditingArtifact(null)
-            }}
-            onCancel={() => {
-              setShowArtifactForm(false)
-              setEditingArtifact(null)
-            }}
-          />
-        </>
-      )}
-
-      <div className="space-y-4">
-        {artifacts && artifacts.length > 0 ? (
-          artifacts.map(artifact => (
-            <div
-              key={artifact.id}
-              className="bg-parchment text-wood p-4 rounded border-2 border-gold flex justify-between items-start gap-4"
+      {/* Tab Content */}
+      <div className="bg-parchment text-wood p-6 rounded-lg border-2 border-gold space-y-4">
+        {/* Characters Tab */}
+        {activeTab === 'characters' && (
+          <>
+            <button
+              onClick={() => onAddCharacter({ name: '', type: 'guild' })}
+              className="px-6 py-2 bg-green-700 text-white hover:bg-green-800 transition rounded font-medieval mb-4"
             >
-              {artifact.photo && (
-                <div className="flex-shrink-0">
-                  <img
-                    src={getImageSource(artifact.photo)}
-                    alt={artifact.name}
-                    className="w-32 h-40 object-cover rounded border border-gold-dark"
-                  />
-                </div>
-              )}
-              <div className="flex-1">
-                <h3 className="text-lg font-medieval font-bold">{artifact.name}</h3>
-                <p className="text-sm text-wood-light">
-                  {artifact.type} • Owner: {artifact.owner || '—'}
-                </p>
-              </div>
-              <div className="space-x-2 flex">
-                <button
-                  onClick={() => {
-                    setEditingArtifact(artifact)
-                    setShowArtifactForm(true)
-                    window.scrollTo(0, 0)
-                  }}
-                  className="px-3 py-1 bg-gold-dark text-parchment hover:bg-gold transition rounded text-sm font-medieval"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => {
-                    setConfirmDialog({
-                      title: `Delete ${artifact.name}?`,
-                      message: 'This action cannot be undone.',
-                      onConfirm: () => {
-                        onDeleteArtifact(artifact.id)
-                        setConfirmDialog(null)
-                      },
-                      onCancel: () => setConfirmDialog(null)
-                    })
-                  }}
-                  className="px-3 py-1 bg-seal text-parchment hover:bg-seal-light transition rounded text-sm font-medieval"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="bg-parchment text-wood p-4 rounded border-2 border-gold text-center text-wood-light">
-            <p>No artifacts yet. Add one to get started!</p>
-          </div>
+              + Create New Character
+            </button>
+            <AdminCharacterList
+              characters={characters}
+              searchTerm={searchTerm}
+              dropdownOptions={dropdownOptions}
+              onAddCharacter={onAddCharacter}
+              onUpdateCharacter={onUpdateCharacter}
+              onDeleteCharacter={onDeleteCharacter}
+              onGeneratePins={async () => {
+                // Generate random PINs for all characters
+                for (let i = 0; i < characters.length; i++) {
+                  const char = characters[i]
+                  const pin = Math.floor(Math.random() * 10000).toString().padStart(4, '0')
+                  onUpdateCharacter({ ...char, pin })
+                  // Add delay to avoid rate limiting
+                  if (i < characters.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 100))
+                  }
+                }
+                alert(`Generated random PINs for ${characters.length} characters!`)
+              }}
+            />
+          </>
+        )}
+
+        {/* Artifacts Tab */}
+        {activeTab === 'artifacts' && (
+          <>
+            <button
+              onClick={() => onAddArtifact({ name: '', type: 'weapon' })}
+              className="px-6 py-2 bg-green-700 text-white hover:bg-green-800 transition rounded font-medieval mb-4"
+            >
+              + Create New Artifact
+            </button>
+            <AdminArtifactList
+              artifacts={artifacts}
+              searchTerm={searchTerm}
+              dropdownOptions={dropdownOptions}
+              onUpdateArtifact={onUpdateArtifact}
+              onDeleteArtifact={onDeleteArtifact}
+            />
+          </>
+        )}
+
+        {/* Lore Tab */}
+        {activeTab === 'lore' && (
+          <>
+            <button
+              onClick={() => onAddLore({ name: '', type: 'place', description: '' })}
+              className="px-6 py-2 bg-green-700 text-white hover:bg-green-800 transition rounded font-medieval mb-4"
+            >
+              + Create New Lore Entry
+            </button>
+            <AdminLoreList
+              lore={lore}
+              characters={characters}
+              artifacts={artifacts}
+              searchTerm={searchTerm}
+              onUpdateLore={onUpdateLore}
+              onDeleteLore={onDeleteLore}
+            />
+          </>
         )}
       </div>
-
-      {/* Custom Confirmation Modal */}
-      {confirmDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-parchment text-wood p-8 rounded-lg border-2 border-gold max-w-md w-full mx-4">
-            <h2 className="text-2xl font-medieval font-bold text-gold-dark mb-4">{confirmDialog.title}</h2>
-            <p className="text-base mb-6">{confirmDialog.message}</p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={confirmDialog.onCancel}
-                className="px-6 py-2 bg-gold-dark text-parchment hover:bg-gold transition rounded font-medieval"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDialog.onConfirm}
-                className="px-6 py-2 bg-seal text-parchment hover:bg-seal-light transition rounded font-medieval"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

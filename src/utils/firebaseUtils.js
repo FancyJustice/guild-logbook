@@ -53,6 +53,7 @@ import {
 const DATA_COLLECTION = 'app-data'; // Container for config and legacy data
 const CHARACTERS_COLLECTION = 'characters'; // New structure: individual character docs
 const ARTIFACTS_COLLECTION = 'artifacts'; // New structure: individual artifact docs
+const LORE_COLLECTION = 'lore'; // Lore entries for places and affiliations
 const CONFIG_DOC = 'config'; // Configuration document in app-data collection
 
 /**
@@ -446,6 +447,76 @@ export async function mergeCharactersInFirebase(mergedCharacters, mergedArtifact
     await updateConfigInFirebase(currentDropdown);
   } catch (error) {
     console.error('Error merging data:', error);
+    throw error;
+  }
+}
+
+/**
+ * Subscribe to lore entries from Firestore
+ */
+export function subscribeLore(callback) {
+  try {
+    const unsubscribe = onSnapshot(collection(db, LORE_COLLECTION), (snapshot) => {
+      const loreEntries = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id
+      }));
+      callback(loreEntries);
+    });
+    return unsubscribe;
+  } catch (error) {
+    console.error('Error subscribing to lore:', error);
+    throw error;
+  }
+}
+
+/**
+ * Add a new lore entry
+ */
+export async function addLoreEntry(loreData) {
+  try {
+    const loreId = loreData.id || `lore_${Date.now()}`;
+    const loreRef = doc(db, LORE_COLLECTION, loreId);
+    const { id, ...cleanData } = loreData;
+    const cleanedData = Object.fromEntries(
+      Object.entries(cleanData).filter(([_, value]) => value !== undefined)
+    );
+    await setDoc(loreRef, {
+      ...cleanedData,
+      createdAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Error adding lore entry:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update a lore entry
+ */
+export async function updateLoreEntry(loreData) {
+  try {
+    const { id, ...cleanData } = loreData;
+    const cleanedData = Object.fromEntries(
+      Object.entries(cleanData).filter(([_, value]) => value !== undefined)
+    );
+    const loreRef = doc(db, LORE_COLLECTION, id);
+    await setDoc(loreRef, cleanedData, { merge: true });
+  } catch (error) {
+    console.error('Error updating lore entry:', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a lore entry
+ */
+export async function deleteLoreEntry(loreId) {
+  try {
+    const loreRef = doc(db, LORE_COLLECTION, loreId);
+    await deleteDoc(loreRef);
+  } catch (error) {
+    console.error('Error deleting lore entry:', error);
     throw error;
   }
 }

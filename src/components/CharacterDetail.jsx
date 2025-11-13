@@ -16,7 +16,7 @@ const colorPalette = {
   blue: { color1: '#4361ee', color2: '#7209b7' },
 }
 
-export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev, navDirection = 'right', isAdmin = false, onEdit = null, onDelete = null, dropdownOptions = {} }) {
+export default function CharacterDetail({ character, onBack, onNext, onPrev, hasNext, hasPrev, navDirection = 'right', isAdmin = false, onEdit = null, onDelete = null, onLoreClick = null, dropdownOptions = {} }) {
   const ultimateColors = colorPalette[character.ultimateSkillColor] || colorPalette.gold
   const [slideDirection, setSlideDirection] = useState(navDirection)
   const [showPinDialog, setShowPinDialog] = useState(false)
@@ -318,11 +318,29 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
                 </div>
                 <div className="flex justify-between items-center py-4 border-b border-gold-dark">
                   <span className="text-lg text-wood-light font-medieval">Origin</span>
-                  <span className="font-bold text-lg text-wood">{character.placeOfOrigin || '—'}</span>
+                  {character.placeOfOrigin ? (
+                    <button
+                      onClick={() => onLoreClick && onLoreClick('place', character.placeOfOrigin)}
+                      className="font-bold text-lg text-gold hover:text-gold-dark underline transition cursor-pointer"
+                    >
+                      {character.placeOfOrigin}
+                    </button>
+                  ) : (
+                    <span className="font-bold text-lg text-wood">—</span>
+                  )}
                 </div>
                 <div className="flex justify-between items-center py-4">
                   <span className="text-lg text-wood-light font-medieval">Affiliation</span>
-                  <span className="font-bold text-lg text-wood">{character.affiliation || '—'}</span>
+                  {character.affiliation ? (
+                    <button
+                      onClick={() => onLoreClick && onLoreClick('affiliation', character.affiliation)}
+                      className="font-bold text-lg text-gold hover:text-gold-dark underline transition cursor-pointer"
+                    >
+                      {character.affiliation}
+                    </button>
+                  ) : (
+                    <span className="font-bold text-lg text-wood">—</span>
+                  )}
                 </div>
               </div>
             </div>

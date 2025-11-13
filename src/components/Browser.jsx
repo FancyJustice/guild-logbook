@@ -4,14 +4,17 @@ import CharacterDetail from './CharacterDetail'
 import CharacterHierarchy from './CharacterHierarchy'
 import CharacterForm from './CharacterForm'
 import BookView from './BookView'
+import LoreDetail from './LoreDetail'
 
 import ArtifactGrid from './ArtifactGrid'
 import ArtifactDetail from './ArtifactDetail'
 import ArtifactForm from './ArtifactForm'
 
-export default function Browser({ characters, artifacts, dropdownOptions, isAdmin = false, onAddCharacter = null, onUpdateCharacter = null, onDeleteCharacter = null, onAddArtifact = null }) {
+export default function Browser({ characters, artifacts, lore = [], dropdownOptions, isAdmin = false, onAddCharacter = null, onUpdateCharacter = null, onDeleteCharacter = null, onAddArtifact = null, onUpdateLore = null }) {
   const [selectedCharacter, setSelectedCharacter] = useState(null)
   const [selectedArtifact, setSelectedArtifact] = useState(null)
+  const [selectedLore, setSelectedLore] = useState(null)
+  const [previousCharacter, setPreviousCharacter] = useState(null) // Store character to return to
   const [view, setView] = useState('characters') // 'characters' or 'artifacts'
   const [displayMode, setDisplayMode] = useState('grid') // 'grid', 'hierarchy', or 'book'
   const [navDirection, setNavDirection] = useState('right') // Track which direction user is navigating
@@ -100,7 +103,22 @@ export default function Browser({ characters, artifacts, dropdownOptions, isAdmi
       <div className="flex-1 space-y-6">
         {view === 'characters' ? (
           <>
-            {selectedCharacter ? (
+            {selectedLore ? (
+              <LoreDetail
+                lore={selectedLore}
+                characters={characters}
+                artifacts={artifacts}
+                isAdmin={isAdmin}
+                onEdit={onUpdateLore}
+                onBack={() => {
+                  setSelectedLore(null)
+                  if (previousCharacter) {
+                    setSelectedCharacter(previousCharacter)
+                    setPreviousCharacter(null)
+                  }
+                }}
+              />
+            ) : selectedCharacter ? (
               <CharacterDetail
                 character={selectedCharacter}
                 onBack={() => setSelectedCharacter(null)}
@@ -124,6 +142,22 @@ export default function Browser({ characters, artifacts, dropdownOptions, isAdmi
                 isAdmin={isAdmin}
                 onEdit={onUpdateCharacter}
                 onDelete={onDeleteCharacter}
+                onLoreClick={(type, name) => {
+                  // Find or create lore entry
+                  let selectedLoreEntry = lore.find(l => l.name === name && l.type === type)
+                  if (!selectedLoreEntry) {
+                    // Create a temporary lore entry if it doesn't exist
+                    selectedLoreEntry = {
+                      id: `lore_${Date.now()}`,
+                      name,
+                      type,
+                      description: '',
+                      createdAt: new Date().toISOString()
+                    }
+                  }
+                  setPreviousCharacter(selectedCharacter)
+                  setSelectedLore(selectedLoreEntry)
+                }}
                 dropdownOptions={dropdownOptions}
               />
             ) : (
