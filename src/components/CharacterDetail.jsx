@@ -36,6 +36,11 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
     window.scrollTo(0, 0)
   }, [character.id])
 
+  // Update editData when character prop changes (after Firebase update)
+  useEffect(() => {
+    setEditData(character)
+  }, [character])
+
   const exportCharacterAsJSON = () => {
     const dataToExport = {
       character: character
@@ -101,7 +106,11 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
       const dataToSave = { ...formData, id: character.id }
       onEdit(dataToSave)
     }
+
+    // Close edit mode and go back to grid view
+    // This allows Firebase to update and the data will be fresh when you click again
     setIsEditMode(false)
+    onBack()
   }
 
   const handleCancelEdit = () => {
