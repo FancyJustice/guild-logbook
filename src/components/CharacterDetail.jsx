@@ -95,8 +95,8 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
     }
   }
 
-  const handleSaveEdit = () => {
-    onEdit && onEdit(editData)
+  const handleSaveEdit = (formData) => {
+    onEdit && onEdit(formData)
     setIsEditMode(false)
   }
 

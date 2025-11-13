@@ -285,7 +285,11 @@ export async function addCharacterToFirebase(character, currentCharacters, curre
     const charId = character.id || `char_${Date.now()}`;
     const charRef = doc(db, CHARACTERS_COLLECTION, charId);
     const { id, ...charData } = character;
-    await setDoc(charRef, charData);
+    // Filter out undefined values - Firebase doesn't allow them
+    const cleanData = Object.fromEntries(
+      Object.entries(charData).filter(([_, value]) => value !== undefined)
+    );
+    await setDoc(charRef, cleanData);
   } catch (error) {
     console.error('Error adding character:', error);
     throw error;
@@ -299,8 +303,12 @@ export async function updateCharacterInFirebase(updatedCharacter, currentCharact
   try {
     // First try to update in new structure
     const { id, ...charData } = updatedCharacter;
+    // Filter out undefined values - Firebase doesn't allow them
+    const cleanData = Object.fromEntries(
+      Object.entries(charData).filter(([_, value]) => value !== undefined)
+    );
     const charRef = doc(db, CHARACTERS_COLLECTION, id);
-    await setDoc(charRef, charData, { merge: true });
+    await setDoc(charRef, cleanData, { merge: true });
 
     // Also update in old structure for backward compatibility
     try {
@@ -357,7 +365,11 @@ export async function addArtifactToFirebase(artifact, currentCharacters, current
     const artId = artifact.id || `artifact_${Date.now()}`;
     const artRef = doc(db, ARTIFACTS_COLLECTION, artId);
     const { id, ...artData } = artifact;
-    await setDoc(artRef, artData);
+    // Filter out undefined values - Firebase doesn't allow them
+    const cleanData = Object.fromEntries(
+      Object.entries(artData).filter(([_, value]) => value !== undefined)
+    );
+    await setDoc(artRef, cleanData);
   } catch (error) {
     console.error('Error adding artifact:', error);
     throw error;
@@ -371,8 +383,12 @@ export async function updateArtifactInFirebase(updatedArtifact, currentCharacter
   try {
     // First try to update in new structure
     const { id, ...artData } = updatedArtifact;
+    // Filter out undefined values - Firebase doesn't allow them
+    const cleanData = Object.fromEntries(
+      Object.entries(artData).filter(([_, value]) => value !== undefined)
+    );
     const artRef = doc(db, ARTIFACTS_COLLECTION, id);
-    await setDoc(artRef, artData, { merge: true });
+    await setDoc(artRef, cleanData, { merge: true });
 
     // Also update in old structure for backward compatibility
     try {
