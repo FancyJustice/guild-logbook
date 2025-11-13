@@ -96,7 +96,11 @@ export default function CharacterDetail({ character, onBack, onNext, onPrev, has
   }
 
   const handleSaveEdit = (formData) => {
-    onEdit && onEdit(formData)
+    if (onEdit) {
+      // Ensure the character ID is preserved
+      const dataToSave = { ...formData, id: character.id }
+      onEdit(dataToSave)
+    }
     setIsEditMode(false)
   }
 
